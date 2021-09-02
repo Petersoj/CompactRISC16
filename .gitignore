@@ -9,8 +9,7 @@
 *.hex
 *.html
 *.jdi
-*.jpg
-# *.mif
+*.mif
 *.pin
 *.pof
 *.ptf.*
@@ -23,8 +22,6 @@
 *.sopc_builder
 *.summary
 *.tcl
-*.txt # Explicitly add any text files used
-*~
 *example*
 *sopc_*
 # *.sdc # I want those timing files
@@ -40,3 +37,8 @@ incremental_db/
 db/
 _output_files/
 PLLJ_PLLSPE_INFO.txt
+
+# Ignore Quartus Prime project files to prevent constant unnecessary project file changes
+# if Quartus versions are different on machines
+*.qpf
+*.qsf
