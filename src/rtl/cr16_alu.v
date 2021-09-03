@@ -1,4 +1,3 @@
-////
 //
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
@@ -7,5 +6,4 @@
 // Description: The CR16 ALU
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
-////
 

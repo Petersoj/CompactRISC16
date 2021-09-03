@@ -42,3 +42,6 @@ PLLJ_PLLSPE_INFO.txt
 # if Quartus versions are different on machines
 *.qpf
 *.qsf
+
+# Ignore file system metadata files
+.DS_Store
