@@ -7,25 +7,32 @@
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-module alutest();
+module tb_cr16_alu();
     
     // Inputs
-    reg [15:0] I_op1;
-    reg [15:0] I_op2;
-    reg [3:0] Opcode;
+    reg [15:0] I_A;
+    reg [15:0] I_B;
+    reg [3:0] I_OPCODE;
+	 reg I_ENABLE;
+	 reg I_CLK;
     
     // Outputs
-    wire [15:0] O_dest;
-    wire [4:0] flags;
+    wire [15:0] O_C;
+    wire [4:0] O_STATUS;
     
-    integer i;
+	 // establish the clock signal to sync the test
+	 always #5 I_CLK = ~I_CLK;
+	 
+    integer i, j;
     // Instantiate the Unit Under Test (UUT)
     alu uut (
-    .I_op1(I_op1),
-    .I_op2(I_op2),
-    .O_dest(O_dest),
-    .Opcode(Opcode),
-    .flags(flags)
+	 .I_CLK(I_CLK),
+	 .I_ENABLE(I_ENABLE),
+    .I_A(I_A),
+    .I_B(I_B),
+    .O_C(O_C),
+    .I_OPCODE(I_OPCODE),
+    .O_STATUS(O_STATUS)
     );
     
     initial begin
@@ -35,9 +42,9 @@ module alutest();
         //signal in the argument list.
         
         // Initialize Inputs
-        I_op1  = 0;
-        I_op2  = 0;
-        Opcode = 2'b11;
+        I_A  = 0;
+        I_B  = 0;
+        I_ENABLE = 1'b1;
         
         // Wait 100 ns for global reset to finish
         /*****
@@ -49,14 +56,33 @@ module alutest();
          I_op1 = 4'b1111; I_op2 = 4'b 1110;
          //$display("I_op1: %b, I_op2: %b, O_dest:%b, flags[4:0]: %b, time:%d", I_op1, I_op2, O_dest, flags[4:0], $time);
          ****/
-        //Random simulation
-        for(i = 0; i< 10; i = i+ 1) begin
-            #10
-            I_op1 = $random %16;
-            I_op2 = $random %16;
-            $display("I_op1: %0d, I_op2: %0d, O_dest: %0d, flags[4:0]: %b, time:%0d", I_op1, I_op2, O_dest, flags[4:0], $time);
-        end
-        $finish(2);
+			
+			
+        //Simulate ADD, Opcode = 0
+		  I_OPCODE = 4'b0000;
+		  
+        for(i = -32_768; i < 32_767; i = i + 1) begin            
+            I_A = i;
+				
+				for(j = -32_768; j < 32_767; j = j + 1) begin
+					I_B = j;
+					#10;
+					
+					if (O_C != i + j)
+						$display("Test Failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+					if ((~I_A[15] & ~I_B[15] & O_C[15]) | (I_A[15] & I_B[15] & ~O_C[15]) && (O_STATUS[2] != 1'b1))
+						$display("Signed Overflow not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+					if ( O_C == 0 && O_STATUS[3] != 1)
+						$display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+					if ( O_C[3] == 1 && O_STATUS[4] != 1)
+						$display("Neg bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+					if (I_B < I_A && O_STATUS[1] != 1)
+						$display("Low bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+					if (O_STATUS[0] == 1)
+						$display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+			   end
+		  end
+        //$finish(2);
         
         // Add stimulus here
         
