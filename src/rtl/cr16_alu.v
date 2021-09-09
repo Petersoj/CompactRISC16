@@ -15,7 +15,7 @@ module alu #(parameter integer P_WIDTH = 16)
              input wire [P_WIDTH - 1 : 0] I_B,
              output reg [P_WIDTH - 1 : 0] O_C,
              output reg [4 : 0] O_STATUS);
- 
+    
     // Parameterized opcodes
     parameter integer
     ADD = 0,
@@ -42,5 +42,63 @@ module alu #(parameter integer P_WIDTH = 16)
     STATUS_FLAG = 5'b00100,
     STATUS_ZERO = 5'b01000,
     STATUS_NEGATIVE = 5'b10000;
-
+    
+    // Clock block
+    always @(posedge I_CLK) begin
+        if (I_ENABLE) begin
+            case (I_OPCODE)
+                ADD: begin
+                    
+                end
+                ADDU: begin
+                    
+                end
+                ADDC: begin
+                    
+                end
+                ADDCU: begin
+                    
+                end
+                SUB: begin
+                    
+                end
+                CMP: begin
+                    
+                end
+                CMPU: begin
+                    
+                end
+                AND: begin
+                    
+                end
+                OR: begin
+                    
+                end
+                XOR: begin
+                    
+                end
+                NOT: begin
+                    
+                end
+                LSH: begin
+                    
+                end
+                RSH: begin
+                    
+                end
+                ALSH: begin
+                    
+                end
+                ARSH: begin
+                    
+                end
+                NOP: begin
+                    
+                end
+                default: begin
+                    
+                end
+            endcase
+        end
+    end
 endmodule
