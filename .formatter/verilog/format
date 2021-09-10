@@ -1,9 +1,14 @@
 #!/bin/bash
 
-VERILOG_FORMAT_JAR_FILE_PATH=$(dirname $0)/verilog-format-1.0.1-full.jar
-VERILOG_FORMAT_PROPERTIES_PATH=.verilog-format.properties
+VERILOG_FORMATTER_PATH=$(dirname $0)/istyle-verilog-formatter
+VERILOG_FORMATTER_BIN=${VERILOG_FORMATTER_PATH}/bin/release/iStyle
 
-# Loop through all arguments and format the specified files or recursively format 
+if [ ! -f "$VERILOG_FORMATTER_BIN" ]; then
+    echo "${VERILOG_FORMATTER_BIN} doesn\'t exist. Running 'make'..."
+    make --directory "$VERILOG_FORMATTER_PATH"
+fi
+
+# Loop through all arguments and format the specified files or recursively format
 # files in specified directories.
 count=0
 for path in "$@"; do
@@ -14,12 +19,12 @@ for path in "$@"; do
 
         for subpath in $(find "$path" -iname *.v); do
             echo "Formatting ${subpath}."
-            java -jar "$VERILOG_FORMAT_JAR_FILE_PATH" -f "$subpath" -s "$VERILOG_FORMAT_PROPERTIES_PATH"
+            eval $VERILOG_FORMATTER_BIN "$subpath" --convert-tabs --suffix=none --style=kr
             ((count++))
         done
     elif [ -f "$path" ]; then
         echo "Formatting ${path}."
-        java -jar "$VERILOG_FORMAT_JAR_FILE_PATH" -f "$path" -s "$VERILOG_FORMAT_PROPERTIES_PATH"
+        eval $VERILOG_FORMATTER_BIN "$path" --convert-tabs --suffix=none --style=kr
         ((count++))
     else
         echo "$path does not exist." 1>&2;

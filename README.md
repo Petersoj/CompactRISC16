@@ -13,7 +13,7 @@ This is an implementation of the CompactRISC (CR16) CPU written in Verilog for t
 - Testbench file names should be prepended with a `tb_` (e.g. `tb_my_verilog_module.v`)
 - Module instantiations should use uppercase named port lists with inputs prepended with `I_` and outputs prepended with `O_` (e.g. `my_verilog_module(.I_INPUT_1(my_input_1), .O_OUTPUT_1(my_output_1));`)
 - Module signatures and bodies should use parameters instead of hard-coding constants.
-- The port list in module signatures should contain `input` and `output` port direction declarations, as opposed to those port direction declarations being placed in the body of the module. 
+- The port list in module signatures should contain `input` and `output` port direction declarations, as opposed to those port direction declarations being placed in the body of the module.
 - Module sections should generally follow the following format, from top of file to bottom of file:
   - Module signature with parameter list, then input wires, then output reg/wires
   - `localparam`s that defines constants for the rest of the module
@@ -34,4 +34,4 @@ For example, to recursively format Verilog source files in the `src` directory, 
 ```
 .formatter/verilog/format src
 ```
-The [`verilog-format`](https://github.com/ericsonj/verilog-format) built Jar file is provided in the [`.formatter/verilog`](.formatter/verilog) directory along with `format` shell script. Note: you may need to make the script executable via: `chmod 755 .formatter/verilog/format`. Additionally, you'll need the [Java Runtime Environment](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) on your machine.
+The [`istyle-verilog-formatter`](https://github.com/thomasrussellmurphy/istyle-verilog-formatter) source is provided in the [`.formatter/verilog`](.formatter/verilog) directory along with `format` shell script. The `format` shell script will run `make` if the `iStyle` binary is not already present in the `istyle-verilog-formatter` directory. Note: you may need to make the script executable via: `chmod 755 .formatter/verilog/format`.
