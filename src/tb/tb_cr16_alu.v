@@ -89,6 +89,7 @@ initial begin
         end
     end
 	 */
+	 
 	 //Simulate ADDU, Opcode = 1
     I_OPCODE = 4'b0001;
 
@@ -106,13 +107,58 @@ initial begin
                 $display("Signed Overflow set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if ( O_C == 0 && O_STATUS[3] != 1)
                 $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            //if ( O_C[15] == 1 && O_STATUS[4] == 1)
-                //$display("Neg bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-				//// Decide here if we really want to set the low bit or not.
-            if ($signed(I_B) < $signed(I_A) && O_STATUS[1] != 1);
-                //$display("Low bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            if (O_STATUS[1] == 0);
-                //$display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if (O_STATUS[4] == 1)
+                $display("Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if (O_STATUS[1] == 0 && (k + l) > 65_535);
+                $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+        end
+    end
+	 
+	 //Simulate ADDC, Opcode = 2	 
+    I_OPCODE = 4'b0010;
+
+    for(i = -32_768; i < 32_767; i = i + 1) begin
+        I_A = i;
+
+        for(j = -32_768; j < 32_767; j = j + 1) begin
+            I_B = j;
+            #2;
+
+            if ($signed(O_C) != $signed(I_A) + $signed(I_B) + 1'b1)
+                $display("Test Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
+				
+            if ((~I_A[15] & ~I_B[15] & O_C[15]) | (I_A[15] & I_B[15] & ~O_C[15]) && (O_STATUS[2] != 1'b1))
+                $display("Signed Overflow not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if ( O_C == 0 && O_STATUS[3] != 1)
+                $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if ( O_C[15] == 1 && O_STATUS[4] != 1)
+                $display("Neg bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if (O_STATUS[0] == 1)
+                $display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+        end
+    end
+	 	 
+	 
+	 //Simulate ADDCU, Opcode = 3
+    I_OPCODE = 4'b0011;
+
+    for(k = 0; k < 65_535; k = k + 1) begin
+        I_A = k;
+
+        for(l = 0; l < 65_535; l = l + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B + 1)
+                $display("Test Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
+				if (O_STATUS[2] == 1'b1)
+                $display("Signed Overflow set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if ( O_C == 0 && O_STATUS[3] != 1)
+                $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if (O_STATUS[4] == 1)
+                $display("Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if (O_STATUS[1] == 0 && (k + l) > 65_535);
+                $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
     //$finish(2);
