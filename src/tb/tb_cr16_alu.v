@@ -93,10 +93,10 @@ initial begin
 	 //Simulate ADDU, Opcode = 1
     I_OPCODE = 4'b0001;
 
-    for(k = 0; k < 65_535; k = k + 1) begin
+    for(i = 0; i < 65_535; i = i + 1) begin
         I_A = k;
 
-        for(l = 0; l < 65_535; l = l + 1) begin
+        for(j = 0; j < 65_535; j = j + 1) begin
             I_B = l;
             #2;
 
@@ -109,7 +109,7 @@ initial begin
                 $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if (O_STATUS[4] == 1)
                 $display("Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            if (O_STATUS[1] == 0 && (k + l) > 65_535);
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
                 $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
@@ -140,7 +140,7 @@ initial begin
 	 	 
 	 
 	 //Simulate ADDCU, Opcode = 3
-    I_OPCODE = 4'b0011;
+    I_OPCODE = 3;
 
     for(k = 0; k < 65_535; k = k + 1) begin
         I_A = k;
@@ -161,7 +161,229 @@ initial begin
                 $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
-    //$finish(2);
+	 
+	  
+	  //Simulate SUB, Opcode = 4
+	  I_OPCODE = 4;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate SUBU, Opcode = 6
+	  I_OPCODE = 6;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate AND, Opcode = 7
+	  I_OPCODE = 7;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate OR, Opcode = 8
+	  I_OPCODE = 8;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate XOR, Opcode = 9
+	  I_OPCODE = 9;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate NOT, Opcode = 10
+	  I_OPCODE = 10;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate LSH, Opcode = 11
+	  I_OPCODE = 11;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate RSH, Opcode = 12
+	  I_OPCODE = 12;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate ALSH, Opcode = 13
+	  I_OPCODE = 13;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+	  //Simulate ARSH, Opcode = 14
+	  I_OPCODE = 14;
+	  for(i = 0; i < 65_535; i = i + 1) begin
+        I_A = k;
+
+        for(j = 0; j < 65_535; j = j + 1) begin
+            I_B = l;
+            #2;
+
+            if (O_C != I_A + I_B)
+					
+            if (O_STATUS[2] == 1'b1)
+               
+            if ( O_C == 0 && O_STATUS[3] != 1)
+					
+            if (O_STATUS[4] == 1)
+					
+            if (O_STATUS[1] == 0 && (i + l) > 65_535);
+					
+        end
+    end
+	  
+ //$finish(2);
 
     // Add stimulus here
 
