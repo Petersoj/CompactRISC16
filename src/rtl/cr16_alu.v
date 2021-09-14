@@ -93,94 +93,94 @@ always @(posedge I_CLK) begin
             SUB: begin
                 O_C = I_B - I_A;
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-					 // Only set the negative bit for signed subtraction
-					 if ($signed(I_B) < $signed(I_A))
-						  O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b1;
-					 else
-						  O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
+                // Only set the negative bit for signed subtraction
+                if ($signed(I_B) < $signed(I_A))
+                    O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b1;
+                else
+                    O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
-				SUBU: begin
+            SUBU: begin
                 O_C = I_B - I_A;
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 // Only set the low bit for unsigned subtraction
-					 if (I_B < I_A)
-						  O_STATUS[STATUS_INDEX_LOW] = 1'b1;
-					 else
-						  O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                // Only set the low bit for unsigned subtraction
+                if (I_B < I_A)
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b1;
+                else
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-					 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
+                O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             AND: begin
-					 O_C = I_A & I_B;
-					 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_C = I_A & I_B;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             OR: begin
-					 O_C = I_A | I_B;
-					 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_C = I_A | I_B;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             XOR: begin
-					 O_C = I_A ^ I_B;
-					 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_C = I_A ^ I_B;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             NOT: begin
-					 O_C = ~I_A;
-					 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_C = ~I_A;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             LSH: begin
-					 O_C = I_A << I_B;
-					 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_C = I_A << I_B;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             RSH: begin
-					 O_C = I_A >> I_B;
-					 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_C = I_A >> I_B;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
-				ALSH: begin
-					 O_C = I_A <<< I_B;
-					 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+            ALSH: begin
+                O_C = I_A <<< I_B;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
-				end
+            end
             ARSH: begin
-					 O_C = I_A >>> I_B;
-					 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-					 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_C = I_A >>> I_B;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             default: begin
-					 O_C = 0;
-					 O_STATUS = 0;
+                O_C = 0;
+                O_STATUS = 0;
             end
         endcase
     end
