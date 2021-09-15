@@ -94,7 +94,9 @@ always @(posedge I_CLK) begin
                 O_C = I_B - I_A;
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
-                O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
+                O_STATUS[STATUS_INDEX_FLAG] =
+                (I_A[P_WIDTH - 1] != I_B[P_WIDTH - 1]) &
+                (I_A[P_WIDTH - 1] == O_C[P_WIDTH - 1]);
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 // Only set the negative bit for signed subtraction
                 if ($signed(I_B) < $signed(I_A))
@@ -110,7 +112,7 @@ always @(posedge I_CLK) begin
                     O_STATUS[STATUS_INDEX_LOW] = 1'b1;
                 else
                     O_STATUS[STATUS_INDEX_LOW] = 1'b0;
-                O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
+                O_STATUS[STATUS_INDEX_FLAG] = I_A > I_B;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
