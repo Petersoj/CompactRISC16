@@ -1,0 +1,107 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{ragged2e}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% Used for a left-aligned table cell with given width
+\newcolumntype{P}[1]{>{\RaggedRight\hspace{0pt}}p{#1}}
+
+\begin{document}
+
+\title{Lab 1 Report --- ALU\\
+\Large{Computer Design Laboratory ECE 3710}\\
+\Large{Fall 2021}\\
+\Large{The University of Utah}}
+
+\author{\IEEEauthorblockN{Jacob Peterson}
+\IEEEauthorblockA{\textit{Computer Engineering 2022}\\
+\textit{University of Utah}\\
+Salt Lake City, UT}
+\and
+\IEEEauthorblockN{Brady Hartog}
+\IEEEauthorblockA{\textit{Computer Engineering 2022}\\
+\textit{University of Utah}\\
+Salt Lake City, UT}
+\and
+\IEEEauthorblockN{Isabella Gilman}
+\IEEEauthorblockA{\textit{Computer Engineering 2023}\\
+\textit{University of Utah}\\
+Salt Lake City, UT}
+\and
+\IEEEauthorblockN{Nate Hansen}
+\IEEEauthorblockA{\textit{Computer Engineering 2023}\\
+\textit{University of Utah}\\
+Salt Lake City, UT}
+}
+
+\maketitle
+
+\begin{abstract}
+This document contains data tables of the ALU (Algorithmic Logic Unit) implementation for Lab 1.
+\end{abstract}
+
+\section{Table of ALU Opcodes}
+\begin{center}
+\begin{tabular}{ | P{5em} | P{5em} | P{12em} | } 
+\hline
+\textbf{ALU Opcode} & \textbf{Instruction Encoding} & \textbf{Description} \\
+\hline
+ADD & 0 & Signed addition \\
+\hline
+ADDU & 1 & Unsigned addition \\
+\hline
+ADDC & 2 & Signed addition with carry \\
+\hline
+ADDCU & 3 & Unsigned addition with carry \\
+\hline
+SUB & 4 & Signed subtraction \\
+\hline
+SUBU & 5 & Unsigned subtraction \\
+\hline
+AND & 6 & Bitwise AND \\
+\hline
+OR & 7 & Bitwise OR \\
+\hline
+XOR & 8 & Bitwise XOR \\
+\hline
+NOT & 9 & Bitwise NOT \\
+\hline
+LSH & 10 & Logical left shift \\
+\hline
+RSH & 11 & Logical right shift \\
+\hline
+ALSH & 12 & Arithmetic (sign-extending) left shift \\
+\hline
+ARSH & 13 & Arithmetic (sign-extending) right shift \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.2in}
+\section{Table of ALU Status Bit Mappings}
+\begin{center}
+\begin{tabular}{ | P{5em} | P{5em} | P{12em} | } 
+\hline
+\textbf{Status Bit} & \textbf{Status One-Hot Encoding} & \textbf{Description} \\
+\hline
+CARRY & \verb|5'b00001| & MSB carry out for unsigned addition \\
+\hline
+LOW & \verb|5'b00010| & \verb|B < A| for unsigned subtraction \\
+\hline
+FLAG & \verb|5'b00100| & MSB carry out for signed addition \\
+\hline
+ZERO & \verb|5'b01000| & Set when \verb|C == 0| \\
+\hline
+NEGATIVE & \verb|5'b10000| & \verb|B < A| for signed subtraction \\
+\hline
+\end{tabular}
+\end{center}
+\end{document}
+
