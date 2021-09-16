@@ -15,40 +15,22 @@ module bcd_seven_segment_mapping
 
 always @(*) begin
     case (I_BCD)
-        4'b0000:
-            O_SEVEN_SEGMENT = 7'b1111110; // 0
-        4'b0001:
-            O_SEVEN_SEGMENT = 7'b0110000; // 1
-        4'b0010:
-            O_SEVEN_SEGMENT = 7'b1101101; // 2
-        4'b0011:
-            O_SEVEN_SEGMENT = 7'b1111001; // 3
-        4'b0100:
-            O_SEVEN_SEGMENT = 7'b0110011; // 4
-        4'b0101:
-            O_SEVEN_SEGMENT = 7'b1011011; // 5
-        4'b0110:
-            O_SEVEN_SEGMENT = 7'b1011111; // 6
-        4'b0111:
-            O_SEVEN_SEGMENT = 7'b1110000; // 7
-        4'b1000:
-            O_SEVEN_SEGMENT = 7'b1111111; // 8
-        4'b1001:
-            O_SEVEN_SEGMENT = 7'b1111011; // 9
-        4'b1010:
-            O_SEVEN_SEGMENT = 7'b1110111; // A
-        4'b1011:
-            O_SEVEN_SEGMENT = 7'b0011111; // B
-        4'b1100:
-            O_SEVEN_SEGMENT = 7'b0001101; // C
-        4'b1101:
-            O_SEVEN_SEGMENT = 7'b0111101; // D
-        4'b1110:
-            O_SEVEN_SEGMENT = 7'b1001111; // E
-        4'b1111:
-            O_SEVEN_SEGMENT = 7'b1000111; // F
-        default:
-            O_SEVEN_SEGMENT = 7'b0000000;
+        0: O_SEVEN_SEGMENT = 7'b1000000;
+			1: O_SEVEN_SEGMENT = 7'b1111001;
+			2: O_SEVEN_SEGMENT = 7'b0100100;
+			3: O_SEVEN_SEGMENT = 7'b0110000;
+			4: O_SEVEN_SEGMENT = 7'b0011001;
+			5: O_SEVEN_SEGMENT = 7'b0010010;
+			6: O_SEVEN_SEGMENT = 7'b0000010;
+			7: O_SEVEN_SEGMENT = 7'b1111000;
+			8: O_SEVEN_SEGMENT = 7'b0000000;
+			9: O_SEVEN_SEGMENT = 7'b0011000;
+			10: O_SEVEN_SEGMENT = 7'b0001000;
+			11: O_SEVEN_SEGMENT = 7'b0000011;
+			12: O_SEVEN_SEGMENT = 7'b1000110;
+			13: O_SEVEN_SEGMENT = 7'b0100001;
+			14: O_SEVEN_SEGMENT = 7'b0000110;
+			15: O_SEVEN_SEGMENT = 7'b0001110;
     endcase
 end
 endmodule
