@@ -49,26 +49,14 @@ initial begin
     I_ENABLE = 1'b1;
 	 I_CLK = 0;
 
-    // Wait 100 ns for global reset to finish
-    /*****
-     // One vector-by-vector case simulation
-     #10;
-     Opcode = 2'b11;
-     I_op1  = 4'b0010; I_op2  = 4'b0011;
-     #10
-     I_op1 = 4'b1111; I_op2 = 4'b 1110;
-     //$display("I_op1: %b, I_op2: %b, O_dest:%b, flags[4:0]: %b, time:%d", I_op1, I_op2, O_dest, flags[4:0], $time);
-     ****/
-
-
     //Simulate ADD, Opcode = 0
 	 
     I_OPCODE = 4'b0000;
-/*
-    for(i = -32_768; i < 32_767; i = i + 1) begin
+
+    for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
 
-        for(j = -32_768; j < 32_767; j = j + 1) begin
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -77,24 +65,23 @@ initial begin
 				
             if ((~I_A[15] & ~I_B[15] & O_C[15]) | (I_A[15] & I_B[15] & ~O_C[15]) && (O_STATUS[2] != 1'b1))
                 $display("Signed Overflow not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            if ( O_C == 0 && O_STATUS[3] != 1)
+          if ( O_C == 0 && O_STATUS[3] != 1)
                 $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if ( O_C[15] == 1 && O_STATUS[4] != 1)
-                $display("Neg bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+                $display("0 Neg bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if (O_STATUS[0] == 1)
                 $display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
 	 
-	 */
-	 /*
+	 
 	 //Simulate ADDU, Opcode = 1
     I_OPCODE = 4'b0001;
 
-    for(i = 0; i < 65_535; i = i + 1) begin
+    for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
 
-        for(j = 0; j < 65_535; j = j + 1) begin
+        for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -106,20 +93,19 @@ initial begin
             if ( O_C == 0 && O_STATUS[3] != 1)
                 $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if (O_STATUS[4] == 1)
-                $display("Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+                $display("1 Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if ((O_STATUS[0] != 1) && ((i + j)  > 65_535))
                 $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b, i+j:%0d", I_A, I_B, O_C, O_STATUS[4:0], i+j);
         end
     end
-	 */
-	 /*
+	 
 	 //Simulate ADDC, Opcode = 2	 
     I_OPCODE = 4'b0010;
 
-    for(i = -32_768; i < 32_767; i = i + 1) begin
+    for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
 
-        for(j = -32_768; j < 32_767; j = j + 1) begin
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -131,20 +117,20 @@ initial begin
             if ( O_C == 0 && O_STATUS[3] != 1)
                 $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if ( O_C[15] == 1 && O_STATUS[4] != 1)
-                $display("Neg bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+                $display("2 Neg bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if (O_STATUS[0] == 1)
                 $display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
-	 */ 
+	 
 	 
 	 //Simulate ADDCU, Opcode = 3
- /*   I_OPCODE = 3;
+    I_OPCODE = 3;
 
-    for(i = 0; i < 65_535; i = i + 1) begin
+    for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
 
-        for(j = 0; j < 65_535; j = j + 1) begin
+        for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -155,20 +141,19 @@ initial begin
             if ( O_C == 0 && O_STATUS[3] != 1)
                 $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if (O_STATUS[4] == 1)
-                $display("Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+                $display("3 Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if ((O_STATUS[0] != 1) && ((i + j + 1) > 65_535))
                 $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
 	 
-  */
-/*
+  
 	  //Simulate SUB, Opcode = 4
 	  I_OPCODE = 4;
-	  for(i = -32_768; i < 32_767; i = i + 1) begin
+	  for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
 
-        for(j = -32_768; j < 32_767; j = j + 1) begin
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -178,21 +163,21 @@ initial begin
                 $display("Signed Overflow set incorrectly: I_A: %b, I_B: %b, i: %0d, j: %0d, O_C: %b, j-i: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, j-i, O_STATUS[4:0]);
             if ( O_C == 0 && O_STATUS[3] != 1) 
 					$display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            if (O_STATUS[4] == 1  && O_C[15] != 1)
-					$display("Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            if (($signed(I_B) < $signed(I_A)) && O_STATUS[4] != 1)
+					$display("4 Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %b, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if (O_STATUS[1] == 1)
 					$display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             
         end
     end
-*/
+
 	
 	  //Simulate SUBU, Opcode = 5
 	  I_OPCODE = 5;
-	  for(i = 0; i < 65_535; i = i + 1) begin
+	  for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
 
-        for(j = 0; j < 65_535; j = j + 1) begin
+        for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -203,7 +188,7 @@ initial begin
             if ((O_C == 0) && (O_STATUS[3] != 1))
 					$display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             if (O_STATUS[4] == 1)
-					$display("Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+					$display("5 Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
 				if ((I_B < I_A) && (O_STATUS[1] != 1))
                $display("Low bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
 					
@@ -211,13 +196,13 @@ initial begin
     end
 	  
 	  
-	  /*
+	  
 	  //Simulate AND, Opcode = 6
 	  I_OPCODE = 6;
-	  for(i = 0; i < 65_535; i = i + 1) begin
+	  for(i = 0; i < 65_535; i = i + 1_024) begin
          I_A = i;
 
-        for(j = 0; j < 65_535; j = j + 1) begin
+        for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
             if (O_C != (I_A & I_B))
@@ -225,30 +210,28 @@ initial begin
 					
         end
     end
-	 */
-	  /*
-	  //Simulate OR, Opcode = 7
-	  I_OPCODE = 7;
-	  for(i = 0; i < 65_535; i = i + 1) begin
-        I_A = i;
+	 
+	 //Simulate OR, Opcode = 7
+	 I_OPCODE = 7;
+	 for(i = 0; i < 65_535; i = i + 1_024) begin
+       I_A = i;
 
-        for(j = 0; j < 65_535; j = j + 1) begin
-            I_B = j;
-            #2;
-
-            if (O_C != (I_A | I_B))
-					$display("OR failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+       for(j = 0; j < 65_535; j = j + 1_024) begin
+           I_B = j;
+           #2;
+           if (O_C != (I_A | I_B))
+			    $display("OR failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
 					
         end
     end
-	 */
-	  /*
+	 
+	  
 	  //Simulate XOR, Opcode = 8
 	  I_OPCODE = 8;
-	  for(i = 0; i < 65_535; i = i + 1) begin
+	  for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
 
-        for(j = 0; j < 65_535; j = j + 1) begin
+        for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -257,24 +240,27 @@ initial begin
 					
         end
     end
-	 */
-	  /*
-	  //Simulate NOT, Opcode = 9
-	  I_OPCODE = 9;
-	  for(i = 0; i < 65_535; i = i + 1) begin
-       I_A = i;
-
-        if (O_C != ~I_A)
-					$display("NOT failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-    end
 	 
+	 //Simulate NOT, Opcode = 9
+	 I_OPCODE = 9;
+	 for(i = 0; i < 65_535; i = i + 1_024) begin
+      I_A = i;
+		
+		 for(j = -32_768; j < 32_767; j = j + 1_024) begin
+            I_B = j;
+            #2;
+
+				if (O_C != ~I_A)
+					$display("NOT failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+		 end
+    end	 
 	  
-	  //Simulate LSH, Opcode = 10
-	  I_OPCODE = 10;
-	 for(i = -32_768; i < 32_767; i = i + 1) begin
+	 //Simulate LSH, Opcode = 10
+	 I_OPCODE = 10;
+	 for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
 
-        for(j = -32_768; j < 32_767; j = j + 1) begin
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -283,14 +269,13 @@ initial begin
 					
         end
     end
-	 
 	  
 	  //Simulate RSH, Opcode = 11
 	  I_OPCODE = 11;
-	  for(i = -32_768; i < 32_767; i = i + 1) begin
+	  for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
 
-        for(j = -32_768; j < 32_767; j = j + 1) begin
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -303,10 +288,10 @@ initial begin
 	  
 	  //Simulate ALSH, Opcode = 12
 	  I_OPCODE = 12;
-	  for(i = -32_768; i < 32_767; i = i + 1) begin
+	  for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
 
-        for(j = -32_768; j < 32_767; j = j + 1) begin
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -315,14 +300,14 @@ initial begin
 					
         end
     end
-	 */
+	 
 	  
 	  //Simulate ARSH, Opcode = 13
 	  I_OPCODE = 13;
-	  for(i = -32_768; i < 32_767; i = i + 1) begin
+	  for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
 
-        for(j = -32_768; j < 32_767; j = j + 1) begin
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
 
@@ -331,8 +316,9 @@ initial begin
 					
         end
     end
+	 
 	  
- //$finish(2);
+   $stop;
 
     // Add stimulus here
 

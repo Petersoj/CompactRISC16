@@ -108,16 +108,16 @@ always @(posedge I_CLK) begin
                 O_C = I_B - I_A;
 						
                 // Only set the low bit for unsigned subtraction
-                //if (I_B > I_A) begin
-                    O_STATUS[STATUS_INDEX_LOW] = 1'b1;
-						  O_STATUS[STATUS_INDEX_CARRY] = 1'b1;
-					 /*end
+                if (I_B > I_A) begin
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+						  O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+					 end
 					 
                 else begin
                     O_STATUS[STATUS_INDEX_LOW] = 1'b1;
 						  O_STATUS[STATUS_INDEX_CARRY] = 1'b1;
 					 end
-					 */
+					 
 					 
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
