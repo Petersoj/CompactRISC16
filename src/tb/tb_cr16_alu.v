@@ -25,10 +25,8 @@ wire [4:0] O_STATUS;
 always #1 I_CLK = ~I_CLK;
 
 integer i, j;
-integer k, l;
 // Instantiate the Unit Under Test (UUT)
 cr16_alu uut (
-             .I_CLK(I_CLK),
              .I_ENABLE(I_ENABLE),
              .I_A(I_A),
              .I_B(I_B),
