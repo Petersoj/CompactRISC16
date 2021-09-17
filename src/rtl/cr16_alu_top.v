@@ -1,84 +1,95 @@
 //
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
-// Create Date: 09/02/2021
+// Create Date: 09/16/2021
 // Module Name: cr16_alu_top
-// Description: The CR16 ALU Top module
+// Description: The CR16 ALU top module
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-module cr16_alu_top(input wire[7:0] INPUT, input RST, input CLK, output wire [6:0] O_7_SEG_DISPLAY0, output wire [6:0] O_7_SEG_DISPLAY1, output wire [6:0] O_7_SEG_DISPLAY2, output wire [6:0] O_7_SEG_DISPLAY3, output wire [4:0] O_STATUS_LED);
+module cr16_alu_top
+       (input wire[7:0] I_INPUT,
+        input I_RST,
+        input I_STEP,
+        output wire [6:0] O_7_SEGMENT_DISPLAY_0,
+        output wire [6:0] O_7_SEGMENT_DISPLAY_1,
+        output wire [6:0] O_7_SEGMENT_DISPLAY_2,
+        output wire [6:0] O_7_SEGMENT_DISPLAY_3,
+        output wire [4:0] O_STATUS_LED);
 
+// Parameterized states for FSM
+localparam STATE_HIGH_A = 3'd0,
+    STATE_LOW_A = 3'd1,
+    STATE_HIGH_B = 3'd2,
+    STATE_LOW_B = 3'd3,
+    STATE_OPCODE = 3'd4;
 
-wire [15:0] OUTPUT;
-reg [4:0] OPCODE = 0;
-wire [4:0] O_STATUS;
 reg [2:0] state = 0;
-reg [15:0] A = 0;
-reg [15:0] B = 0;
+reg [4:0] opcode = 0;
+reg [15:0] a = 0;
+reg [15:0] b = 0;
+wire [15:0] c;
 
-cr16_alu alu
-         (.I_CLK(CLK),
-          .I_ENABLE(1),
-          .I_OPCODE(OPCODE),
-          .I_A(A),
-          .I_B(B),
-          .O_C(OUTPUT),
-          .O_STATUS(O_STATUS));
+cr16_alu
+    #(.P_WIDTH(16))
+    i_cr16_alu
+    (.I_ENABLE(1'b1),
+     .I_OPCODE(opcode),
+     .I_A(a),
+     .I_B(b),
+     .O_C(c),
+     .O_STATUS(O_STATUS_LED));
 
-bcd_seven_segment_mapping bcd_7_0
-                          (.I_BCD(OUTPUT[3:0]),
-                           .O_SEVEN_SEGMENT(O_7_SEG_DISPLAY0));
+seven_segment_hex_mapping i_seven_segment_hex_mapping_0
+                          (.I_VALUE(c[3:0]),
+                           .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_0));
 
-bcd_seven_segment_mapping bcd_7_1
-                          (.I_BCD(OUTPUT[7:4]),
-                           .O_SEVEN_SEGMENT(O_7_SEG_DISPLAY1));
+seven_segment_hex_mapping i_seven_segment_hex_mapping_1
+                          (.I_VALUE(c[7:4]),
+                           .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_1));
 
-bcd_seven_segment_mapping bcd_7_2
-                          (.I_BCD(OUTPUT[11:8]),
-                           .O_SEVEN_SEGMENT(O_7_SEG_DISPLAY2));
+seven_segment_hex_mapping i_seven_segment_hex_mapping_2
+                          (.I_VALUE(c[11:8]),
+                           .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_2));
 
-bcd_seven_segment_mapping bcd_7_3
-                          (.I_BCD(OUTPUT[15:12]),
-                           .O_SEVEN_SEGMENT(O_7_SEG_DISPLAY3));
+seven_segment_hex_mapping i_seven_segment_hex_mapping_3
+                          (.I_VALUE(c[15:12]),
+                           .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_3));
 
-assign O_STATUS_LED = O_STATUS;
-
-always@(posedge CLK or negedge RST) begin
-    if (!RST) begin
-        state <= 3'b000;
+always@(negedge I_STEP or negedge I_RST) begin
+    if (!I_RST) begin
+        state <= STATE_HIGH_A;
+        opcode <= 0;
+        a <= 0;
+        b <= 0;
     end
     else begin
         case (state)
-            // Set high of A
-            3'b000: begin
-                A[15:8] <= INPUT;
-                state <= 3'b001;
+            STATE_HIGH_A: begin
+                a[15:8] <= I_INPUT;
+                state <= STATE_LOW_A;
             end
-            // Set low of A
-            3'b001: begin
-                A[7:0] <= INPUT;
-                state <= 3'b010;
+            STATE_LOW_A: begin
+                a[7:0] <= I_INPUT;
+                state <= STATE_HIGH_B;
             end
-            // Set high of B
-            3'b010: begin
-                B[15:8] <= INPUT;
-                state <= 3'b011;
+            STATE_HIGH_B: begin
+                b[15:8] <= I_INPUT;
+                state <= STATE_LOW_B;
             end
-            // Set low of B
-            3'b011: begin
-                B[7:0] <= INPUT;
-                state <= 3'b100;
+            STATE_LOW_B: begin
+                b[7:0] <= I_INPUT;
+                state <= STATE_OPCODE;
             end
-            // Set opcode
-            3'b100: begin
-                OPCODE <= INPUT[4:0];
-                state <= 3'b000;
+            STATE_OPCODE: begin
+                opcode <= I_INPUT[4:0];
+                state <= STATE_HIGH_A;
             end
             default: begin
-                state <= 3'b000;
+                state <= STATE_HIGH_A;
             end
         endcase
     end
 end
+
 endmodule

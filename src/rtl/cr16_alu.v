@@ -8,8 +8,7 @@
 //
 
 module cr16_alu #(parameter integer P_WIDTH = 16)
-       (input wire I_CLK,
-        input wire I_ENABLE,
+       (input wire I_ENABLE,
         input wire [3 : 0] I_OPCODE,
         input wire [P_WIDTH - 1 : 0] I_A,
         input wire [P_WIDTH - 1 : 0] I_B,
@@ -41,8 +40,8 @@ localparam integer
            STATUS_INDEX_ZERO = 3,     // 'O_C' == 0
            STATUS_INDEX_NEGATIVE = 4; // 'I_B' < 'I_A' for signed subtraction
 
-// Clock block
-always @(posedge I_CLK) begin
+// Combinational logic case block
+always @(*) begin
     if (I_ENABLE) begin
         case (I_OPCODE)
             ADD: begin
@@ -108,17 +107,17 @@ always @(posedge I_CLK) begin
                 O_C = I_B - I_A;
                 // Only set the low bit (and carry bit) for unsigned subtraction
                 if (I_B > I_A) begin
-                    O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                     O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-                end else begin
-                    O_STATUS[STATUS_INDEX_LOW] = 1'b1;
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                end
+                else begin
                     O_STATUS[STATUS_INDEX_CARRY] = 1'b1;
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b1;
                 end
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
-
             AND: begin
                 O_C = I_A & I_B;
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
