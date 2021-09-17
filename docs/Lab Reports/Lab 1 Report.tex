@@ -49,7 +49,7 @@ This document contains data tables of the ALU (Algorithmic Logic Unit) implement
 
 \section{Table of ALU Opcodes}
 \begin{center}
-\begin{tabular}{ | P{5em} | P{5em} | P{12em} | } 
+\begin{tabular}{ | P{5em} | P{5em} | P{12em} | }
 \hline
 \textbf{ALU Opcode} & \textbf{Instruction Encoding} & \textbf{Description} \\
 \hline
@@ -87,7 +87,7 @@ ARSH & 13 & Arithmetic (sign-extending) right shift \\
 \vspace{0.2in}
 \section{Table of ALU Status Bit Mappings}
 \begin{center}
-\begin{tabular}{ | P{5em} | P{5em} | P{12em} | } 
+\begin{tabular}{ | P{5em} | P{5em} | P{12em} | }
 \hline
 \textbf{Status Bit} & \textbf{Status One-Hot Encoding} & \textbf{Description} \\
 \hline
@@ -103,5 +103,12 @@ NEGATIVE & \verb|5'b10000| & \verb|B < A| for signed subtraction \\
 \hline
 \end{tabular}
 \end{center}
-\end{document}
 
+\section{Notes}
+The ALU has a single addressing mode, such that it does not distinguish
+between immediate-type and literal-type instructions.
+
+In a future revision, the ALU will omit the clock signal so as to be a
+purely combinational circuit.
+
+\end{document}
