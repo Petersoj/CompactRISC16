@@ -188,5 +188,10 @@ always @(*) begin
             end
         endcase
     end
+    else begin
+        O_C = 0;
+        O_STATUS = 0;
+    end
+
 end
 endmodule

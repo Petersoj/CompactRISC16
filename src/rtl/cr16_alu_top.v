@@ -19,10 +19,10 @@ module cr16_alu_top
 
 // Parameterized states for FSM
 localparam STATE_HIGH_A = 3'd0,
-    STATE_LOW_A = 3'd1,
-    STATE_HIGH_B = 3'd2,
-    STATE_LOW_B = 3'd3,
-    STATE_OPCODE = 3'd4;
+           STATE_LOW_A = 3'd1,
+           STATE_HIGH_B = 3'd2,
+           STATE_LOW_B = 3'd3,
+           STATE_OPCODE = 3'd4;
 
 reg [2:0] state = 0;
 reg [4:0] opcode = 0;
