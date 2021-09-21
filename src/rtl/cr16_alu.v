@@ -34,11 +34,11 @@ localparam integer
 
 // Status register indicies for one-hot encoding
 localparam integer
-           STATUS_INDEX_CARRY = 0,    // MSB carry out for unsigned addition
+           STATUS_INDEX_CARRY = 0,    // MSB carry out for unsigned addition and subtraction
            STATUS_INDEX_LOW = 1,      // 'I_B' < 'I_A' for unsigned subtraction
            STATUS_INDEX_FLAG = 2,     // MSB carry out for signed addition
            STATUS_INDEX_ZERO = 3,     // 'O_C' == 0
-           STATUS_INDEX_NEGATIVE = 4; // 'I_B' < 'I_A' for signed subtraction
+           STATUS_INDEX_NEGATIVE = 4; // 'I_B' < 'I_A' for signed addition and subtraction
 
 // Combinational logic case block
 always @(*) begin
@@ -192,6 +192,5 @@ always @(*) begin
         O_C = 0;
         O_STATUS = 0;
     end
-
 end
 endmodule

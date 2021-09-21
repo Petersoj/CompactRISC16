@@ -50,6 +50,5 @@ always @(*) begin
             O_7_SEGMENT = 7'b0001110;
     endcase
 end
-
 endmodule
 
