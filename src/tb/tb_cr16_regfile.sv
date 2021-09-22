@@ -33,6 +33,8 @@ cr16_regfile uut (
 integer i, j;
 
 initial begin
+    clk = 0;
+
     #20;
     // Loop through all registers in the register file.
     for (i = 0; i < 16; i++) begin
