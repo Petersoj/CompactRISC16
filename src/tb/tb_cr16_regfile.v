@@ -53,7 +53,7 @@ initial begin
     end
 
     $display("Testbench finished.");
-    $stop
+    $stop;
 end
 
 endmodule
