@@ -7,14 +7,14 @@
 //
 
 module ( input wire [15:0] REG_ENABLE,
-			input wire I_ENABLE,
-			output reg [3:0] O_S			
-		);
-		
-		always@(I_ENABLE) begin
-			case(REG_ENABLE)
-		
-		
-		
-endmodule
-	
+         input wire I_ENABLE,
+         output reg [3:0] O_S
+       );
+
+always@(I_ENABLE) begin
+    case(REG_ENABLE)
+
+
+
+        endmodule
+
