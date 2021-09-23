@@ -17,7 +17,7 @@ module cr16_flags #(parameter integer P_FLAG_WIDTH = 5)
         input wire I_NRESET,
         input wire I_CLK,
         input wire [P_FLAG_WIDTH - 1 : 0] I_FLAGS,
-        output reg [P_FLAG_WIDTH - 1 : 0] O_FLAGS);
+        output wire [P_FLAG_WIDTH - 1 : 0] O_FLAGS);
 
 register #(.P_WIDTH(P_FLAG_WIDTH))
          i_flag_register
