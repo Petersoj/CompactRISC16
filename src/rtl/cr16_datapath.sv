@@ -30,7 +30,7 @@ module cr16_datapath(input wire [15:0] I_REG_ENABLE,
 	wire [15:0] write_port;
 	
 	// Instantiate compatibility for immediates to be loaded onto bus B.
-	mux_array imm_arr (reg_bus_B, I_IMMEDIATE, I_IMM_SEL, bus_B);
+	mux_array imm_arr (I_IMM_SEL, reg_bus_B, I_IMMEDIATE, bus_B);
 
 	assign O_WRITE_PORT = write_port;
 		
