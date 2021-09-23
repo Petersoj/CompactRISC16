@@ -17,7 +17,7 @@ genvar i;
 
 generate
     for (i = 0; i < SIZE; i = i + 1) begin: MUXarray
-        mux2_1 m(.i({a[i], b[i]}), .sel(sel), .o(o[i]));
+        mux2_1 m(.INPUT({a[i], b[i]}), .s(sel), .OUT(o[i]));
     end
 endgenerate
 endmodule

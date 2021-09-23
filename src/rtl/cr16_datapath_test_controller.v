@@ -12,7 +12,10 @@ module cr16_datapath_test_controller (	input wire I_CLK,
 													input wire I_NRST,
 													input wire I_ENABLE,
 													output [4:0] led_flags,
-													output [27:0] seg_7_output);
+													output wire [6:0] O_7_SEGMENT_DISPLAY_0,
+												   output wire [6:0] O_7_SEGMENT_DISPLAY_1,
+												   output wire [6:0] O_7_SEGMENT_DISPLAY_2,
+												   output wire [6:0] O_7_SEGMENT_DISPLAY_3);
 													
 
 													
@@ -47,10 +50,10 @@ module cr16_datapath_test_controller (	input wire I_CLK,
 		
 	// 7-seg integration for the output of the write port.
 	
-	seven_segment_hex_mapping(.I_VALUE(write_port[3:0]), O_7_SEGMENT(seg_7_output[6:0]));
-	seven_segment_hex_mapping(.I_VALUE(write_port[7:4]), O_7_SEGMENT(seg_7_output[13:7]));
-	seven_segment_hex_mapping(.I_VALUE(write_port[11:8]), O_7_SEGMENT(seg_7_output[20:14]));
-	seven_segment_hex_mapping(.I_VALUE(write_port[15:12]), O_7_SEGMENT(seg_7_output[27:21]));
+	seven_segment_hex_mapping seg1(.I_VALUE(write_port[3:0]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_0));
+	seven_segment_hex_mapping seg2(.I_VALUE(write_port[7:4]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_1));
+	seven_segment_hex_mapping seg3(.I_VALUE(write_port[11:8]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_2));
+	seven_segment_hex_mapping seg4(.I_VALUE(write_port[15:12]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_3));
 
 													
 													

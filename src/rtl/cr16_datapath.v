@@ -29,13 +29,12 @@ module cr16_datapath(input wire [15:0] I_REG_ENABLE,
 	wire [15:0] read_port_B [15:0];
 	wire [15:0] write_port;
 	
-	// Instantiate compatibility for immediates
+	// Instantiate compatibility for immediates to be loaded onto bus B.
 	mux_array imm_arr (reg_bus_B, I_IMMEDIATE, I_IMM_SEL, bus_B);
 
 	assign O_WRITE_PORT = write_port;
 		
-	// Instantiate the regfile, flags, alu, and muxes
-
+	// Instantiate the regfile, flags register, alu, and muxes
 	cr16_regfile REGFILE( 	.I_NRESET(I_NRESET),
 									.I_CLK(I_CLK),
 									.I_REG_BUS(write_port),
@@ -61,7 +60,7 @@ module cr16_datapath(input wire [15:0] I_REG_ENABLE,
 
 
 	// Generate statement to connect the nth bit of each register to the nth row of the 
-	// read ports A and B.
+	// read ports A and B. 
 	genvar reg_bit_idx;
 	genvar reg_reg_idx;
 
@@ -74,7 +73,9 @@ module cr16_datapath(input wire [15:0] I_REG_ENABLE,
 		end
 	endgenerate
 
-	// Generate statement to connect the register data to the arrays of muxes.				
+	// Generate statement to connect the register data to the arrays of muxes. Mux n has 16
+	// inputs that are the same bit of each register r0-r15. The 16x16 structure is used to 
+	// pass only 1 register value at a time to each port of the ALU.
 	genvar mux_A_idx;
 
 	generate
@@ -86,7 +87,9 @@ module cr16_datapath(input wire [15:0] I_REG_ENABLE,
 					.OUT(bus_A[mux_A_idx]));
 		end
 	endgenerate
-			
+	
+	// Same behavior as above for bus B. This assignment will be ignored if 
+	// the immediate selector is active.
 	genvar mux_B_idx;
 
 	generate
@@ -95,7 +98,7 @@ module cr16_datapath(input wire [15:0] I_REG_ENABLE,
 			i_mux16_1
 				(	.INPUT(read_port_B[mux_B_idx][15:0]),
 					.s(I_READ_PORT_B_SEL),
-					.OUT(bus_B[mux_B_idx]));
+					.OUT(reg_bus_B[mux_B_idx]));
 		end
 	endgenerate
 		
