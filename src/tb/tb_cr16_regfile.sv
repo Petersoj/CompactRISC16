@@ -23,12 +23,12 @@ always #5 clk = ~clk;
 
 // Instantiate the Unit Under Test (UUT).
 cr16_regfile uut (
-    .I_NRESET(1'b1), // Inverted reset will be permanently high.
-    .I_CLK(clk),
-    .I_REG_BUS(reg_bus),
-    .I_REG_ENABLE(reg_enable),
-    .O_REG_DATA(reg_data)
-);
+                 .I_NRESET(1'b1), // Inverted reset will be permanently high.
+                 .I_CLK(clk),
+                 .I_REG_BUS(reg_bus),
+                 .I_REG_ENABLE(reg_enable),
+                 .O_REG_DATA(reg_data)
+             );
 
 integer i, j;
 
@@ -40,7 +40,7 @@ initial begin
     for (i = 0; i < 16; i++) begin
         // Reset reg_enable so that it may be used for one-hot encoding.
         reg_enable = 0;
-        
+
         // Enable the next register.
         reg_enable[i] = 1'b1;
 

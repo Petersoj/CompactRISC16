@@ -17,7 +17,7 @@ for path in "$@"; do
         # in for loops.
         IFS=$'\n'
 
-        for subpath in $(find "$path" -iname *.v); do
+        for subpath in $(find "$path" -iname *.v -o -iname *.sv); do
             echo "Formatting ${subpath}."
             eval $VERILOG_FORMATTER_BIN "$subpath" --convert-tabs --suffix=none --style=kr
             ((count++))
