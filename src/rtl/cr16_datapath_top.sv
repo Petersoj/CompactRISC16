@@ -1,13 +1,13 @@
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/23/2021
-// Module Name: cr16_test1_fsm
+// Module Name: cr16_datapath_top
 // Description: FSM for the datapath of the CR16 CPU. Demonstrates read, write, and update
 // functionality for registers 0-7 using the Fibonacci sequence.
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-module cr16_test1_fsm (input wire I_CLK,
+module cr16_datapath_top (input wire I_CLK,
 					   input wire I_NRESET,
 					   output wire [4:0] O_LED_FLAGS,
 					   output wire [6:0] O_7_SEGMENT_DISPLAY [3:0]);
