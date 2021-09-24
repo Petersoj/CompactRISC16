@@ -1,0 +1,61 @@
+# Copyright (C) 2020  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and any partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details, at
+# https://fpgasoftware.intel.com/eula.
+
+# Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+# File: C:\Users\Jacob Peterson\Documents\ECE 3710\CompactRISC16\src\resources\pin_assignments\5CSEMA5F31C6N_cr16_datapath_top.csv
+# Generated on: Thu Sep 23 19:30:07 2021
+
+# Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
+
+To,Direction,Location,I/O Bank,VREF Group,Fitter Location,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Transceiver Analog Settings Protocol,VCCR_GXB/VCCT_GXB Voltage,Transceiver I/O Pin Termination,Transceiver Dedicated Refclk Pin Termination,Transmitter Common Mode Driver Voltage,Transmitter Slew Rate Control,Transmitter Differential Output Voltage,Receiver Buffer Common Mode Voltage,Strict Preservation
+I_CLK,Input,PIN_Y16,3B,B3B_N0,PIN_Y27,3.3-V LVTTL,,,,,,,,,,,,,
+I_NRESET,Input,PIN_AA14,3B,B3B_N0,PIN_AK28,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3],Output,,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2],Output,,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1],Output,,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0],Output,,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][0],Output,PIN_AE26,5A,B5A_N0,PIN_AD25,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][1],Output,PIN_AE27,5A,B5A_N0,PIN_Y21,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][2],Output,PIN_AE28,5A,B5A_N0,PIN_AF26,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][3],Output,PIN_AG27,5A,B5A_N0,PIN_Y19,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][4],Output,PIN_AF28,5A,B5A_N0,PIN_C12,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][5],Output,PIN_AG28,5A,B5A_N0,PIN_AB21,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][6],Output,PIN_AH28,5A,B5A_N0,PIN_AJ27,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][0],Output,PIN_AJ29,5A,B5A_N0,PIN_AG25,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][1],Output,PIN_AH29,5A,B5A_N0,PIN_AH25,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][2],Output,PIN_AH30,5A,B5A_N0,PIN_AE22,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][3],Output,PIN_AG30,5A,B5A_N0,PIN_AA20,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][4],Output,PIN_AF29,5A,B5A_N0,PIN_AK27,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][5],Output,PIN_AF30,5A,B5A_N0,PIN_AK29,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][6],Output,PIN_AD27,5A,B5A_N0,PIN_AD20,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][0],Output,PIN_AB23,5A,B5A_N0,PIN_AH27,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][1],Output,PIN_AE29,5B,B5B_N0,PIN_AD21,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][2],Output,PIN_AD29,5B,B5B_N0,PIN_AC23,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][3],Output,PIN_AC28,5B,B5B_N0,PIN_AC22,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][4],Output,PIN_AD30,5B,B5B_N0,PIN_AE23,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][5],Output,PIN_AC29,5B,B5B_N0,PIN_AG26,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][6],Output,PIN_AC30,5B,B5B_N0,PIN_V18,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][0],Output,PIN_AD26,5A,B5A_N0,PIN_W20,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][1],Output,PIN_AC27,5A,B5A_N0,PIN_AH28,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][2],Output,PIN_AD25,5A,B5A_N0,PIN_AF25,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][3],Output,PIN_AC25,5A,B5A_N0,PIN_AG27,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][4],Output,PIN_AB28,5B,B5B_N0,PIN_AE24,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][5],Output,PIN_AB25,5A,B5A_N0,PIN_AJ29,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][6],Output,PIN_AB22,5A,B5A_N0,PIN_AC25,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[4],Output,PIN_W17,4A,B4A_N0,PIN_AD7,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[3],Output,PIN_V18,4A,B4A_N0,PIN_AH29,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[2],Output,PIN_V17,4A,B4A_N0,PIN_G7,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[1],Output,PIN_W16,4A,B4A_N0,PIN_F9,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[0],Output,PIN_V16,4A,B4A_N0,PIN_AE26,3.3-V LVTTL,,,,,,,,,,,,,
