@@ -6,8 +6,8 @@ reg I_NRESET;
 reg [3:0] I_OPCODE;
 reg I_CLK;
 reg I_ENABLE; // Global enable signal
-reg I_READ_PORT_A_SEL;
-reg I_READ_PORT_B_SEL;
+reg [3:0] I_READ_PORT_A_SEL; // 4 bit selectors for register values to ALU
+reg [3:0] I_READ_PORT_B_SEL;
 reg I_IMMEDIATE;
 reg I_IMM_SEL; // 1 if loading immediate, 0 otherwise
 
@@ -37,7 +37,59 @@ cr16_datapath datapath(
 		 
 initial begin
 
+	//////////////////////////////////////////////////////////
+	/// #1: Fibbonacci Sequence
+	//////////////////////////////////////////////////////////
 	// Initialize Inputs
+	I_REG_ENABLE = 16'b0000_0000_0000_0100;
+	I_NRESET = 0;
+	I_OPCODE = 4'b0000;
+	I_ENABLE = 1;
+	I_IMMEDIATE = 4'h0000;
+	I_IMM_SEL = 1;
+	I_CLK = 0;
+	
+	
+	// Set initial register values to 0
+	for(i = 0; i < 14; i = i + 1) begin
+		I_REG_ENABLE <<= 1;
+		#5;
+		
+	end
+	
+	// Load 1 into registers 1 and 2
+	I_IMMEDIATE = 4'h0001;
+	I_REG_ENABLE = 16'b0000_0000_0000_0001;
+	#5;
+	I_REG_ENABLE = 16'b0000_0000_0000_0010;
+	#5;
+	I_NRESET = 1;
+	// Begin test
+	I_READ_PORT_A_SEL = 4'b0000;
+	I_READ_PORT_B_SEL = 4'b0001;
+	#5
+	I_IMM_SEL = 0;
+	
+	num = 1;
+	prevNum = 1;
+	I_REG_ENABLE = 16'b0000_0000_0000_0100;
+	for(i = 0; i < 15; i = i + 1) begin
+		#5;
+		
+		if ((num + prevNum) != O_WRITE_PORT)
+                $display("Test Failed: Expected: %0d, Actual: %0d", num + prevNum, O_WRITE_PORT);
+		prevNum = num;
+		num = O_WRITE_PORT;
+		
+		I_READ_PORT_A_SEL = I_READ_PORT_A_SEL + 4'b0001;
+		I_READ_PORT_B_SEL = I_READ_PORT_B_SEL + 4'b0001;
+		I_REG_ENABLE <<= 1;
+		
+	end
+	
+	//////////////////////////////////////////////////////////
+	/// #2: Signed Operations
+	//////////////////////////////////////////////////////////
 	I_REG_ENABLE = 16'b0000_0000_0000_0100;
 	I_NRESET = 0;
 	I_OPCODE = 4'b0000;
@@ -68,7 +120,7 @@ initial begin
 	prevNum = 1;
 	I_REG_ENABLE = 16'b0000_0000_0000_0100;
 	for(i = 0; i < 15; i = i + 1) begin
-		#2
+		#5
 		
 		if ((num + prevNum) != O_WRITE_PORT)
                 $display("Test Failed: Expected: %0d, Actual: %0d", num + prevNum, O_WRITE_PORT);
@@ -80,6 +132,7 @@ initial begin
 		I_REG_ENABLE <<= 1;
 		
 	end
+	
 	$stop;
 	
 	end
