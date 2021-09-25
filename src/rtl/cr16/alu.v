@@ -2,12 +2,12 @@
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/02/2021
-// Module Name: cr16_alu
+// Module Name: alu
 // Description: The CR16 ALU
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-module cr16_alu #(parameter integer P_WIDTH = 16)
+module alu #(parameter integer P_WIDTH = 16)
        (input wire I_ENABLE,
         input wire [3 : 0] I_OPCODE,
         input wire [P_WIDTH - 1 : 0] I_A,

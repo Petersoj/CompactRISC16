@@ -2,8 +2,8 @@
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/21/2021
-// Module Name: cr16_flags
-// Description: A register for the 5 bit ALU flag value
+// Module Name: flags
+// Description: A register for the 5 bit ALU status flagse
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
@@ -12,7 +12,7 @@
 // @param I_CLK    clock
 // @param I_FLAGS  flag inputs
 // @param O_FLAGS  flags outputs
-module cr16_flags #(parameter integer P_FLAG_WIDTH = 5)
+module flags #(parameter integer P_FLAG_WIDTH = 5)
        (input wire I_ENABLE,
         input wire I_NRESET,
         input wire I_CLK,

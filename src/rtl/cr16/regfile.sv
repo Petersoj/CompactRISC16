@@ -2,12 +2,12 @@
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/21/2021
-// Module Name: cr16_regfile
+// Module Name: regfile
 // Description: Register file for CR16 CPU
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-module cr16_regfile
+module regfile
        #(parameter integer P_REG_WIDTH = 16,
          parameter integer P_FILE_WIDTH = 16)
        (input wire I_NRESET,

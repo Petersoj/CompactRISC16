@@ -2,14 +2,14 @@
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/24/2021
-// Module Name: tb_cr16_datapath
-// Description: The CR16 datapath testbench
+// Module Name: datapath_tb
+// Description: A testbench for the CR16 datapath.
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
 `timescale 1ps/1ps
 
-module tb_cr16_datapath();
+module datapath_tb();
 
 // Inputs
 reg [15:0] I_REG_WRITE_ENABLE; // Enables write to register
@@ -28,21 +28,25 @@ wire [4:0] O_STATUS_FLAGS;
 // establish the clock signal to sync the test
 always #1 I_CLK = ~I_CLK;
 
+datapath uut(.I_CLK(I_CLK),
+             .I_ENABLE('b1),
+             .I_NRESET(I_NRESET),
+             .I_REG_WRITE_ENABLE(I_REG_WRITE_ENABLE),
+             .I_REG_A_SELECT(I_REG_A_SELECT),
+             .I_REG_B_SELECT(I_REG_B_SELECT),
+             .I_IMMEDIATE_SELECT(I_IMM_SELECT),
+             .I_IMMEDIATE(I_IMMEDIATE),
+             .I_OPCODE(I_OPCODE),
+             .O_RESULT_BUS(O_RESULT_BUS),
+             .O_STATUS_FLAGS(O_STATUS_FLAGS));
+
 integer i, num, prevNum, temp;
 
-cr16_datapath uut(.I_CLK(I_CLK),
-                  .I_ENABLE('b1),
-                  .I_NRESET(I_NRESET),
-                  .I_REG_WRITE_ENABLE(I_REG_WRITE_ENABLE),
-                  .I_REG_A_SELECT(I_REG_A_SELECT),
-                  .I_REG_B_SELECT(I_REG_B_SELECT),
-                  .I_IMMEDIATE_SELECT(I_IMM_SELECT),
-                  .I_IMMEDIATE(I_IMMEDIATE),
-                  .I_OPCODE(I_OPCODE),
-                  .O_RESULT_BUS(O_RESULT_BUS),
-                  .O_STATUS_FLAGS(O_STATUS_FLAGS));
-
 initial begin
+    $display("================================================================");
+    $display("========================== BEGIN SIM ===========================");
+    $display("================================================================");
+
     I_CLK = 'b1;
 
     // Set initial register values to 0
@@ -58,9 +62,9 @@ initial begin
     I_OPCODE = 'd0;
     #2;
 
-    //////////////////////////////////////////////////////////
-    /// #1: Fibbonacci Sequence
-    //////////////////////////////////////////////////////////
+    $display("================================================================");
+    $display("BEGIN Testing Fibbonacci Sequence");
+    $display("================================================================");
 
     // Load 1 into registers 1 and 2
     I_IMMEDIATE = 1;
@@ -96,9 +100,13 @@ initial begin
         #2;
     end
 
-    //////////////////////////////////////////////////////////
-    /// #2: Signed Operations
-    //////////////////////////////////////////////////////////
+    $display("================================================================");
+    $display("END Testing Fibbonacci Sequence");
+    $display("================================================================\n");
+
+    $display("================================================================");
+    $display("BEGIN Testing Signed Operations");
+    $display("================================================================");
 
     // Set initial register values to 0
     #2;
@@ -129,10 +137,13 @@ initial begin
     if (O_RESULT_BUS != 'b1111_1111_1111_1111)
         $display("Test Failed in signed operations: Expected: %b, Actual: %b", 16'b1111_1111_1111_1111, O_RESULT_BUS);
 
+    $display("================================================================");
+    $display("END Testing Signed Operations");
+    $display("================================================================\n");
 
-    //////////////////////////////////////////////////////////
-    /// #3: Boolean test
-    //////////////////////////////////////////////////////////
+    $display("================================================================");
+    $display("BEGIN Testing Boolean Operations");
+    $display("================================================================");
 
     // Set initial register values to 0
     #2;
@@ -199,9 +210,13 @@ initial begin
     I_REG_WRITE_ENABLE <<= 1;
     #2;
 
-    //////////////////////////////////////////////////////////
-    /// #4: Bit shifting
-    //////////////////////////////////////////////////////////
+    $display("================================================================");
+    $display("END Testing Boolean Operations");
+    $display("================================================================\n");
+
+    $display("================================================================");
+    $display("BEGIN Testing Bit Shifting");
+    $display("================================================================");
 
     // Set initial register values to 0
     /*    #2;
@@ -215,7 +230,7 @@ initial begin
         I_IMM_SELECT = 'd0;
         I_OPCODE = 'd10;
         #2;
-     
+
         // Load 1 into registers 1 and 2
         I_IMMEDIATE = 1;
         I_IMM_SELECT = 1;
@@ -224,24 +239,31 @@ initial begin
         I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
         #2;
         I_IMM_SELECT = 0;
-     
+
         // Begin test
         I_REG_A_SELECT = 0;
         I_REG_B_SELECT = 1;
         I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
-     
+
         num = 1;
         for(i = 0; i < 15; i = i + 1) begin
             #2;
             num *= 2;
-     
+
             if (num != O_RESULT_BUS)
                 $display("Test Failed in bit shifting: Expected: %0d, Actual: %0d", num, O_RESULT_BUS);
-     
+
             I_REG_B_SELECT = I_REG_B_SELECT + 1;
             I_REG_WRITE_ENABLE <<= 1;
         end*/
 
+    $display("================================================================");
+    $display("END Testing Bit Shifting");
+    $display("================================================================\n");
+
+    $display("================================================================");
+    $display("=========================== END SIM ============================");
+    $display("================================================================");
     $stop;
 end
 endmodule

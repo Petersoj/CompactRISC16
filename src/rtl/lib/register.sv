@@ -3,15 +3,16 @@
 //
 // Create Date: 09/21/2021
 // Module Name: register
-// Description: A generic register
+// Description: A generic register of parameterized width.
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-// @param I_ENABLE enable bit
-// @param I_NRESET inverted reset bit
-// @param I_CLK    clock
-// @param I_DATA   input data
-// @param O_DATA   output data
+// @param P_WIDTH  the width of the register
+// @param I_ENABLE the enable bit
+// @param I_NRESET the inverted reset bit
+// @param I_CLK    the clock signal
+// @param I_DATA   the input data
+// @param O_DATA   the output data
 module register #(parameter integer P_WIDTH = 16)
        (input wire I_ENABLE,
         input wire I_NRESET,

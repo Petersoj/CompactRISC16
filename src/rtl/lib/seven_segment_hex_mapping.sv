@@ -3,13 +3,13 @@
 //
 // Create Date: 09/16/2021
 // Module Name: seven_segment_hex_mapping
-// Description: A binary number to 7-segment display mapping
+// Description: A decimal number to a 7-segment hex value display mapping.
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-// @param I_VALUE     a binary number
-// @param O_7_SEGMENT the output is a mapping with the MSB to LSB as the '0123456' active-low LEDs
-//                    of the 7-segment display
+// @param I_VALUE     a 4-bit decimal number
+// @param O_7_SEGMENT a 7-bit output with a mapping using the MSB to LSB as the '0123456'
+//                    active-low LEDs of the 7-segment display
 module seven_segment_hex_mapping
        (input [3:0] I_VALUE,
         output reg [6:0] O_7_SEGMENT);

@@ -2,16 +2,17 @@
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/23/2021
-// Module Name: cr16_datapath_top
+// Module Name: datapath_top
 // Description: FSM for the datapath of the CR16 CPU. Demonstrates read, write, and update
 // functionality for registers 0-7 using the Fibonacci sequence.
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-module cr16_datapath_top (input wire I_CLK,
-                          input wire I_NRESET,
-                          output wire [4:0] O_LED_FLAGS,
-                          output wire [6:0] O_7_SEGMENT_DISPLAY [3:0]);
+module datapath_top
+       (input wire I_CLK,
+        input wire I_NRESET,
+        output wire [4:0] O_LED_FLAGS,
+        output wire [6:0] O_7_SEGMENT_DISPLAY [3:0]);
 
 // Instantiate wires to connect the FSM to the datapath and the 7-seg.
 reg [15:0] reg_enable;
@@ -24,23 +25,24 @@ reg [3:0] opcode;
 
 wire [15:0] write_port;
 
-cr16_datapath i_cr16_datapath(.I_CLK(I_CLK),
-                              .I_ENABLE(1'b1),
-                              .I_NRESET(nreset),
-                              .I_REG_WRITE_ENABLE(reg_enable),
-                              .I_REG_A_SELECT(read_a_sel),
-                              .I_REG_B_SELECT(read_b_sel),
-                              .I_IMMEDIATE_SELECT(imm_sel),
-                              .I_IMMEDIATE(immediate),
-                              .I_OPCODE(opcode),
-                              .O_RESULT_BUS(write_port),
-                              .O_STATUS_FLAGS(O_LED_FLAGS));
+datapath i_datapath
+         (.I_CLK(I_CLK),
+          .I_ENABLE(1'b1),
+          .I_NRESET(nreset),
+          .I_REG_WRITE_ENABLE(reg_enable),
+          .I_REG_A_SELECT(read_a_sel),
+          .I_REG_B_SELECT(read_b_sel),
+          .I_IMMEDIATE_SELECT(imm_sel),
+          .I_IMMEDIATE(immediate),
+          .I_OPCODE(opcode),
+          .O_RESULT_BUS(write_port),
+          .O_STATUS_FLAGS(O_LED_FLAGS));
 
 // 7-seg integration for the output of the write port.
-seven_segment_hex_mapping i_seg1 (.I_VALUE(write_port[3:0]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[0]));
-seven_segment_hex_mapping i_seg2 (.I_VALUE(write_port[7:4]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[1]));
-seven_segment_hex_mapping i_seg3 (.I_VALUE(write_port[11:8]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[2]));
-seven_segment_hex_mapping i_seg4 (.I_VALUE(write_port[15:12]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[3]));
+seven_segment_hex_mapping i_display_0(.I_VALUE(write_port[3:0]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[0]));
+seven_segment_hex_mapping i_display_1(.I_VALUE(write_port[7:4]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[1]));
+seven_segment_hex_mapping i_display_2(.I_VALUE(write_port[11:8]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[2]));
+seven_segment_hex_mapping i_display_3(.I_VALUE(write_port[15:12]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[3]));
 
 // Declare the next state.
 reg [3:0] NS;
@@ -183,5 +185,4 @@ always @ (NS) begin
         end
     endcase
 end
-
 endmodule

@@ -2,14 +2,14 @@
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/02/2021
-// Module Name: cr16_alu_tb
-// Description: The CR16 ALU testbench
+// Module Name: alu_tb
+// Description: A testbench for the CR16 ALU.
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
 `timescale 1ps/1ps
 
-module tb_cr16_alu();
+module alu_tb();
 
 // Inputs
 reg [15:0] I_A;
@@ -27,28 +27,31 @@ always #1 I_CLK = ~I_CLK;
 
 integer i, j;
 // Instantiate the Unit Under Test (UUT)
-cr16_alu uut (
-             .I_ENABLE(I_ENABLE),
-             .I_A(I_A),
-             .I_B(I_B),
-             .O_C(O_C),
-             .I_OPCODE(I_OPCODE),
-             .O_STATUS(O_STATUS)
-         );
+alu uut
+    (.I_ENABLE(I_ENABLE),
+     .I_A(I_A),
+     .I_B(I_B),
+     .O_C(O_C),
+     .I_OPCODE(I_OPCODE),
+     .O_STATUS(O_STATUS));
 
 initial begin
+    $display("================================================================");
+    $display("========================== BEGIN SIM ===========================");
+    $display("================================================================");
+
     // The testbench will use a series of nested "for" loops to work through a fairly exhaustive set
     // of numbers for each opcode. Operations that support signed operations will loop from the maximum
     // negative to positive value that can be represented with 16-bit numbers. Each iteration of the
     // loop tests the correct behavior of the operation and the correct setting of the status flags.
 
     /*
-    Flag encoding is as follows:
-     STATUS_INDEX_CARRY = 0,    // MSB carry out for unsigned addition
-           STATUS_INDEX_LOW = 1,      // 'I_B' < 'I_A' for unsigned subtraction
-           STATUS_INDEX_FLAG = 2,     // MSB carry out for signed addition
-           STATUS_INDEX_ZERO = 3,     // 'O_C' == 0
-           STATUS_INDEX_NEGATIVE = 4; // 'I_B' < 'I_A' for signed subtraction
+     Flag encoding is as follows:
+     STATUS_INDEX_CARRY = 0
+     STATUS_INDEX_LOW = 1
+     STATUS_INDEX_FLAG = 2
+     STATUS_INDEX_ZERO = 3
+     STATUS_INDEX_NEGATIVE = 4
     */
 
     // Initialize Inputs
@@ -59,12 +62,9 @@ initial begin
     I_CLK = 0;
 
     //Simulate ADD, Opcode = 0
-
     I_OPCODE = 4'b0000;
-
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
-
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
@@ -89,10 +89,8 @@ initial begin
 
     //Simulate ADDU, Opcode = 1
     I_OPCODE = 4'b0001;
-
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
-
         for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
@@ -116,10 +114,8 @@ initial begin
 
     //Simulate ADDC, Opcode = 2
     I_OPCODE = 4'b0010;
-
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
-
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
@@ -140,13 +136,10 @@ initial begin
         end
     end
 
-
     //Simulate ADDCU, Opcode = 3
     I_OPCODE = 3;
-
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
-
         for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
@@ -168,12 +161,10 @@ initial begin
         end
     end
 
-
     //Simulate SUB, Opcode = 4
     I_OPCODE = 4;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
-
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
@@ -196,12 +187,10 @@ initial begin
         end
     end
 
-
     //Simulate SUBU, Opcode = 5
     I_OPCODE = 5;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
-
         for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
@@ -220,23 +209,18 @@ initial begin
             // Error if the low flag is not set when B is less than A.
             if ((I_B < I_A) && (O_STATUS[1] != 1))
                 $display("Low bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
         end
     end
-
-
 
     //Simulate AND, Opcode = 6
     I_OPCODE = 6;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
-
         for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
             if (O_C != (I_A & I_B))
                 $display("AND failed: I_A: %b, I_B: %b, O_C: %b, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
         end
     end
 
@@ -244,29 +228,23 @@ initial begin
     I_OPCODE = 7;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
-
         for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
             if (O_C != (I_A | I_B))
                 $display("OR failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
         end
     end
-
 
     //Simulate XOR, Opcode = 8
     I_OPCODE = 8;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
-
         for(j = 0; j < 65_535; j = j + 1_024) begin
             I_B = j;
             #2;
-
             if (O_C != (I_A ^ I_B))
                 $display("XOR failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
         end
     end
 
@@ -276,7 +254,6 @@ initial begin
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         #2;
-
         if (O_C != ~I_A)
             $display("NOT failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
     end
@@ -285,14 +262,11 @@ initial begin
     I_OPCODE = 10;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
-
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
-
             if (O_C != (I_A << I_B))
                 $display("LSH failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
         end
     end
 
@@ -300,54 +274,41 @@ initial begin
     I_OPCODE = 11;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
-
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
-
             if (O_C != (I_A >> I_B))
                 $display("RSH failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
         end
     end
-
 
     //Simulate ALSH, Opcode = 12
     I_OPCODE = 12;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
-
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
-
             if (O_C != (I_A <<< I_B))
                 $display("ALSH failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
         end
     end
-
 
     //Simulate ARSH, Opcode = 13
     I_OPCODE = 13;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
-
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
-
             if (O_C != (I_A >>> I_B))
                 $display("ARSH failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
         end
     end
 
-
+    $display("================================================================");
+    $display("=========================== END SIM ============================");
+    $display("================================================================");
     $stop;
-
-    // Add stimulus here
-
 end
-
 endmodule
