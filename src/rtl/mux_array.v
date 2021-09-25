@@ -16,7 +16,7 @@ module mux_array
 genvar i;
 generate
     for (i = 0; i < SIZE; i = i + 1) begin: make_muxes
-        mux2_1 i_mux2_1(.INPUT({a[i], b[i]}),
+        mux2_1 i_mux2_1(.INPUT({b[i], a[i]}),
                         .s(sel),
                         .OUT(o[i]));
     end

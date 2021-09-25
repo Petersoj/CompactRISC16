@@ -1,3 +1,4 @@
+//
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/23/2021
@@ -23,17 +24,17 @@ reg [3:0] opcode;
 
 wire [15:0] write_port;
 
-cr16_datapath i_cr16_datapath (.I_REG_ENABLE(reg_enable),
-                               .I_NRESET(nreset),
-                               .I_OPCODE(opcode),
-                               .I_CLK(I_CLK),
-                               .I_ENABLE(1'b1),
-                               .I_READ_PORT_A_SEL(read_a_sel),
-                               .I_READ_PORT_B_SEL(read_b_sel),
-                               .I_IMMEDIATE(immediate),
-                               .I_IMM_SEL(imm_sel),
-                               .O_WRITE_PORT(write_port),
-                               .O_FLAGS(O_LED_FLAGS));
+cr16_datapath i_cr16_datapath(.I_CLK(I_CLK),
+                              .I_ENABLE(1'b1),
+                              .I_NRESET(nreset),
+                              .I_REG_WRITE_ENABLE(reg_enable),
+                              .I_REG_A_SELECT(read_a_sel),
+                              .I_REG_B_SELECT(read_b_sel),
+                              .I_IMMEDIATE_SELECT(imm_sel),
+                              .I_IMMEDIATE(immediate),
+                              .I_OPCODE(opcode),
+                              .O_RESULT_BUS(write_port),
+                              .O_STATUS_FLAGS(O_LED_FLAGS));
 
 // 7-seg integration for the output of the write port.
 seven_segment_hex_mapping i_seg1 (.I_VALUE(write_port[3:0]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[0]));
@@ -45,8 +46,15 @@ seven_segment_hex_mapping i_seg4 (.I_VALUE(write_port[15:12]), .O_7_SEGMENT(O_7_
 reg [3:0] NS;
 
 // Parameter aliases for states.
-parameter [3:0] S0 = 4'b0000, S1 = 4'b0001, S2 = 4'b0010, S3 = 4'b0011, S4 = 4'b0100,
-          S5 = 4'b0101, S6 = 4'b0110, S7 = 4'b0111, S8 = 4'b1000;
+parameter [3:0] S0 = 4'b0000,
+          S1 = 4'b0001,
+          S2 = 4'b0010,
+          S3 = 4'b0011,
+          S4 = 4'b0100,
+          S5 = 4'b0101,
+          S6 = 4'b0110,
+          S7 = 4'b0111,
+          S8 = 4'b1000;
 
 // Next state and sequential logic.
 always @ (negedge I_NRESET or posedge I_CLK) begin
@@ -77,11 +85,10 @@ always @ (negedge I_NRESET or posedge I_CLK) begin
     endcase
 end
 
-// Successively write to and read from registers 0-7 to compute and store the first 8
-// elements of the Fibonacci sequence. After states 0-7, the values in the registers should
-// appear as:
-//                            1   1   2   3   5   8  13  21
-//                           r0  r1  r2  r3  r4  r5  r6  r7
+// Successively write to and read from registers 0-7 to compute and store the first 8 elements of
+// the Fibonacci sequence. After states 0-7, the values in the registers should appear as:
+//  1   1   2   3   5   8  13  21
+// r0  r1  r2  r3  r4  r5  r6  r7
 always @ (NS) begin
     case (NS)
         // Reset.

@@ -21,17 +21,17 @@ always #1 I_CLK = ~I_CLK;
 integer i, num, prevNum, temp;
 
 cr16_datapath datapath(
-			.I_REG_ENABLE(I_REG_ENABLE),
+			.I_REG_WRITE_ENABLE(I_REG_ENABLE),
 			.I_NRESET(I_NRESET),
 			.I_OPCODE(I_OPCODE),
 			.I_CLK(I_CLK),
 			.I_ENABLE(I_ENABLE),
-			.I_READ_PORT_A_SEL(I_READ_PORT_A_SEL),
-			.I_READ_PORT_B_SEL(I_READ_PORT_B_SEL),
+			.I_REG_A_SELECT(I_READ_PORT_A_SEL),
+			.I_REG_B_SELECT(I_READ_PORT_B_SEL),
 			.I_IMMEDIATE(I_IMMEDIATE),
-			.I_IMM_SEL(I_IMM_SEL),
-			.O_WRITE_PORT(O_WRITE_PORT),
-			.O_FLAGS(O_FLAGS)
+			.I_IMMEDIATE_SELECT(I_IMM_SEL),
+			.O_RESULT_BUS(O_WRITE_PORT),
+			.O_STATUS_FLAGS(O_FLAGS)
 			);
 
 		 
@@ -260,17 +260,17 @@ always #1 I_CLK = ~I_CLK;
 integer i, num, prevNum;
 
 cr16_datapath datapath(
-                  .I_REG_ENABLE(I_REG_ENABLE),
+                  .I_REG_WRITE_ENABLE(I_REG_ENABLE),
                   .I_NRESET(I_NRESET),
                   .I_OPCODE(I_OPCODE),
                   .I_CLK(I_CLK),
                   .I_ENABLE(I_ENABLE),
-                  .I_READ_PORT_A_SEL(I_READ_PORT_A_SEL),
-                  .I_READ_PORT_B_SEL(I_READ_PORT_B_SEL),
+                  .I_REG_A_SELECT(I_READ_PORT_A_SEL),
+                  .I_REG_B_SELECT(I_READ_PORT_B_SEL),
                   .I_IMMEDIATE(I_IMMEDIATE),
-                  .I_IMM_SEL(I_IMM_SEL),
-                  .O_WRITE_PORT(O_WRITE_PORT),
-                  .O_FLAGS(O_FLAGS)
+                  .I_IMMEDIATE_SELECT(I_IMM_SEL),
+                  .O_RESULT_BUS(O_WRITE_PORT),
+                  .O_STATUS_FLAGS(O_FLAGS)
               );
 
 
