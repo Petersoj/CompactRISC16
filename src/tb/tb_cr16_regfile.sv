@@ -1,4 +1,3 @@
-`timescale 1ps/1ps
 //
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
@@ -7,6 +6,8 @@
 // Description: CR16 register file testbench
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
+
+`timescale 1ps/1ps
 
 module tb_cr16_regfile();
 
@@ -22,13 +23,11 @@ wire [15:0] reg_data [15:0];
 always #5 clk = ~clk;
 
 // Instantiate the Unit Under Test (UUT).
-cr16_regfile uut (
-                 .I_NRESET(1'b1), // Inverted reset will be permanently high.
+cr16_regfile uut(.I_NRESET(1'b1), // Inverted reset will be permanently high.
                  .I_CLK(clk),
                  .I_REG_BUS(reg_bus),
                  .I_REG_ENABLE(reg_enable),
-                 .O_REG_DATA(reg_data)
-             );
+                 .O_REG_DATA(reg_data));
 
 integer i, j;
 

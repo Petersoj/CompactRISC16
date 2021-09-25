@@ -1,4 +1,3 @@
-`timescale 1ps/1ps
 //
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
@@ -7,6 +6,8 @@
 // Description: The CR16 ALU testbench
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
+
+`timescale 1ps/1ps
 
 module tb_cr16_alu();
 
