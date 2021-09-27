@@ -29,7 +29,7 @@ wire [4:0] O_STATUS_FLAGS;
 always #1 I_CLK = ~I_CLK;
 
 datapath uut(.I_CLK(I_CLK),
-             .I_ENABLE('b1),
+             .I_ENABLE(1'b1),
              .I_NRESET(I_NRESET),
              .I_REG_WRITE_ENABLE(I_REG_WRITE_ENABLE),
              .I_REG_A_SELECT(I_REG_A_SELECT),

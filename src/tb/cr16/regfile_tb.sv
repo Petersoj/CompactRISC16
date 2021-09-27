@@ -17,7 +17,7 @@ reg [15:0] reg_enable;
 reg clk;
 
 // Outputs
-wire [15:0] reg_data [15:0];
+wire [15:0][15:0] reg_data;
 
 // Establish the clock signal to sync the test.
 always #5 clk = ~clk;

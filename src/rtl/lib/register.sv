@@ -8,15 +8,15 @@
 //
 
 // @param P_WIDTH  the width of the register
-// @param I_ENABLE the enable bit
-// @param I_NRESET the inverted reset bit
 // @param I_CLK    the clock signal
+// @param I_ENABLE the enable bit
+// @param I_NRESET the active-low reset bit
 // @param I_DATA   the input data
 // @param O_DATA   the output data
 module register #(parameter integer P_WIDTH = 16)
-       (input wire I_ENABLE,
+       (input wire I_CLK,
+        input wire I_ENABLE,
         input wire I_NRESET,
-        input wire I_CLK,
         input wire [P_WIDTH - 1 : 0] I_DATA,
         output reg [P_WIDTH - 1 : 0] O_DATA);
 

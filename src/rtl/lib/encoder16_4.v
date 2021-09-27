@@ -1,11 +1,15 @@
+//
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/21/2021
 // Module Name: encoder16_4
-// Description: A generic 16-to-4 encoder module
+// Description: A generic 16-to-4 encoder module.
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
+// @param I_DATA   the 16-bit encoder input data
+// @param I_ENABLE the enable bit
+// @param O_DATA   the 4-bit encoder output data
 module encoder16_4
        (input wire [15:0] I_DATA,
         input wire I_ENABLE,

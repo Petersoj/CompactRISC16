@@ -23,7 +23,7 @@ This is an implementation of the CompactRISC (CR16) CPU written in Verilog for t
     - Prepend reg/wire names with `q_` to represent a 'current state' register/wire and `n_` to represent a 'next state' register/wire
   - Output mapping `assign` statements which map internal wires/registers with module output wires/registers
   - RTL logic with `assign` statements for all internal wires which generally consist of ternary operators
-  - Module instantiations using named port lists in the instantiation signature and a module instance name that is the same as the module name, but with `i` prepended
+  - Module instantiations using named port lists in the instantiation signature and a module instance name that is the same as the module name (or a name that's more concise and applicable to the instantiation), but with `i` prepended
   - Clock `@always` blocks which generally should only include `posedge I_CLK` in the sensitivty list
   - Other `@always` (such as internal finite state machines) or `task` blocks
 

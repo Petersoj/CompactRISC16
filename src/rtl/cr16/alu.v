@@ -7,6 +7,13 @@
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
+// @param P_WIDTH  the width of 'I_A', 'I_B', and 'O_C'
+// @param I_ENABLE the enable bit
+// @param I_OPCODE the 4-bit opcode number. See the 'Parameterized Opcodes' section.
+// @param I_A      the first operand
+// @param I_B      the second operand
+// @param O_C      the result output
+// @param O_STATUS the status flags of the operation executed
 module alu #(parameter integer P_WIDTH = 16)
        (input wire I_ENABLE,
         input wire [3 : 0] I_OPCODE,
