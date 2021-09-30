@@ -11,7 +11,7 @@
 
 module bram_fsm(   input wire I_CLK,
                    input wire I_NRESET,
-						 output wire [6:0] O_7_SEGMENT_DISPLAY [3:0])
+						 output wire [6:0] O_7_SEGMENT_DISPLAY [3:0]);
 
 	// Initialize memory storage for simulation:
 	bram I_BRAM(input [(DATA_WIDTH-1):0] data_a, data_b,

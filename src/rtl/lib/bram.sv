@@ -7,7 +7,7 @@
 //
 
 module bram
-       #(parameter P_DATA_WIDTH=48,
+       #(parameter P_DATA_WIDTH=16,
          parameter P_ADDRESS_WIDTH=10)
        (input I_CLK,
         input [P_DATA_WIDTH - 1 : 0] I_DATA_A, I_DATA_B,
@@ -15,15 +15,18 @@ module bram
         input I_WRITE_ENABLE_A, I_WRITE_ENABLE_B,
         output reg [P_DATA_WIDTH - 1 : 0] O_DATA_A, O_DATA_B);
 
-reg [2 ** P_ADDRESS_WIDTH - 1 : 0][P_DATA_WIDTH - 1 : 0] ram; // 2D packed register array for RAM
+reg [P_DATA_WIDTH - 1 : 0] ram [0 : 2 ** P_ADDRESS_WIDTH - 1]; // 2D packed register array for RAM
 
 // TODO initialize ram using init ram file
-// integer i;
-// initial
-// begin
-//     for(i=0;i<1024;i=i+1)
-//         ram[i] = i[15:0];
-// end
+   integer i;
+   initial
+   begin
+       for(i=0;i<1024;i=i+1)
+           ram[i] = i[15:0];
+  	
+	   $readmemh("ram_init.txt", ram);
+	end
+
 
 // Port A
 always @(posedge I_CLK) begin
