@@ -6,27 +6,39 @@
 // Description: A BRAM (Block Random Access Memory) module (from Quartus Prime Verilog Template).
 //
 
+// @param P_BRAM_INIT_FILE the file path (relative to working directory) of a UTF-encoded file
+//                         containing hex digits that BRAM will initilize to
+// @param P_DATA_WIDTH     the width of the data
+// @param P_ADDRESS_WIDTH  the width of the address line
+// @param I_CLK            the clock signal
+// @param I_DATA_A         the input data for Port A
+// @param I_DATA_B         the input data for Port B
+// @param I_ADDRESS_A      the address line for Port A
+// @param I_ADDRESS_B      the address line for Port B
+// @param I_WRITE_ENABLE_A the write/read enable signal for Port A
+// @param I_WRITE_ENABLE_B the write/read enable signal for Port B
+// @param O_DATA_A         the output data for Port A
+// @param O_DATA_B         the output data for Port B
 module bram
-       #(parameter P_DATA_WIDTH=16,
-         parameter P_ADDRESS_WIDTH=10)
+       #(parameter string P_BRAM_INIT_FILE = "bram_init.txt",
+         parameter integer P_DATA_WIDTH = 16,
+         parameter integer P_ADDRESS_WIDTH = 10)
        (input I_CLK,
         input [P_DATA_WIDTH - 1 : 0] I_DATA_A, I_DATA_B,
         input [P_ADDRESS_WIDTH - 1 : 0] I_ADDRESS_A, I_ADDRESS_B,
         input I_WRITE_ENABLE_A, I_WRITE_ENABLE_B,
         output reg [P_DATA_WIDTH - 1 : 0] O_DATA_A, O_DATA_B);
 
-reg [P_DATA_WIDTH - 1 : 0] ram [0 : 2 ** P_ADDRESS_WIDTH - 1]; // 2D packed register array for RAM
+reg [P_DATA_WIDTH - 1 : 0] ram [0 : 2 ** P_ADDRESS_WIDTH - 1]; // 2D register array for RAM
 
-// TODO initialize ram using init ram file
-   integer i;
-   initial
-   begin
-       for(i=0;i<1024;i=i+1)
-           ram[i] = i[15:0];
-  	
-	   $readmemh("ram_init.txt", ram);
-	end
+// Initialize entire BRAM to zeros, then read in 'P_BRAM_INIT_FILE' to BRAM
+integer index;
+initial begin
+   for (index = 0; index < 2 ** P_ADDRESS_WIDTH; index++)
+       ram[index] = {P_DATA_WIDTH{'d0}};
 
+   $readmemh(P_BRAM_INIT_FILE, ram);
+end
 
 // Port A
 always @(posedge I_CLK) begin
