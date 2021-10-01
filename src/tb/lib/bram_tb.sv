@@ -1,142 +1,149 @@
-`timescale 1ps/1ps
 //
 // University of Utah, Computer Design Laboratory ECE 3710, CompactRISC16
 //
 // Create Date: 09/30/2021
 // Module Name: bram_tb
 // Description: Testbench for BRAM memory, must use a file to initialize the first 8 memory
-// addresses to numbers 1-8.
+//              addresses to numbers 1-8.
+// Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
+`timescale 1ps / 1ps
+
 module bram_tb();
- 
-   reg I_CLK;
-   reg [15:0] I_DATA_A, I_DATA_B;
-   reg [9:0] I_ADDRESS_A, I_ADDRESS_B;
-   reg I_WRITE_ENABLE_A, I_WRITE_ENABLE_B;
-   reg [15:0] O_DATA_A, O_DATA_B;
- 
-	// establish the clock signal to sync the test
-   always #1 I_CLK = ~I_CLK;
- 
-   bram uut(.I_CLK(I_CLK), 
-	         .I_DATA_A(I_DATA_A), 
-				.I_DATA_B(I_DATA_B),
-				.I_ADDRESS_A(I_ADDRESS_A),
-				.I_ADDRESS_B(I_ADDRESS_B),
-				.I_WRITE_ENABLE_A(I_WRITE_ENABLE_A), 
-				.I_WRITE_ENABLE_B(I_WRITE_ENABLE_B), 
-				.O_DATA_A(O_DATA_A), 
-				.O_DATA_B(O_DATA_B));
- 
- 
-	integer i, j;
-	
-   initial begin
 
-	   // Initialize enables and address pointers.
-		I_CLK = 0;
-		I_ADDRESS_A = 10'b0000000000;
-		I_ADDRESS_B = 10'b0000000000;
-		I_WRITE_ENABLE_A = 1'b0;
-		I_WRITE_ENABLE_B = 1'b0;
-		I_DATA_A = 16'h0000;
-		I_DATA_B = 16'h0000;
-		
-		
-		$display("================================================================");
-      $display("Test 1: Read sequential values addresses 0-7 on port A.");
-      $display("================================================================\n");
-		// Read data on one port.
-		for( i = 0; i < 8; i = i + 1) begin
-			I_ADDRESS_A = i;
-			#2;
-			if ( O_DATA_A != (i+1))
-				$display("Initial read failed. Got: %b, Expected: %b.", O_DATA_A, i);
-			
-		end
-		
-		// Read data on two ports at once.
-		I_ADDRESS_A = 10'b0000000000; // Start at index 0
-		I_ADDRESS_B = 10'b0000000001; // Start at index 2
-		
-		$display("================================================================");
-      $display("Test 2: Read sequential values addresses 0-5 on port A and simultaneously read 2-7 on port B.");
-      $display("================================================================\n");
-		for( i = 0; i < 6; i = i + 1) begin
-			I_ADDRESS_A = i;
-			I_ADDRESS_B = I_ADDRESS_B + 1;
-			#2;
-			if ( O_DATA_A != (i+1))
-				$display("Initial read A failed. Got: %b, Expected: %b.", O_DATA_A, i);
-		   if ( O_DATA_B != (i+3))
-				$display("Initial read B failed. Got: %b, Expected: %b.", O_DATA_B, i);
-			
-		end
-			
-		I_ADDRESS_A = 10'b0000000000;
-		I_ADDRESS_B = 10'b0000000000;
-		I_WRITE_ENABLE_B = 1'b0;
-		
-		$display("================================================================");
-      $display("Test 3: Write incrementing i*2 into data addresses 0-7 using port A, read them on port B to verify correctness.");
-      $display("================================================================\n");
-		// Write 2*i into bram
-		for( i = 0; i < 8; i = i + 1) begin
-			I_WRITE_ENABLE_A = 1'b0;
-			I_DATA_A = i * 2;
-			I_ADDRESS_A = i;
-			#2;
-			I_WRITE_ENABLE_A = 1'b1;
-			#2;
-		end
-		I_WRITE_ENABLE_A = 1'b0;
-		
-		// Check if bram was wrote into correctly
-		for( i = 0; i < 8; i = i + 1) begin
-			I_ADDRESS_B = i;
-			#2;
-		   if ( O_DATA_B != (i*2))
-				$display("Bram write failed. Got: %b, Expected: %b.", O_DATA_B, i*2);
-			
-		end
-		
-		I_ADDRESS_A = 10'b0000000000;
-		I_ADDRESS_B = 10'b0000000000;
-		I_WRITE_ENABLE_A = 1'b0;
-		
-		$display("================================================================");
-      $display("Test 4: Write incrementing i*2 into data addresses 0-7 using port B, read them on port A to verify correctness.");
-      $display("================================================================\n");
-		// Write 3*i into bram
-		for( i = 0; i < 8; i = i + 1) begin
-			I_WRITE_ENABLE_B = 1'b0;
-			I_DATA_B = i * 3;
-			I_ADDRESS_B = i;
-			#2;
-			I_WRITE_ENABLE_B = 1'b1;
-			#2;
-		end
-		I_WRITE_ENABLE_B = 1'b0;
-		
-		// Check if bram was wrote into correctly
-		for( i = 0; i < 8; i = i + 1) begin
-			I_ADDRESS_A = i;
-			#2;
-		   if ( O_DATA_A != (i*3))
-				$display("Bram write failed. Got: %b, Expected: %b.", O_DATA_A, i*3);
-			
-		end
-			
-	 
-		$stop();
+reg clk;
+reg [15:0] i_data_a, i_data_b;
+reg [9:0] address_a, address_b;
+reg write_enable_a, write_enable_b;
+reg [15:0] o_data_a, o_data_b;
 
-	end
+always #1 clk = ~clk;
 
+// Note: if you're running this tb from Modelsim via Quartus Prime, the 'P_BRAM_INIT_FILE'
+// directory structure must exist in the 'simulation/modelsim' directory, so simply copy the
+// 'resources' folder at the root of this Git project into the 'simulation/modelsim' directory.
+bram #(.P_BRAM_INIT_FILE("resources/bram_init/bram_tb_init.dat"),
+       .P_DATA_WIDTH('d16),
+       .P_ADDRESS_WIDTH('d10))
+     uut
+     (.I_CLK(clk),
+      .I_DATA_A(i_data_a),
+      .I_DATA_B(i_data_b),
+      .I_ADDRESS_A(address_a),
+      .I_ADDRESS_B(address_b),
+      .I_WRITE_ENABLE_A(write_enable_a),
+      .I_WRITE_ENABLE_B(write_enable_b),
+      .O_DATA_A(o_data_a),
+      .O_DATA_B(o_data_b));
+
+integer i;
+initial begin
+    $display("================================================================");
+    $display("========================== BEGIN SIM ===========================");
+    $display("================================================================");
+
+    // Initialize enable and address pointers.
+    clk = 0;
+    address_a = 10'b0000000000;
+    address_b = 10'b0000000000;
+    write_enable_a = 1'b0;
+    write_enable_b = 1'b0;
+    i_data_a = 16'h0000;
+    i_data_b = 16'h0000;
+
+    $display("================================================================");
+    $display("Test 1: Read sequential values addresses 0-7 on port A.");
+    $display("================================================================");
+
+    // Read data on one port.
+    for (i = 0; i < 8; i++) begin
+        address_a = i[9:0];
+        #2;
+        if (o_data_a != (i + 1))
+            $display("Initial read failed. Got: %b, Expected: %b.", o_data_a, i);
+    end
+
+    $display("\n================================================================");
+    $display("Test 2: Read sequential values addresses 0-5 on port A and");
+    $display("simultaneously read 2-7 on port B.");
+    $display("================================================================");
+
+    // Read data on two ports at once.
+    address_a = 10'b0000000000; // Start at index 0
+    address_b = 10'b0000000001; // Start at index 2
+
+    for (i = 0; i < 6; i++) begin
+        address_a = i[9:0];
+        address_b = address_b + 1'b1;
+        #2;
+        if (o_data_a != (i + 1))
+            $display("Initial read A failed. Got: %b, Expected: %b.", o_data_a, i);
+        if (o_data_b != (i + 3))
+            $display("Initial read B failed. Got: %b, Expected: %b.", o_data_b, i);
+    end
+
+    $display("\n================================================================");
+    $display("Test 3: Write incrementing i * 2 into data addresses 0-7 using");
+    $display("port A, read them on port B to verify correctness.");
+    $display("================================================================");
+
+    address_a = 10'b0000000000;
+    address_b = 10'b0000000000;
+    write_enable_b = 1'b0;
+
+    // Write i * 2 into bram
+    for (i = 0; i < 8; i++) begin
+        write_enable_a = 1'b0;
+        i_data_a = i[15:0] * 2;
+        address_a = i[9:0];
+        #2;
+        write_enable_a = 1'b1;
+        #2;
+    end
+
+    write_enable_a = 1'b0;
+
+    // Check if bram was wrote into correctly
+    for (i = 0; i < 8; i++) begin
+        address_b = i[9:0];
+        #2;
+        if (o_data_b != (i * 2))
+            $display("Bram write failed. Got: %b, Expected: %b.", o_data_b, i * 2);
+    end
+
+    $display("\n================================================================");
+    $display("Test 4: Write incrementing i * 3 into data addresses 0-7 using");
+    $display("port B, read them on port A to verify correctness.");
+    $display("================================================================");
+
+    address_a = 10'b0000000000;
+    address_b = 10'b0000000000;
+    write_enable_a = 1'b0;
+
+    // Write i * 3 into bram
+    for (i = 0; i < 8; i++) begin
+        write_enable_b = 1'b0;
+        i_data_b = i[15:0] * 3;
+        address_b = i[9:0];
+        #2;
+        write_enable_b = 1'b1;
+        #2;
+    end
+
+    write_enable_b = 1'b0;
+
+    // Check if bram was written into correctly
+    for (i = 0; i < 8; i++) begin
+        address_a = i[9:0];
+        #2;
+        if (o_data_a != (i * 3))
+            $display("Bram write failed. Got: %b, Expected: %b.", o_data_a, i * 3);
+    end
+
+    $display("================================================================");
+    $display("=========================== END SIM ============================");
+    $display("================================================================");
+    $stop();
+end
 endmodule
-	
- 
- 
- 
- 
- 

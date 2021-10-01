@@ -4,10 +4,12 @@
 // Create Date: 09/28/2021
 // Module Name: bram
 // Description: A BRAM (Block Random Access Memory) module (from Quartus Prime Verilog Template).
+// Authors: Quartus Prime Template, Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
 // @param P_BRAM_INIT_FILE the file path (relative to working directory) of a UTF-encoded file
-//                         containing hex digits that BRAM will initilize to
+//                         containing hex digits that BRAM will initilize to. If empty, then
+//                         BRAM will initialize with all zeros.
 // @param P_DATA_WIDTH     the width of the data
 // @param P_ADDRESS_WIDTH  the width of the address line
 // @param I_CLK            the clock signal
@@ -20,7 +22,7 @@
 // @param O_DATA_A         the output data for Port A
 // @param O_DATA_B         the output data for Port B
 module bram
-       #(parameter string P_BRAM_INIT_FILE = "bram_init.txt",
+       #(parameter P_BRAM_INIT_FILE = "",
          parameter integer P_DATA_WIDTH = 16,
          parameter integer P_ADDRESS_WIDTH = 10)
        (input I_CLK,
@@ -31,13 +33,15 @@ module bram
 
 reg [P_DATA_WIDTH - 1 : 0] ram [0 : 2 ** P_ADDRESS_WIDTH - 1]; // 2D register array for RAM
 
-// Initialize entire BRAM to zeros, then read in 'P_BRAM_INIT_FILE' to BRAM
+// Initialize entire BRAM to zeros if 'P_BRAM_INIT_FILE' is empty or
+// read contents of 'P_BRAM_INIT_FILE' file to BRAM.
 integer index;
 initial begin
-   for (index = 0; index < 2 ** P_ADDRESS_WIDTH; index++)
-       ram[index] = {P_DATA_WIDTH{'d0}};
-
-   $readmemh(P_BRAM_INIT_FILE, ram);
+    if (P_BRAM_INIT_FILE == "")
+        for (index = 0; index < 2 ** P_ADDRESS_WIDTH; index++)
+            ram[index] = {P_DATA_WIDTH{1'd0}};
+    else
+        $readmemh(P_BRAM_INIT_FILE, ram);
 end
 
 // Port A
