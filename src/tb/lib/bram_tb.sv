@@ -24,6 +24,7 @@ always #1 clk = ~clk;
 // directory structure must exist in the 'simulation/modelsim' directory, so simply copy the
 // 'resources' folder at the root of this Git project into the 'simulation/modelsim' directory.
 bram #(.P_BRAM_INIT_FILE("resources/bram_init/bram_tb_init.dat"),
+       .P_BRAM_INIT_FILE_START_ADDRESS('d0),
        .P_DATA_WIDTH('d16),
        .P_ADDRESS_WIDTH('d10))
      uut

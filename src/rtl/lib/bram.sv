@@ -23,6 +23,8 @@
 // @param O_DATA_B         the output data for Port B
 module bram
        #(parameter P_BRAM_INIT_FILE = "",
+         parameter integer P_BRAM_INIT_FILE_START_ADDRESS = -1,
+         parameter integer P_BRAM_INIT_FILE_END_ADDRESS = -1,
          parameter integer P_DATA_WIDTH = 16,
          parameter integer P_ADDRESS_WIDTH = 10)
        (input I_CLK,
@@ -41,7 +43,13 @@ initial begin
         for (index = 0; index < 2 ** P_ADDRESS_WIDTH; index++)
             ram[index] = {P_DATA_WIDTH{1'd0}};
     else
-        $readmemh(P_BRAM_INIT_FILE, ram);
+        if (P_BRAM_INIT_FILE_START_ADDRESS != -1 && P_BRAM_INIT_FILE_END_ADDRESS != -1)
+            $readmemh(P_BRAM_INIT_FILE, ram,
+                      P_BRAM_INIT_FILE_START_ADDRESS, P_BRAM_INIT_FILE_END_ADDRESS);
+        else if (P_BRAM_INIT_FILE_START_ADDRESS != -1)
+            $readmemh(P_BRAM_INIT_FILE, ram, P_BRAM_INIT_FILE_START_ADDRESS);
+        else
+            $readmemh(P_BRAM_INIT_FILE, ram);
 end
 
 // Port A

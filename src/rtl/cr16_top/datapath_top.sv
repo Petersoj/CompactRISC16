@@ -59,7 +59,7 @@ parameter [3:0] S0 = 4'b0000,
           S8 = 4'b1000;
 
 // Next state and sequential logic.
-always @ (negedge I_NRESET or posedge I_CLK) begin
+always @(negedge I_NRESET or posedge I_CLK) begin
     if (~I_NRESET)
         NS <= S0;
     else
@@ -91,7 +91,7 @@ end
 // the Fibonacci sequence. After states 0-7, the values in the registers should appear as:
 //  1   1   2   3   5   8  13  21
 // r0  r1  r2  r3  r4  r5  r6  r7
-always @ (NS) begin
+always @(NS) begin
     case (NS)
         // Reset.
         S0: begin
