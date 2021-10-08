@@ -59,6 +59,8 @@ docs/**/*.fot
 docs/**/*.cb
 docs/**/*.cb2
 docs/**/.*.lb
+docs/**/*.bbl
+docs/**/*.blg
 ## LaTeX Build tool auxiliary files:
 docs/**/*.fdb_latexmk
 docs/**/*.synctex
