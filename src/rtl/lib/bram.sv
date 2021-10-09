@@ -43,6 +43,7 @@ initial begin
         for (index = 0; index < 2 ** P_ADDRESS_WIDTH; index++)
             ram[index] = {P_DATA_WIDTH{1'd0}};
     else
+        // '$readmemh' here is meant to mimic a ROM and works only on FGPAs and in simulations
         if (P_BRAM_INIT_FILE_START_ADDRESS != -1 && P_BRAM_INIT_FILE_END_ADDRESS != -1)
             $readmemh(P_BRAM_INIT_FILE, ram,
                       P_BRAM_INIT_FILE_START_ADDRESS, P_BRAM_INIT_FILE_END_ADDRESS);

@@ -23,7 +23,7 @@ module pc #(parameter integer P_ADDRESS_WIDTH = 16)
         input wire I_ADDRESS_SELECT,
         output reg [P_ADDRESS_WIDTH - 1 : 0] O_ADDRESS);
 
-always@(posedge I_CLK) begin
+always @(posedge I_CLK) begin
     if (I_ENABLE) begin
         if(!I_NRESET)
             O_ADDRESS = 0;
