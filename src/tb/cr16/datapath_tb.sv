@@ -20,10 +20,14 @@ reg [3:0] I_REG_A_SELECT; // 4 bit selectors for register values to ALU
 reg [3:0] I_REG_B_SELECT;
 reg [15:0] I_IMMEDIATE;
 reg I_IMM_SELECT; // 1 if loading immediate, 0 otherwise
+reg [15:0]I_REG_DATA;
+reg I_REG_DATA_SELECT;
 
 // Outputs
 wire [15:0] O_RESULT_BUS;
 wire [4:0] O_STATUS_FLAGS;
+wire [15:0]O_A;
+wire [15:0]O_B;
 
 // establish the clock signal to sync the test
 always #1 I_CLK = ~I_CLK;
@@ -37,6 +41,10 @@ datapath uut(.I_CLK(I_CLK),
              .I_IMMEDIATE_SELECT(I_IMM_SELECT),
              .I_IMMEDIATE(I_IMMEDIATE),
              .I_OPCODE(I_OPCODE),
+				 .I_REG_DATA(I_REG_DATA),
+				 .I_REG_DATA_SELECT(I_REG_DATA_SELECT),
+				 .O_A(O_A),
+				 .O_B(O_B),
              .O_RESULT_BUS(O_RESULT_BUS),
              .O_STATUS_FLAGS(O_STATUS_FLAGS));
 
@@ -60,6 +68,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'd0;
+	 I_REG_DATA = 'd0;
+	 I_REG_DATA_SELECT = 'b0;
     #2;
 
     $display("================================================================");
@@ -119,6 +129,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'b00100;
+	 I_REG_DATA = 'd0;
+	 I_REG_DATA_SELECT = 'b0;
     #2;
 
     // Load 1 into register 2
@@ -156,6 +168,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'd0;
+	 I_REG_DATA = 'd0;
+	 I_REG_DATA_SELECT = 'b0;
     #2;
 
     // Load 7 (0111) into register 0
@@ -215,50 +229,56 @@ initial begin
     $display("================================================================\n");
 
     $display("================================================================");
-    $display("BEGIN Testing Bit Shifting");
+    $display("BEGIN Testing Reg Data Select");
     $display("================================================================");
 
     // Set initial register values to 0
-    /*    #2;
-        I_NRESET = 'b0;
-        #2;
-        I_NRESET = 'b1;
-        I_REG_WRITE_ENABLE = 'b0;
-        I_REG_A_SELECT = 'b0;
-        I_REG_B_SELECT = 'b0;
-        I_IMMEDIATE = 'd0;
-        I_IMM_SELECT = 'd0;
-        I_OPCODE = 'd10;
-        #2;
+    #2;
+    I_NRESET = 'b0;
+    #2;
+    I_NRESET = 'b1;
+    I_REG_WRITE_ENABLE = 'b0;
+    I_REG_A_SELECT = 'b0;
+    I_REG_B_SELECT = 'b0;
+    I_IMMEDIATE = 'd0;
+    I_IMM_SELECT = 'd0;
+    I_OPCODE = 'd10;
+	 I_REG_DATA = 'd0;
+	 I_REG_DATA_SELECT = 'b0;
+    #2;
 
-        // Load 1 into registers 1 and 2
-        I_IMMEDIATE = 1;
-        I_IMM_SELECT = 1;
-        I_REG_WRITE_ENABLE = 'b0000_0000_0000_0001;
-        #2;
-        I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
-        #2;
-        I_IMM_SELECT = 0;
-
-        // Begin test
-        I_REG_A_SELECT = 0;
-        I_REG_B_SELECT = 1;
-        I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
-
-        num = 1;
-        for(i = 0; i < 15; i = i + 1) begin
-            #2;
-            num *= 2;
-
-            if (num != O_RESULT_BUS)
-                $display("Test Failed in bit shifting: Expected: %0d, Actual: %0d", num, O_RESULT_BUS);
-
-            I_REG_B_SELECT = I_REG_B_SELECT + 1;
-            I_REG_WRITE_ENABLE <<= 1;
-        end*/
-
+	 // Begin Test
+	 // Load 5 into first register
+	 I_REG_DATA = 'd5;
+	 I_REG_DATA_SELECT = 'b1;
+	 I_REG_WRITE_ENABLE = 'b0000_0000_0000_0001;
+	 #2;
+	 
+	 if (O_RESULT_BUS != 5)
+        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd5, O_RESULT_BUS);
+		  
+	 // Load 6 into second register
+	 I_REG_DATA = 'd6;
+	 I_REG_DATA_SELECT = 'b1;
+	 I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
+	 #2;
+	 
+	 if (O_RESULT_BUS != 6)
+        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd6, O_RESULT_BUS);
+		  
+	 // Add first and second registers into third register
+	 I_REG_A_SELECT = 0;
+    I_REG_B_SELECT = 1;
+	 I_REG_DATA_SELECT = 'b0;
+	 I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
+	 I_OPCODE = 'b0000;
+    #2;
+    if (O_RESULT_BUS != 11)
+        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd11, O_RESULT_BUS);
+			
+		  
     $display("================================================================");
-    $display("END Testing Bit Shifting");
+    $display("END Testing Reg Data Select");
     $display("================================================================\n");
 
     $display("================================================================");
