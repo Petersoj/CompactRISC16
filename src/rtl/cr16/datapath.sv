@@ -101,7 +101,7 @@ register #(.P_WIDTH(5))
           .I_DATA(alu_status_flags),
           .O_DATA(O_STATUS_FLAGS));
 
-// Instantiate a mux to select between the
+// Instantiate a mux to select between the 'I_REG_DATA' input and ALU output
 mux #(.P_WIDTH(2),
       .P_DEPTH(16))
     i_mux_data_select
