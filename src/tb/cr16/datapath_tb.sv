@@ -20,7 +20,7 @@ reg [3:0] I_REG_A_SELECT; // 4 bit selectors for register values to ALU
 reg [3:0] I_REG_B_SELECT;
 reg [15:0] I_IMMEDIATE;
 reg I_IMM_SELECT; // 1 if loading immediate, 0 otherwise
-reg [15:0]I_REG_DATA;
+reg [15:0] I_REG_DATA;
 reg I_REG_DATA_SELECT;
 
 // Outputs
@@ -41,10 +41,10 @@ datapath uut(.I_CLK(I_CLK),
              .I_IMMEDIATE_SELECT(I_IMM_SELECT),
              .I_IMMEDIATE(I_IMMEDIATE),
              .I_OPCODE(I_OPCODE),
-				 .I_REG_DATA(I_REG_DATA),
-				 .I_REG_DATA_SELECT(I_REG_DATA_SELECT),
-				 .O_A(O_A),
-				 .O_B(O_B),
+             .I_REG_DATA(I_REG_DATA),
+             .I_REG_DATA_SELECT(I_REG_DATA_SELECT),
+             .O_A(O_A),
+             .O_B(O_B),
              .O_RESULT_BUS(O_RESULT_BUS),
              .O_STATUS_FLAGS(O_STATUS_FLAGS));
 
@@ -68,8 +68,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'd0;
-	 I_REG_DATA = 'd0;
-	 I_REG_DATA_SELECT = 'b0;
+    I_REG_DATA = 'd0;
+    I_REG_DATA_SELECT = 'b0;
     #2;
 
     $display("================================================================");
@@ -129,8 +129,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'b00100;
-	 I_REG_DATA = 'd0;
-	 I_REG_DATA_SELECT = 'b0;
+    I_REG_DATA = 'd0;
+    I_REG_DATA_SELECT = 'b0;
     #2;
 
     // Load 1 into register 2
@@ -168,8 +168,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'd0;
-	 I_REG_DATA = 'd0;
-	 I_REG_DATA_SELECT = 'b0;
+    I_REG_DATA = 'd0;
+    I_REG_DATA_SELECT = 'b0;
     #2;
 
     // Load 7 (0111) into register 0
@@ -243,40 +243,39 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'd10;
-	 I_REG_DATA = 'd0;
-	 I_REG_DATA_SELECT = 'b0;
+    I_REG_DATA = 'd0;
+    I_REG_DATA_SELECT = 'b0;
     #2;
 
-	 // Begin Test
-	 // Load 5 into first register
-	 I_REG_DATA = 'd5;
-	 I_REG_DATA_SELECT = 'b1;
-	 I_REG_WRITE_ENABLE = 'b0000_0000_0000_0001;
-	 #2;
-	 
-	 if (O_RESULT_BUS != 5)
+    // Begin Test
+    // Load 5 into first register
+    I_REG_DATA = 'd5;
+    I_REG_DATA_SELECT = 'b1;
+    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0001;
+    #2;
+
+    if (O_RESULT_BUS != 5)
         $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd5, O_RESULT_BUS);
-		  
-	 // Load 6 into second register
-	 I_REG_DATA = 'd6;
-	 I_REG_DATA_SELECT = 'b1;
-	 I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
-	 #2;
-	 
-	 if (O_RESULT_BUS != 6)
+
+    // Load 6 into second register
+    I_REG_DATA = 'd6;
+    I_REG_DATA_SELECT = 'b1;
+    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
+    #2;
+
+    if (O_RESULT_BUS != 6)
         $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd6, O_RESULT_BUS);
-		  
-	 // Add first and second registers into third register
-	 I_REG_A_SELECT = 0;
+
+    // Add first and second registers into third register
+    I_REG_A_SELECT = 0;
     I_REG_B_SELECT = 1;
-	 I_REG_DATA_SELECT = 'b0;
-	 I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
-	 I_OPCODE = 'b0000;
+    I_REG_DATA_SELECT = 'b0;
+    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
+    I_OPCODE = 'b0000;
     #2;
     if (O_RESULT_BUS != 11)
         $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd11, O_RESULT_BUS);
-			
-		  
+
     $display("================================================================");
     $display("END Testing Reg Data Select");
     $display("================================================================\n");
