@@ -30,14 +30,15 @@ localparam integer
            ADDCU = 3, // Unsigned addition with carry
            SUB = 4,   // Signed subtraction
            SUBU = 5,  // Unsigned subtraction
-           AND = 6,   // Bitwise AND
-           OR = 7,    // Bitwise OR
-           XOR = 8,   // Bitwise XOR
-           NOT = 9,   // Bitwise NOT
-           LSH = 10,  // Logical left shift
-           RSH = 11,  // Logical right shift
-           ALSH = 12, // Arithmetic (sign-extending) left shift
-           ARSH = 13; // Arithmetic (sign-extending) right shift
+           MUL = 6,   // Signed multiplication
+           AND = 7,   // Bitwise AND
+           OR = 8,    // Bitwise OR
+           XOR = 9,   // Bitwise XOR
+           NOT = 10,  // Bitwise NOT
+           LSH = 11,  // Logical left shift
+           RSH = 12,  // Logical right shift
+           ALSH = 13, // Arithmetic (sign-extending) left shift
+           ARSH = 14; // Arithmetic (sign-extending) right shift
 
 // Status register indicies for one-hot encoding
 localparam integer
@@ -124,6 +125,11 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
+            end
+            MUL: begin
+                O_C = I_A * I_B;
+                // Do not set flags for multiply instruction
+                O_STATUS = 0;
             end
             AND: begin
                 O_C = I_A & I_B;
