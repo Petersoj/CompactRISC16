@@ -211,9 +211,22 @@ initial begin
                 $display("Low bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
-
-    //Simulate AND, Opcode = 6
+	 
+	 //Simulate MULT, Opcode = 6
     I_OPCODE = 6;
+    for(i = -32_768; i < 32_767; i = i + 1_024) begin
+        I_A = i;
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
+            I_B = j;
+            #2;
+            // Error if ADD failed
+            if ($signed(O_C) != $signed(I_A) * $signed(I_B))
+                $display("Test Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
+        end
+    end
+
+    //Simulate AND, Opcode = 7
+    I_OPCODE = 7;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -224,8 +237,8 @@ initial begin
         end
     end
 
-    //Simulate OR, Opcode = 7
-    I_OPCODE = 7;
+    //Simulate OR, Opcode = 8
+    I_OPCODE = 8;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -236,8 +249,8 @@ initial begin
         end
     end
 
-    //Simulate XOR, Opcode = 8
-    I_OPCODE = 8;
+    //Simulate XOR, Opcode = 9
+    I_OPCODE = 9;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -248,9 +261,9 @@ initial begin
         end
     end
 
-    //Simulate NOT, Opcode = 9
+    //Simulate NOT, Opcode = 10
     // NOTE: Only one loop is necessary because NOT doesn't involve the I_B register.
-    I_OPCODE = 9;
+    I_OPCODE = 10;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         #2;
@@ -258,8 +271,8 @@ initial begin
             $display("NOT failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
     end
 
-    //Simulate LSH, Opcode = 10
-    I_OPCODE = 10;
+    //Simulate LSH, Opcode = 11
+    I_OPCODE = 11;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -270,8 +283,8 @@ initial begin
         end
     end
 
-    //Simulate RSH, Opcode = 11
-    I_OPCODE = 11;
+    //Simulate RSH, Opcode = 12
+    I_OPCODE = 12;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -282,8 +295,8 @@ initial begin
         end
     end
 
-    //Simulate ALSH, Opcode = 12
-    I_OPCODE = 12;
+    //Simulate ALSH, Opcode = 13
+    I_OPCODE = 13;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -294,8 +307,8 @@ initial begin
         end
     end
 
-    //Simulate ARSH, Opcode = 13
-    I_OPCODE = 13;
+    //Simulate ARSH, Opcode = 14
+    I_OPCODE = 14;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
