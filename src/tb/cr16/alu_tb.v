@@ -86,7 +86,6 @@ initial begin
         end
     end
 
-
     //Simulate ADDU, Opcode = 1
     I_OPCODE = 4'b0001;
     for(i = 0; i < 65_535; i = i + 1_024) begin
@@ -211,15 +210,15 @@ initial begin
                 $display("Low bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
-	 
-	 //Simulate MULT, Opcode = 6
+
+    //Simulate MUL, Opcode = 6
     I_OPCODE = 6;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             I_B = j;
             #2;
-            // Error if ADD failed
+            // Error if MUL failed
             if ($signed(O_C) != $signed(I_A) * $signed(I_B))
                 $display("Test Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
         end
