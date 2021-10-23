@@ -22,10 +22,29 @@ reg I_CLK;
 wire [15:0] O_C;
 wire [4:0] O_STATUS;
 
-// establish the clock signal to sync the test
+// Parameterized Opcodes from 'rtl/cr16/alu.v'
+localparam integer
+           ADD = 0,   // Signed addition
+           ADDU = 1,  // Unsigned addition
+           ADDC = 2,  // Signed addition with carry
+           ADDCU = 3, // Unsigned addition with carry
+           SUB = 4,   // Signed subtraction
+           SUBU = 5,  // Unsigned subtraction
+           MUL = 6,   // Signed multiplication
+           AND = 7,   // Bitwise AND
+           OR = 8,    // Bitwise OR
+           XOR = 9,   // Bitwise XOR
+           NOT = 10,  // Bitwise NOT
+           LSH = 11,  // Logical left shift
+           RSH = 12,  // Logical right shift
+           ALSH = 13, // Arithmetic (sign-extending) left shift
+           ARSH = 14; // Arithmetic (sign-extending) right shift
+
+// Establish the clock signal to sync the test
 always #1 I_CLK = ~I_CLK;
 
 integer i, j;
+
 // Instantiate the Unit Under Test (UUT)
 alu uut
     (.I_ENABLE(I_ENABLE),
@@ -45,24 +64,21 @@ initial begin
     // negative to positive value that can be represented with 16-bit numbers. Each iteration of the
     // loop tests the correct behavior of the operation and the correct setting of the status flags.
 
-    /*
-     Flag encoding is as follows:
-     STATUS_INDEX_CARRY = 0
-     STATUS_INDEX_LOW = 1
-     STATUS_INDEX_FLAG = 2
-     STATUS_INDEX_ZERO = 3
-     STATUS_INDEX_NEGATIVE = 4
-    */
+    // Flag encoding is as follows:
+    // STATUS_INDEX_CARRY = 0
+    // STATUS_INDEX_LOW = 1
+    // STATUS_INDEX_FLAG = 2
+    // STATUS_INDEX_ZERO = 3
+    // STATUS_INDEX_NEGATIVE = 4
 
     // Initialize Inputs
     I_A  = 0;
     I_B  = 0;
-    // Enable will be permanently high.
-    I_ENABLE = 1'b1;
+    I_ENABLE = 1'b1; // Enable will be permanently high.
     I_CLK = 0;
 
-    //Simulate ADD, Opcode = 0
-    I_OPCODE = 4'b0000;
+    // Simulate ADD
+    I_OPCODE = ADD;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -86,8 +102,8 @@ initial begin
         end
     end
 
-    //Simulate ADDU, Opcode = 1
-    I_OPCODE = 4'b0001;
+    // Simulate ADDU
+    I_OPCODE = ADDU;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -111,8 +127,8 @@ initial begin
         end
     end
 
-    //Simulate ADDC, Opcode = 2
-    I_OPCODE = 4'b0010;
+    // Simulate ADDC
+    I_OPCODE = ADDC;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -135,8 +151,8 @@ initial begin
         end
     end
 
-    //Simulate ADDCU, Opcode = 3
-    I_OPCODE = 3;
+    // Simulate ADDCU
+    I_OPCODE = ADDCU;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -160,8 +176,8 @@ initial begin
         end
     end
 
-    //Simulate SUB, Opcode = 4
-    I_OPCODE = 4;
+    // Simulate SUB
+    I_OPCODE = SUB;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -186,8 +202,8 @@ initial begin
         end
     end
 
-    //Simulate SUBU, Opcode = 5
-    I_OPCODE = 5;
+    // Simulate SUBU
+    I_OPCODE = SUBU;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -211,8 +227,8 @@ initial begin
         end
     end
 
-    //Simulate MUL, Opcode = 6
-    I_OPCODE = 6;
+    // Simulate MUL
+    I_OPCODE = MUL;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -224,8 +240,8 @@ initial begin
         end
     end
 
-    //Simulate AND, Opcode = 7
-    I_OPCODE = 7;
+    // Simulate AND
+    I_OPCODE = AND;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -236,8 +252,8 @@ initial begin
         end
     end
 
-    //Simulate OR, Opcode = 8
-    I_OPCODE = 8;
+    // Simulate OR
+    I_OPCODE = OR;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -248,8 +264,8 @@ initial begin
         end
     end
 
-    //Simulate XOR, Opcode = 9
-    I_OPCODE = 9;
+    // Simulate XOR
+    I_OPCODE = XOR;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         for(j = 0; j < 65_535; j = j + 1_024) begin
@@ -260,9 +276,9 @@ initial begin
         end
     end
 
-    //Simulate NOT, Opcode = 10
-    // NOTE: Only one loop is necessary because NOT doesn't involve the I_B register.
-    I_OPCODE = 10;
+    // Simulate NOT
+    // Note: Only one loop is necessary because NOT doesn't involve the I_B register.
+    I_OPCODE = NOT;
     for(i = 0; i < 65_535; i = i + 1_024) begin
         I_A = i;
         #2;
@@ -270,8 +286,8 @@ initial begin
             $display("NOT failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
     end
 
-    //Simulate LSH, Opcode = 11
-    I_OPCODE = 11;
+    // Simulate LSH
+    I_OPCODE = LSH;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -282,8 +298,8 @@ initial begin
         end
     end
 
-    //Simulate RSH, Opcode = 12
-    I_OPCODE = 12;
+    // Simulate RSH
+    I_OPCODE = RSH;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -294,8 +310,8 @@ initial begin
         end
     end
 
-    //Simulate ALSH, Opcode = 13
-    I_OPCODE = 13;
+    // Simulate ALSH
+    I_OPCODE = ALSH;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
@@ -306,8 +322,8 @@ initial begin
         end
     end
 
-    //Simulate ARSH, Opcode = 14
-    I_OPCODE = 14;
+    // Simulate ARSH
+    I_OPCODE = ARSH;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
         I_A = i;
         for(j = -32_768; j < 32_767; j = j + 1_024) begin

@@ -29,29 +29,48 @@ wire [4:0] O_STATUS_FLAGS;
 wire [15:0]O_A;
 wire [15:0]O_B;
 
-// establish the clock signal to sync the test
+// Parameterized Opcodes from 'rtl/cr16/alu.v'
+localparam integer
+           ADD = 0,   // Signed addition
+           ADDU = 1,  // Unsigned addition
+           ADDC = 2,  // Signed addition with carry
+           ADDCU = 3, // Unsigned addition with carry
+           SUB = 4,   // Signed subtraction
+           SUBU = 5,  // Unsigned subtraction
+           MUL = 6,   // Signed multiplication
+           AND = 7,   // Bitwise AND
+           OR = 8,    // Bitwise OR
+           XOR = 9,   // Bitwise XOR
+           NOT = 10,  // Bitwise NOT
+           LSH = 11,  // Logical left shift
+           RSH = 12,  // Logical right shift
+           ALSH = 13, // Arithmetic (sign-extending) left shift
+           ARSH = 14; // Arithmetic (sign-extending) right shift
+
+// Establish the clock signal to sync the test
 always #1 I_CLK = ~I_CLK;
 
-datapath uut(.I_CLK(I_CLK),
-             .I_ENABLE(1'b1),
-             .I_NRESET(I_NRESET),
-             .I_REG_WRITE_ENABLE(I_REG_WRITE_ENABLE),
-             .I_REG_A_SELECT(I_REG_A_SELECT),
-             .I_REG_B_SELECT(I_REG_B_SELECT),
-             .I_IMMEDIATE_SELECT(I_IMM_SELECT),
-             .I_IMMEDIATE(I_IMMEDIATE),
-             .I_OPCODE(I_OPCODE),
-             .I_REG_DATA(I_REG_DATA),
-             .I_REG_DATA_SELECT(I_REG_DATA_SELECT),
-             .O_A(O_A),
-             .O_B(O_B),
-             .O_RESULT_BUS(O_RESULT_BUS),
-             .O_STATUS_FLAGS(O_STATUS_FLAGS));
+datapath uut
+         (.I_CLK(I_CLK),
+          .I_ENABLE(1'b1),
+          .I_NRESET(I_NRESET),
+          .I_REG_WRITE_ENABLE(I_REG_WRITE_ENABLE),
+          .I_REG_A_SELECT(I_REG_A_SELECT),
+          .I_REG_B_SELECT(I_REG_B_SELECT),
+          .I_IMMEDIATE_SELECT(I_IMM_SELECT),
+          .I_IMMEDIATE(I_IMMEDIATE),
+          .I_OPCODE(I_OPCODE),
+          .I_REG_DATA(I_REG_DATA),
+          .I_REG_DATA_SELECT(I_REG_DATA_SELECT),
+          .O_A(O_A),
+          .O_B(O_B),
+          .O_RESULT_BUS(O_RESULT_BUS),
+          .O_STATUS_FLAGS(O_STATUS_FLAGS));
 
 integer i, num, prevNum, temp;
 
 initial begin
-    $display("================================================================");
+    $display("\n================================================================");
     $display("========================== BEGIN SIM ===========================");
     $display("================================================================");
 
@@ -67,13 +86,13 @@ initial begin
     I_REG_B_SELECT = 'b0;
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
-    I_OPCODE = 'd0;
+    I_OPCODE = ADD;
     I_REG_DATA = 'd0;
     I_REG_DATA_SELECT = 'b0;
     #2;
 
     $display("================================================================");
-    $display("BEGIN Testing Fibbonacci Sequence");
+    $display("Testing Fibbonacci Sequence");
     $display("================================================================");
 
     // Load 1 into registers 1 and 2
@@ -110,12 +129,8 @@ initial begin
         #2;
     end
 
-    $display("================================================================");
-    $display("END Testing Fibbonacci Sequence");
-    $display("================================================================\n");
-
-    $display("================================================================");
-    $display("BEGIN Testing Signed Operations");
+    $display("\n================================================================");
+    $display("Testing Signed Operations");
     $display("================================================================");
 
     // Set initial register values to 0
@@ -128,7 +143,7 @@ initial begin
     I_REG_B_SELECT = 'b0;
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
-    I_OPCODE = 'b00100;
+    I_OPCODE = SUB;
     I_REG_DATA = 'd0;
     I_REG_DATA_SELECT = 'b0;
     #2;
@@ -149,12 +164,8 @@ initial begin
     if (O_RESULT_BUS != 'b1111_1111_1111_1111)
         $display("Test Failed in signed operations: Expected: %b, Actual: %b", 16'b1111_1111_1111_1111, O_RESULT_BUS);
 
-    $display("================================================================");
-    $display("END Testing Signed Operations");
-    $display("================================================================\n");
-
-    $display("================================================================");
-    $display("BEGIN Testing Boolean Operations");
+    $display("\n================================================================");
+    $display("Testing Boolean Operations");
     $display("================================================================");
 
     // Set initial register values to 0
@@ -189,7 +200,7 @@ initial begin
     I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
 
     // Test AND
-    I_OPCODE = 'b0110;
+    I_OPCODE = AND;
     #2;
     if (O_RESULT_BUS != 4)
         $display("Boolean test failed in AND Expected: %b, Actual: %b", 16'd4, O_RESULT_BUS);
@@ -198,7 +209,7 @@ initial begin
     #2;
 
     // Test OR
-    I_OPCODE = 'b0111;
+    I_OPCODE = OR;
     #2;
     if (O_RESULT_BUS != 7)
         $display("Boolean test failed in OR Expected: %b, Actual: %b", 16'd7, O_RESULT_BUS);
@@ -207,7 +218,7 @@ initial begin
     #2;
 
     // Test XOR
-    I_OPCODE = 'b1000;
+    I_OPCODE = XOR;
     #2;
     if (O_RESULT_BUS != 3)
         $display("Boolean test failed in XOR Expected: %b, Actual: %b", 16'd3, O_RESULT_BUS);
@@ -216,7 +227,7 @@ initial begin
     #2;
 
     // Test NOT
-    I_OPCODE = 'b1001;
+    I_OPCODE = NOT;
     #2;
     if (O_RESULT_BUS != ~16'd7)
         $display("Boolean test failed in NOT Expected: %b, Actual: %b", ~16'd7, O_RESULT_BUS);
@@ -224,12 +235,8 @@ initial begin
     I_REG_WRITE_ENABLE <<= 1;
     #2;
 
-    $display("================================================================");
-    $display("END Testing Boolean Operations");
-    $display("================================================================\n");
-
-    $display("================================================================");
-    $display("BEGIN Testing Reg Data Select");
+    $display("\n================================================================");
+    $display("Testing Reg Data Select");
     $display("================================================================");
 
     // Set initial register values to 0
@@ -276,11 +283,7 @@ initial begin
     if (O_RESULT_BUS != 11)
         $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd11, O_RESULT_BUS);
 
-    $display("================================================================");
-    $display("END Testing Reg Data Select");
-    $display("================================================================\n");
-
-    $display("================================================================");
+    $display("\n================================================================");
     $display("=========================== END SIM ============================");
     $display("================================================================");
     $stop;

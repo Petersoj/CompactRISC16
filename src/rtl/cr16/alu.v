@@ -53,7 +53,7 @@ always @(*) begin
     if (I_ENABLE) begin
         case (I_OPCODE)
             ADD: begin
-                O_C = I_A + I_B;
+                O_C = $signed(I_A) + $signed(I_B);
                 // Do not set the Carry status bit for signed arithmetic
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 // Do not set the Low status bit for signed arithmetic
@@ -80,7 +80,7 @@ always @(*) begin
                 // Add 'I_A' and 'I_B' and 1 and set to 'O_C'
                 // This instruction is needed due to adding 'immediate high' numbers
                 // in the event that an 'immediate low' addition instruction caused a carry.
-                O_C = I_A + I_B + 1'b1;
+                O_C = $signed(I_A) + $signed(I_B) + 1'b1;
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] =
@@ -98,7 +98,7 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             SUB: begin
-                O_C = I_B - I_A;
+                O_C = $signed(I_B) - $signed(I_A);
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] =
@@ -127,7 +127,7 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             MUL: begin
-                O_C = I_A * I_B;
+                O_C = $signed(I_A) * $signed(I_B);
                 // Do not set flags for multiply instruction
                 O_STATUS = 0;
             end
