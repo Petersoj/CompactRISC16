@@ -1,3 +1,11 @@
+# Ignore file system metadata files
+.DS_Store
+
+
+#
+# BEGIN Ignore Quartus Prime
+#
+
 # From: https://gist.github.com/nhasbun/71918796044b7ba89d6662133495f754
 # ignore Quartus II generated files
 *_generation_script*
@@ -43,8 +51,14 @@ PLLJ_PLLSPE_INFO.txt
 *.qpf
 *.qsf
 
-# Ignore file system metadata files
-.DS_Store
+#
+# END Ignore Quartus Prime
+#
+
+
+#
+# BEGIN Ignore LaTeX
+#
 
 ## Core LaTeX/pdflatex auxiliary files:
 docs/**/*.aux
@@ -68,3 +82,7 @@ docs/**/*.synctex(busy)
 docs/**/*.synctex.gz
 docs/**/*.synctex.gz(busy)
 docs/**/*.pdfsync
+
+#
+# END Ignore LaTeX
+#
