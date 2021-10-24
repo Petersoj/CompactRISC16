@@ -14,8 +14,9 @@
 // @param I_ADDRESS_SELECT           assert to output 'I_ADDRESS' on 'O_ADDRESS' or reset to
 //                                   increment and output 'O_ADDRESS'
 // @param I_ADDRESS_SELECT_INCREMENT assert to output 'I_ADDRESS' + 1 on 'O_ADDRESS' if
-//                                   'I_ADDRESS_SELECT' is asserted, reset to not increment
-//                                   'I_ADDRESS' by 1
+//                                   'I_ADDRESS_SELECT' is asserted
+// @param I_ADDRESS_SELECT_DISPLACE  assert to output the current 'O_ADDRESS' + $signed(I_ADDRESS)
+//                                   if 'I_ADDRESS_SELECT' is asserted
 // @param O_ADDRESS                  the address output value
 module pc #(parameter integer P_ADDRESS_WIDTH = 16)
        (input wire I_ENABLE,
@@ -23,23 +24,22 @@ module pc #(parameter integer P_ADDRESS_WIDTH = 16)
         input wire [P_ADDRESS_WIDTH - 1 : 0] I_ADDRESS,
         input wire I_ADDRESS_SELECT,
         input wire I_ADDRESS_SELECT_INCREMENT,
+        input wire I_ADDRESS_SELECT_DISPLACE,
         output reg [P_ADDRESS_WIDTH - 1 : 0] O_ADDRESS);
 
-always @(posedge I_ENABLE) begin
-    if (I_ENABLE) begin
-        if(!I_NRESET)
-            O_ADDRESS = 1'd0;
-        else begin
-            if (I_ADDRESS_SELECT)
-                if (I_ADDRESS_SELECT_INCREMENT)
-                    O_ADDRESS = I_ADDRESS + 1'd1;
-                else
-                    O_ADDRESS = I_ADDRESS;
+always @(posedge I_ENABLE or negedge I_NRESET) begin
+    if (!I_NRESET)
+        O_ADDRESS = 1'd0;
+    else begin
+        if (I_ADDRESS_SELECT)
+            if (I_ADDRESS_SELECT_INCREMENT)
+                O_ADDRESS = I_ADDRESS + 1'd1;
+            else if (I_ADDRESS_SELECT_DISPLACE)
+                O_ADDRESS = O_ADDRESS + $signed(I_ADDRESS);
             else
-                O_ADDRESS += 1'd1;
-        end
+                O_ADDRESS = I_ADDRESS;
+        else
+            O_ADDRESS += 1'd1;
     end
-    else
-        O_ADDRESS = O_ADDRESS;
 end
 endmodule

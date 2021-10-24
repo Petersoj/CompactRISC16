@@ -19,42 +19,42 @@ always @(I_DATA or I_ENABLE) begin
     if (I_ENABLE) begin
         case (I_DATA)
             16'h0001:
-                O_DATA <= 4'd0;
+                O_DATA = 4'd0;
             16'h0002:
-                O_DATA <= 4'd1;
+                O_DATA = 4'd1;
             16'h0004:
-                O_DATA <= 4'd2;
+                O_DATA = 4'd2;
             16'h0008:
-                O_DATA <= 4'd3;
+                O_DATA = 4'd3;
             16'h0010:
-                O_DATA <= 4'd4;
+                O_DATA = 4'd4;
             16'h0020:
-                O_DATA <= 4'd5;
+                O_DATA = 4'd5;
             16'h0040:
-                O_DATA <= 4'd6;
+                O_DATA = 4'd6;
             16'h0080:
-                O_DATA <= 4'd7;
+                O_DATA = 4'd7;
             16'h0100:
-                O_DATA <= 4'd8;
+                O_DATA = 4'd8;
             16'h0200:
-                O_DATA <= 4'd9;
+                O_DATA = 4'd9;
             16'h0400:
-                O_DATA <= 4'd10;
+                O_DATA = 4'd10;
             16'h0800:
-                O_DATA <= 4'd11;
+                O_DATA = 4'd11;
             16'h1000:
-                O_DATA <= 4'd12;
+                O_DATA = 4'd12;
             16'h2000:
-                O_DATA <= 4'd13;
+                O_DATA = 4'd13;
             16'h4000:
-                O_DATA <= 4'd14;
+                O_DATA = 4'd14;
             16'h8000:
-                O_DATA <= 4'd15;
+                O_DATA = 4'd15;
             default:
-                O_DATA <= 4'd0;
+                O_DATA = 4'd0;
         endcase
     end
     else
-        O_DATA <= 'd0;
+        O_DATA = 'd0;
 end
 endmodule
