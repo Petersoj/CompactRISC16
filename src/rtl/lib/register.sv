@@ -9,8 +9,8 @@
 
 // @param P_WIDTH  the width of the register
 // @param I_CLK    the clock signal
-// @param I_ENABLE the enable bit
-// @param I_NRESET the active-low reset bit
+// @param I_ENABLE the enable signal
+// @param I_NRESET the active-low asynchronous reset signal
 // @param I_DATA   the input data
 // @param O_DATA   the output data
 module register #(parameter integer P_WIDTH = 16)
@@ -20,7 +20,7 @@ module register #(parameter integer P_WIDTH = 16)
         input wire [P_WIDTH - 1 : 0] I_DATA,
         output reg [P_WIDTH - 1 : 0] O_DATA);
 
-always @(posedge I_CLK) begin
+always @(posedge I_CLK or negedge I_NRESET) begin
     if (!I_NRESET)
         O_DATA <= 0;
     else begin

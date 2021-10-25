@@ -10,7 +10,7 @@
 // @param P_REG_WIDTH  the width of each register in this register file (bit depth of each register)
 // @param P_FILE_WIDTH the width of this register file (number of registers)
 // @param I_CLK        the clock signal
-// @param I_NRESET     the active-low reset signal
+// @param I_NRESET     the active-low asynchronous reset signal
 // @param I_REG_BUS    the input data bus that is connected to all the registers in this register file
 // @param I_REG_ENABLE the one-hot encoded enable signal to enable a specified register for writing data
 //                     to it from the 'I_REG_BUS'

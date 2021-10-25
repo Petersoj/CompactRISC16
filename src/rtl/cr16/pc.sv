@@ -9,7 +9,7 @@
 
 // @param P_ADDRESS_WIDTH            the width of the input/output address
 // @param I_ENABLE                   the enable signal
-// @param I_NRESET                   the active-low reset signal
+// @param I_NRESET                   the active-low asynchronous reset signal
 // @param I_ADDRESS                  the address input value
 // @param I_ADDRESS_SELECT           assert to output 'I_ADDRESS' on 'O_ADDRESS' or reset to
 //                                   increment and output 'O_ADDRESS'

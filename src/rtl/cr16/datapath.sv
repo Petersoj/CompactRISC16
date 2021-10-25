@@ -9,7 +9,7 @@
 
 // @param I_CLK              the clock signal
 // @param I_ENABLE           the enable signal
-// @param I_NRESET           the active-low reset signal
+// @param I_NRESET           the active-low asynchronous reset signal
 // @param I_REG_WRITE_ENABLE one-hot encoded vector to specify which register to write result data to
 // @param I_REG_A_SELECT     decimal value of regfile register for the 'A' ALU input
 // @param I_REG_B_SELECT     decimal value of regfile register for the 'B' ALU input

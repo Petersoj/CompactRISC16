@@ -59,8 +59,8 @@ parameter [3:0] S0 = 4'b0000,
           S8 = 4'b1000;
 
 // Next state and sequential logic.
-always @(negedge I_NRESET or posedge I_CLK) begin
-    if (~I_NRESET)
+always @(posedge I_CLK or negedge I_NRESET) begin
+    if (!I_NRESET)
         NS <= S0;
     else
     case (NS)
