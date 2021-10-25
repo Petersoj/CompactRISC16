@@ -1,0 +1,118 @@
+\documentclass{article}
+\usepackage[ vmargin={0.75in}, hmargin={0.25in}]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{float} % Appending the [H] option forces the placement of a figure in the place it's in the code
+\usepackage{multirow, makecell}
+\usepackage{longtable}
+
+% \code{} command is used for inline code
+\usepackage{listings}
+\usepackage{xparse}
+\NewDocumentCommand{\code}{v}{%
+\texttt{\textcolor{black}{#1}}%
+}
+
+% Used for a left-aligned table cell with given width
+\newcolumntype{P}[1]{>{\RaggedRight\hspace{0pt}}p{#1}}
+
+\newcolumntype{?}{!{\vrule width 4\arrayrulewidth}}
+
+\begin{document}
+
+\begin{center}
+\LARGE{\textbf{CompactRISC16 (CR16) Instruction Set Architecture (ISA)}}\\[7pt]
+\normalsize{Computer Design Laboratory ECE 3710}\\
+\normalsize{Fall 2021}\\
+\normalsize{The University of Utah}
+\end{center}
+
+\large{Table 1: Assembly Instructions and Machine Encodings}
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{ | l | l | P{1.5in} ? l | l | l | l ? P{1.37in} | }
+\cline{6-7}
+\multicolumn{5}{c|}{} & \textbf{ImmHi/} & \textbf{ImmLo/} \\
+\cline{4-5}
+\multicolumn{3}{c|}{} & \textbf{Opcode} & \textbf{Rdest} & \textbf{Opcode Ext} & \textbf{Rsrc} & \multicolumn{1}{c}{} \\
+\hline
+\textbf{Mnemonic} &	\textbf{Operands} &	\textbf{Function} & \textbf{[15:12]} & \textbf{[11:8]} & \textbf{[7:4]} &	\textbf{[3:0]} & \textbf{Notes} \\
+\Xhline{4\arrayrulewidth}
+ADD & Rsrc, Rdest & \code{Rdest = Rdest + Rsrc} & 0000 & Rdest & 0000 & Rsrc & \\ \hline
+ADDI & Imm, Rdest & \code{Rdest = Rdest + Imm} & 0001 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
+ADD & Rsrc, Rdest & \code{Rdest = Rdest + Rsrc} & 0000 & Rdest & 0000 & Rsrc & \\ \hline
+ADDI & Imm, Rdest & \code{Rdest = Rdest + Imm} & 0001 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
+ADDU & Rsrc, Rdest & \code{Rdest = Rdest + Rsrc} & 0000 & Rdest & 0001 & Rsrc & \\ \hline
+ADDUI & Imm, Rdest & \code{Rdest = Rdest + Imm} & 0010 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
+ADDC & Rsrc, Rdest & \code{Rdest = Rdest + Rsrc + 1} & 0000 & Rdest & 0010 & Rsrc & \\ \hline
+ADDCI & Imm, Rdest & \code{Rdest = Rdest + Imm + 1} & 0011 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
+ADDCUI & Imm, Rdest & \code{Rdest = Rdest + Imm + 1} & 0100 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
+MUL & Rsrc, Rdest & \code{Rdest = Rdest * Rsrc} & 0000 & Rdest & 0011 & Rsrc & \\ \hline
+MULI & Imm, Rdest & \code{Rdest = Rdest * Imm} & 0101 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
+SUB & Rsrc, Rdest & \code{Rdest = Rdest - Rsrc} & 0000 & Rdest & 0100 & Rsrc & \\ \hline
+SUBI & Imm, Rdest & \code{Rdest = Rdest - Imm} & 0110 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
+CMP & Rsrc, Rdest & \code{Rdest - Rsrc} & 0000 & Rdest & 0101 & Rsrc & \\ \hline
+CMPI & Imm, Rdest & \code{Rdest - Imm} & 0111 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
+AND & Rsrc, Rdest & \code{Rdest = Rdest & Rsrc} & 0000 & Rdest & 0110 & Rsrc & \\ \hline
+ANDI & Imm, Rdest & \code{Rdest = Rdest & Imm} & 1000 & Rdest & ImmHi & ImmLo & Zero extended Imm \\ \hline
+OR & Rsrc, Rdest & \code{Rdest = Rdest | Rsrc} & 0000 & Rdest & 0111 & Rsrc & NOP instruction is OR R0, R0 \\ \hline
+ORI & Imm, Rdest & \code{Rdest = Rdest | Imm} & 1001 & Rdest & ImmHi & ImmLo & Zero extended Imm \\ \hline
+XOR & Rsrc, Rdest & \code{Rdest = Rdest ^ Rsrc} & 0000 & Rdest & 1000 & Rsrc & \\ \hline
+XORI & Imm, Rdest & \code{Rdest = Rdest ^ Imm} & 1010 & Rdest & ImmHi & ImmLo & Zero extended Imm \\ \hline
+LSH & Ramount, Rdest & \code{Rdest = Rdest << Ramount} & 0000 & Rdest & 1001 & Ramount & 0 $\le$ Ramount $\le$ 15 since registers are only 16-bits \\ \hline
+LSHI & Imm, Rdest & \code{Rdest = Rdest << Imm} & 0000 & Rdest & 1010 & ImmLo & 0 $\le$ ImmLo $\le$ 15 \\ \hline
+RSH & Ramount, Rdest & \code{Rdest = Rdest >> Ramount} & 0000 & Rdest & 1011 & Ramount & 0 $\le$ Ramount $\le$ 15 \\ \hline
+RSHI & Imm, Rdest & \code{Rdest = Rdest >> Imm} & 0000 & Rdest & 1100 & ImmLo & 0 $\le$ ImmLo $\le$ 15 \\ \hline
+ALSH & Ramount, Rdest & \code{Rdest = Rdest <<< Ramount} & 0000 & Rdest & 1101 & Ramount & 0 $\le$ Ramount $\le$ 15 \\ \hline
+ALSHI & Imm, Rdest & \code{Rdest = Rdest <<< Imm} & 0000 & Rdest & 1110 & ImmLo & 0 $\le$ ImmLo $\le$ 15 \\ \hline
+ARSH & Ramount, Rdest & \code{Rdest = Rdest >>> Ramount} & 0000 & Rdest & 1111 & Ramount & 0 $\le$ Ramount $\le$ 15 \\ \hline
+ARSHI & Imm, Rdest & \code{Rdest = Rdest >>> Imm} & 1111 & Rdest & 0000 & ImmLo & 0 $\le$ ImmLo $\le$ 15 \\ \hline
+MOV & Rsrc, Rdest & \code{Rdest = Rsrc} & 1111 & Rdest & 0001 & Rsrc & Copies Rsrc into Rdest \\ \hline
+MOVIL & Lower Imm, Rdest & \code{Rdest[7:0] = Imm} & 1011 & Rdest & ImmHi & ImmLo & Zero extended Imm, moves immediate value into lower bits of Rdest \\ \hline
+MOVIU & Upper Imm, Rdest & \code{Rdest[15:8] = Imm} & 1100 & Rdest & ImmHi & ImmLo & Zero padded Imm, moves immediate value into upper bits of Rdest \\ \hline
+B[condition] & Displacement Imm & \code{Relative jump by Imm if [condition]} & 1101 & condition & ImmHi & ImmLo & Immediate is used as a 2's complement program counter/address displacement. [condition] bit patterns are in Table 1 in Original CR16 ISA \\ \hline
+J[condition] & Rtarget & \code{Absolute jump to Rtarget if [condition]} & 1111 & condition & 0010 & Rtarget & [condition] bit patterns are in Table 1 in Original CR16 ISA \\ \hline
+JAL & Rlink, Rtarget & \code{Jump to Rtarget, Rlink = PC + 1} & 1111 & Rlink & 0011 & Rtarget & Stores the address of the next instruction in Rlink and jumps to Rtarget, used for subroutines \\ \hline
+LPC & Rdest & \code{Rdest = PC} & 1111 & Rdest & 0100 & xxxx & Sets Rdest to the current instruction address/PC \\ \hline
+LSF & Rdest & \code{Rdest[4:0] = status flags} & 1111 & Rdest & 0101 & xxxx & Sets 5 least significant bits of Rdest to the current status flags \\ \hline
+SSF & Rsrc & \code{Status flags = Rsrc[4:0]} & 1111 & xxxx & 0110 & Rsrc & Sets current status flags to 5 least significant bits of Rsrc \\ \hline
+LOAD & Raddr, Rdest & \code{Rdest = Main memory value at Raddr} & 1111 & Raddr & 0111 & Rdest & Used to load data at Raddr into Rdest from main memory \\ \hline
+STORE & Rsrc, Raddr & \code{Main memory value at Raddr = Rsrc} & 1111 & Raddr & 1000 & Rsrc & Used to store data at Raddr from Rsrc to main memory \\ \hline
+LOADX & Raddr, Rdest & \code{Rdest = External memory at Raddr} & 1111 & Raddr & 1001 & Rdest & Used to load data at Raddr into Rdest from external/peripheral memory/registers \\ \hline
+STOREX & Rsrc, Raddr & \code{External memory value at Raddr = Rsrc} & 1111 & Raddr & 1010 & Rsrc & Used to store data at Raddr from Rsrc to external/peripheral memory/registers \\ \hline
+NOP &  & \code{No Operation} &  &  &  &  & Alias for: OR R0, R0 \\ \hline
+\end{longtable}
+
+\large{Table 2: Register Conventions}
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{ | l | P{2in} | }
+\hline
+\textbf{Register Index} & \textbf{Convention} \\
+\hline
+\code{4'd15} & Stack Pointer with an address starting at \code{0xFFFF} $(2^{16})$ and grows downward towards dynamically allocated memory \\ \hline
+\code{4'd14} & Rlink \\ \hline
+\code{4'd13} & Return value of subroutine \\ \hline
+\code{4'd12} & 1st subroutine argument \\ \hline
+\code{4'd11} & 2nd subroutine argument \\ \hline
+\code{4'd10} & 3rd subroutine argument \\ \hline
+\code{4'd9} & Caller-owned \\ \hline
+\code{4'd8} & Caller-owned \\ \hline
+\code{4'd7} & Caller-owned \\ \hline
+\code{4'd6} & Caller-owned \\ \hline
+\code{4'd5} & Callee-owned \\ \hline
+\code{4'd4} & Callee-owned \\ \hline
+\code{4'd3} & Callee-owned \\ \hline
+\code{4'd2} & Callee-owned \\ \hline
+\code{4'd1} & Callee-owned \\ \hline
+\code{4'd0} & Callee-owned \\ \hline
+\end{longtable}
+
+\end{document}
