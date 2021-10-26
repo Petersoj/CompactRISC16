@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage[ vmargin={0.75in}, hmargin={0.25in}]{geometry}
+\usepackage[vmargin={0.75in}, hmargin={0.25in}]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
 \usepackage{graphicx}
@@ -20,7 +20,7 @@
 
 % Used for a left-aligned table cell with given width
 \newcolumntype{P}[1]{>{\RaggedRight\hspace{0pt}}p{#1}}
-
+% Used for thick column lines in a table
 \newcolumntype{?}{!{\vrule width 4\arrayrulewidth}}
 
 \begin{document}
@@ -42,8 +42,8 @@
 \cline{4-5}
 \multicolumn{3}{c|}{} & \textbf{Opcode} & \textbf{Rdest} & \textbf{Opcode Ext} & \textbf{Rsrc} & \multicolumn{1}{c}{} \\
 \hline
-\textbf{Mnemonic} &	\textbf{Operands} &	\textbf{Function} & \textbf{[15:12]} & \textbf{[11:8]} & \textbf{[7:4]} &	\textbf{[3:0]} & \textbf{Notes} \\
-\Xhline{4\arrayrulewidth}
+\textbf{Mnemonic} & \textbf{Operands} & \textbf{Function} & \textbf{[15:12]} & \textbf{[11:8]} & \textbf{[7:4]} & \textbf{[3:0]} & \textbf{Notes} \\
+\Xcline{1-8}{4\arrayrulewidth}
 ADD & Rsrc, Rdest & \code{Rdest = Rdest + Rsrc} & 0000 & Rdest & 0000 & Rsrc & \\ \hline
 ADDI & Imm, Rdest & \code{Rdest = Rdest + Imm} & 0001 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
 ADD & Rsrc, Rdest & \code{Rdest = Rdest + Rsrc} & 0000 & Rdest & 0000 & Rsrc & \\ \hline
@@ -76,8 +76,8 @@ ARSHI & Imm, Rdest & \code{Rdest = Rdest >>> Imm} & 1111 & Rdest & 0000 & ImmLo 
 MOV & Rsrc, Rdest & \code{Rdest = Rsrc} & 1111 & Rdest & 0001 & Rsrc & Copies Rsrc into Rdest \\ \hline
 MOVIL & Lower Imm, Rdest & \code{Rdest[7:0] = Imm} & 1011 & Rdest & ImmHi & ImmLo & Zero extended Imm, moves immediate value into lower bits of Rdest \\ \hline
 MOVIU & Upper Imm, Rdest & \code{Rdest[15:8] = Imm} & 1100 & Rdest & ImmHi & ImmLo & Zero padded Imm, moves immediate value into upper bits of Rdest \\ \hline
-B[condition] & Displacement Imm & \code{Relative jump by Imm if [condition]} & 1101 & condition & ImmHi & ImmLo & Immediate is used as a 2's complement program counter/address displacement. [condition] bit patterns are in Table 1 in Original CR16 ISA \\ \hline
-J[condition] & Rtarget & \code{Absolute jump to Rtarget if [condition]} & 1111 & condition & 0010 & Rtarget & [condition] bit patterns are in Table 1 in Original CR16 ISA \\ \hline
+B[condition] & Displacement Imm & \code{Relative jump by Imm if [condition]} & 1101 & condition & ImmHi & ImmLo & Immediate is used as a 2's complement program counter/address displacement. [condition] bit patterns are in Table 2. \\ \hline
+J[condition] & Rtarget & \code{Absolute jump to Rtarget if [condition]} & 1111 & condition & 0010 & Rtarget & [condition] bit patterns are in Table 2. \\ \hline
 JAL & Rlink, Rtarget & \code{Jump to Rtarget, Rlink = PC + 1} & 1111 & Rlink & 0011 & Rtarget & Stores the address of the next instruction in Rlink and jumps to Rtarget, used for subroutines \\ \hline
 LPC & Rdest & \code{Rdest = PC} & 1111 & Rdest & 0100 & xxxx & Sets Rdest to the current instruction address/PC \\ \hline
 LSF & Rdest & \code{Rdest[4:0] = status flags} & 1111 & Rdest & 0101 & xxxx & Sets 5 least significant bits of Rdest to the current status flags \\ \hline
@@ -89,14 +89,40 @@ STOREX & Rsrc, Raddr & \code{External memory value at Raddr = Rsrc} & 1111 & Rad
 NOP &  & \code{No Operation} &  &  &  &  & Alias for: OR R0, R0 \\ \hline
 \end{longtable}
 
-\large{Table 2: Register Conventions}
+\clearpage
+
+\large{Table 2: Bit Patterns of Conditions for B[condition] and J[condition]}
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{ | l | l | l | l | }
+\hline
+\textbf{Mnemonic} & \textbf{Bit Pattern} & \textbf{Description} & \textbf{Status Flags} \\ \Xcline{1-4}{4\arrayrulewidth}
+EQ & 0000 & Equal & \code{Z=1} \\ \hline
+NE & 0001 & Not Equal & \code{Z=0} \\ \hline
+CS & 0010 & Carry Set & \code{C=1} \\ \hline
+CC & 0011 & Carry Clear & \code{C=0} \\ \hline
+FS & 0100 & Flag Set & \code{F=1} \\ \hline
+FC & 0101 & Flag Clear & \code{F=0} \\ \hline
+LT & 0110 & Less Than & \code{N=0 and Z=0} \\ \hline
+LE & 0111 & Less than or Equal & \code{N=0} \\ \hline
+LO & 1000 & Lower than & \code{L=0 and Z=0} \\ \hline
+LS & 1001 & Lower than or Same as & \code{L=0} \\ \hline
+GT & 1010 & Greater Than & \code{N=1} \\ \hline
+GE & 1011 & Greater than or Equal & \code{N=1 or Z=1} \\ \hline
+HI & 1100 & Higher than & \code{L=1} \\ \hline
+HS & 1101 & Higher than or Same as & \code{L=1 or Z=1} \\ \hline
+UC & 1110 & Unconditional & \code{N/A} \\ \hline
+& 1111 & Never Jump & \code{N/A} \\ \hline
+\end{longtable}
+
+\large{Table 3: Register Conventions}
 \centering
 \footnotesize
 \renewcommand{\arraystretch}{1.4}
 \begin{longtable}{ | l | P{2in} | }
 \hline
-\textbf{Register Index} & \textbf{Convention} \\
-\hline
+\textbf{Register Index} & \textbf{Convention} \\ \Xcline{1-2}{4\arrayrulewidth}
 \code{4'd15} & Stack Pointer with an address starting at \code{0xFFFF} $(2^{16})$ and grows downward towards dynamically allocated memory \\ \hline
 \code{4'd14} & Rlink \\ \hline
 \code{4'd13} & Return value of subroutine \\ \hline
