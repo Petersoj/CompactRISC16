@@ -20,14 +20,14 @@ reg [3:0] I_REG_A_SELECT; // 4 bit selectors for register values to ALU
 reg [3:0] I_REG_B_SELECT;
 reg [15:0] I_IMMEDIATE;
 reg I_IMM_SELECT; // 1 if loading immediate, 0 otherwise
-reg [15:0] I_REG_DATA;
-reg I_REG_DATA_SELECT;
+reg [15:0] I_REGFILE_DATA;
+reg I_REGFILE_DATA_SELECT;
 
 // Outputs
 wire [15:0] O_RESULT_BUS;
 wire [4:0] O_STATUS_FLAGS;
-wire [15:0]O_A;
-wire [15:0]O_B;
+wire [15:0] O_A;
+wire [15:0] O_B;
 
 // Parameterized Opcodes from 'rtl/cr16/alu.v'
 localparam integer
@@ -60,8 +60,10 @@ datapath uut
           .I_IMMEDIATE_SELECT(I_IMM_SELECT),
           .I_IMMEDIATE(I_IMMEDIATE),
           .I_OPCODE(I_OPCODE),
-          .I_REG_DATA(I_REG_DATA),
-          .I_REG_DATA_SELECT(I_REG_DATA_SELECT),
+          .I_STATUS_FLAGS({5{1'b0}}),
+          .I_STATUS_FLAGS_SELECT(1'b0),
+          .I_REGFILE_DATA(I_REGFILE_DATA),
+          .I_REGFILE_DATA_SELECT(I_REGFILE_DATA_SELECT),
           .O_A(O_A),
           .O_B(O_B),
           .O_RESULT_BUS(O_RESULT_BUS),
@@ -87,8 +89,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = ADD;
-    I_REG_DATA = 'd0;
-    I_REG_DATA_SELECT = 'b0;
+    I_REGFILE_DATA = 'd0;
+    I_REGFILE_DATA_SELECT = 'b0;
     #2;
 
     $display("================================================================");
@@ -144,8 +146,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = SUB;
-    I_REG_DATA = 'd0;
-    I_REG_DATA_SELECT = 'b0;
+    I_REGFILE_DATA = 'd0;
+    I_REGFILE_DATA_SELECT = 'b0;
     #2;
 
     // Load 1 into register 2
@@ -179,8 +181,8 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'd0;
-    I_REG_DATA = 'd0;
-    I_REG_DATA_SELECT = 'b0;
+    I_REGFILE_DATA = 'd0;
+    I_REGFILE_DATA_SELECT = 'b0;
     #2;
 
     // Load 7 (0111) into register 0
@@ -250,14 +252,14 @@ initial begin
     I_IMMEDIATE = 'd0;
     I_IMM_SELECT = 'd0;
     I_OPCODE = 'd10;
-    I_REG_DATA = 'd0;
-    I_REG_DATA_SELECT = 'b0;
+    I_REGFILE_DATA = 'd0;
+    I_REGFILE_DATA_SELECT = 'b0;
     #2;
 
     // Begin Test
     // Load 5 into first register
-    I_REG_DATA = 'd5;
-    I_REG_DATA_SELECT = 'b1;
+    I_REGFILE_DATA = 'd5;
+    I_REGFILE_DATA_SELECT = 'b1;
     I_REG_WRITE_ENABLE = 'b0000_0000_0000_0001;
     #2;
 
@@ -265,8 +267,8 @@ initial begin
         $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd5, O_RESULT_BUS);
 
     // Load 6 into second register
-    I_REG_DATA = 'd6;
-    I_REG_DATA_SELECT = 'b1;
+    I_REGFILE_DATA = 'd6;
+    I_REGFILE_DATA_SELECT = 'b1;
     I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
     #2;
 
@@ -276,7 +278,7 @@ initial begin
     // Add first and second registers into third register
     I_REG_A_SELECT = 0;
     I_REG_B_SELECT = 1;
-    I_REG_DATA_SELECT = 'b0;
+    I_REGFILE_DATA_SELECT = 'b0;
     I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
     I_OPCODE = 'b0000;
     #2;

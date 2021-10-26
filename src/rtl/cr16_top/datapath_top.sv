@@ -22,7 +22,7 @@ reg [3:0] read_b_sel;
 reg [15:0] immediate;
 reg imm_sel;
 reg [3:0] opcode;
-
+wire [15:0] a, b;
 wire [15:0] write_port;
 
 datapath i_datapath
@@ -35,6 +35,12 @@ datapath i_datapath
           .I_IMMEDIATE_SELECT(imm_sel),
           .I_IMMEDIATE(immediate),
           .I_OPCODE(opcode),
+          .I_STATUS_FLAGS({5{1'b0}}),
+          .I_STATUS_FLAGS_SELECT(1'b0),
+          .I_REGFILE_DATA({16{1'b0}}),
+          .I_REGFILE_DATA_SELECT(1'b0),
+          .O_A(a),
+          .O_B(b),
           .O_RESULT_BUS(write_port),
           .O_STATUS_FLAGS(O_LED_FLAGS));
 
