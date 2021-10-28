@@ -28,25 +28,26 @@ localparam integer
            ADDU = 1,  // Unsigned addition
            ADDC = 2,  // Signed addition with carry
            ADDCU = 3, // Unsigned addition with carry
-           SUB = 4,   // Signed subtraction
-           SUBU = 5,  // Unsigned subtraction
-           MUL = 6,   // Signed multiplication
-           AND = 7,   // Bitwise AND
-           OR = 8,    // Bitwise OR
-           XOR = 9,   // Bitwise XOR
-           NOT = 10,  // Bitwise NOT
-           LSH = 11,  // Logical left shift
-           RSH = 12,  // Logical right shift
-           ALSH = 13, // Arithmetic (sign-extending) left shift
-           ARSH = 14; // Arithmetic (sign-extending) right shift
+           SUB = 4,   // Unsigned and signed subtraction
+           MUL = 5,   // Signed multiplication
+           AND = 6,   // Bitwise AND
+           OR = 7,    // Bitwise OR
+           XOR = 8,   // Bitwise XOR
+           NOT = 9,   // Bitwise NOT
+           LSH = 10,  // Logical left shift
+           RSH = 11,  // Logical right shift
+           ALSH = 12, // Arithmetic (sign-extending) left shift
+           ARSH = 13; // Arithmetic (sign-extending) right shift
 
 // Status register indicies for one-hot encoding
 localparam integer
            STATUS_INDEX_CARRY = 0,    // MSB carry out for unsigned addition and subtraction
            STATUS_INDEX_LOW = 1,      // 'I_B' < 'I_A' for unsigned subtraction
-           STATUS_INDEX_FLAG = 2,     // MSB carry out for signed addition
+           STATUS_INDEX_FLAG = 2,     // MSB carry out for signed addition,
+                                      // borrow for signed subtraction
            STATUS_INDEX_ZERO = 3,     // 'O_C' == 0
-           STATUS_INDEX_NEGATIVE = 4; // 'I_B' < 'I_A' for signed addition and subtraction
+           STATUS_INDEX_NEGATIVE = 4; // Sign bit set for signed addition,
+                                      // 'I_B' < 'I_A' for signed subtraction
 
 // Combinational logic case block
 always @(*) begin
@@ -98,33 +99,25 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             SUB: begin
-                O_C = $signed(I_B) - $signed(I_A);
-                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_C = I_B - I_A;
+                if (I_B < I_A) begin
+                    O_STATUS[STATUS_INDEX_CARRY] = 1'b1;
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b1;
+                end
+                else begin
+                    O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                end
                 O_STATUS[STATUS_INDEX_FLAG] =
                 (I_A[P_WIDTH - 1] != I_B[P_WIDTH - 1]) &
                 (I_A[P_WIDTH - 1] == O_C[P_WIDTH - 1]);
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-                // Only set the negative bit for signed subtraction
+                // Use comparater instead of checking sign bit of 'O_C' so that this negative flag
+                // is still set correctly in the event of an overflow/borrow.
                 if ($signed(I_B) < $signed(I_A))
                     O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b1;
                 else
                     O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
-            end
-            SUBU: begin
-                O_C = I_B - I_A;
-                // Only set the low bit (and carry bit) for unsigned subtraction
-                if (I_B > I_A) begin
-                    O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-                    O_STATUS[STATUS_INDEX_LOW] = 1'b0;
-                end
-                else begin
-                    O_STATUS[STATUS_INDEX_CARRY] = 1'b1;
-                    O_STATUS[STATUS_INDEX_LOW] = 1'b1;
-                end
-                O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
-                O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-                O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             MUL: begin
                 O_C = $signed(I_A) * $signed(I_B);

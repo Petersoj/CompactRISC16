@@ -35,17 +35,16 @@ localparam integer
            ADDU = 1,  // Unsigned addition
            ADDC = 2,  // Signed addition with carry
            ADDCU = 3, // Unsigned addition with carry
-           SUB = 4,   // Signed subtraction
-           SUBU = 5,  // Unsigned subtraction
-           MUL = 6,   // Signed multiplication
-           AND = 7,   // Bitwise AND
-           OR = 8,    // Bitwise OR
-           XOR = 9,   // Bitwise XOR
-           NOT = 10,  // Bitwise NOT
-           LSH = 11,  // Logical left shift
-           RSH = 12,  // Logical right shift
-           ALSH = 13, // Arithmetic (sign-extending) left shift
-           ARSH = 14; // Arithmetic (sign-extending) right shift
+           SUB = 4,   // Unsigned and signed subtraction
+           MUL = 5,   // Signed multiplication
+           AND = 6,   // Bitwise AND
+           OR = 7,    // Bitwise OR
+           XOR = 8,   // Bitwise XOR
+           NOT = 9,   // Bitwise NOT
+           LSH = 10,  // Logical left shift
+           RSH = 11,  // Logical right shift
+           ALSH = 12, // Arithmetic (sign-extending) left shift
+           ARSH = 13; // Arithmetic (sign-extending) right shift
 
 // Establish the clock signal to sync the test
 always #1 I_CLK = ~I_CLK;

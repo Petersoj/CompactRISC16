@@ -28,17 +28,16 @@ localparam integer
            ADDU = 1,  // Unsigned addition
            ADDC = 2,  // Signed addition with carry
            ADDCU = 3, // Unsigned addition with carry
-           SUB = 4,   // Signed subtraction
-           SUBU = 5,  // Unsigned subtraction
-           MUL = 6,   // Signed multiplication
-           AND = 7,   // Bitwise AND
-           OR = 8,    // Bitwise OR
-           XOR = 9,   // Bitwise XOR
-           NOT = 10,  // Bitwise NOT
-           LSH = 11,  // Logical left shift
-           RSH = 12,  // Logical right shift
-           ALSH = 13, // Arithmetic (sign-extending) left shift
-           ARSH = 14; // Arithmetic (sign-extending) right shift
+           SUB = 4,   // Unsigned and signed subtraction
+           MUL = 5,   // Signed multiplication
+           AND = 6,   // Bitwise AND
+           OR = 7,    // Bitwise OR
+           XOR = 8,   // Bitwise XOR
+           NOT = 9,   // Bitwise NOT
+           LSH = 10,  // Logical left shift
+           RSH = 11,  // Logical right shift
+           ALSH = 12, // Arithmetic (sign-extending) left shift
+           ARSH = 13; // Arithmetic (sign-extending) right shift
 
 // Establish the clock signal to sync the test
 always #1 I_CLK = ~I_CLK;
@@ -199,31 +198,6 @@ initial begin
             if (O_STATUS[1] == 1)
                 $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
 
-        end
-    end
-
-    // Simulate SUBU
-    I_OPCODE = SUBU;
-    for(i = 0; i < 65_535; i = i + 1_024) begin
-        I_A = i;
-        for(j = 0; j < 65_535; j = j + 1_024) begin
-            I_B = j;
-            #2;
-            // Error if SUBU failed.
-            if ((O_C != I_B - I_A) && (O_STATUS[0] != 1))
-                $display("SUB Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
-            // Error if there was a borrow from the bit above the MSB and the Carry flag was not set.
-            if ((I_B < I_A) && (O_STATUS[0] != 1))
-                $display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if result is 0 and flag not set.
-            if ((O_C == 0) && (O_STATUS[3] != 1))
-                $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Negative bit should never be set because answer is regarded as an unsigned number.
-            if (O_STATUS[4] == 1)
-                $display("Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if the low flag is not set when B is less than A.
-            if ((I_B < I_A) && (O_STATUS[1] != 1))
-                $display("Low bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
 
