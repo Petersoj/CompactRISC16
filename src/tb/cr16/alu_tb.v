@@ -23,17 +23,17 @@ wire [15:0] O_C;
 wire [4:0] O_STATUS;
 
 // Parameterized Opcodes from 'rtl/cr16/alu.v'
-localparam integer
+localparam [3:0]
            ADD = 0,   // Signed addition
            ADDU = 1,  // Unsigned addition
            ADDC = 2,  // Signed addition with carry
            ADDCU = 3, // Unsigned addition with carry
-           SUB = 4,   // Unsigned and signed subtraction
-           MUL = 5,   // Signed multiplication
-           AND = 6,   // Bitwise AND
-           OR = 7,    // Bitwise OR
-           XOR = 8,   // Bitwise XOR
-           NOT = 9,   // Bitwise NOT
+           MUL = 4,   // Signed multiplication
+           SUB = 5,   // Unsigned and signed subtraction
+           NOT = 6,   // Bitwise NOT
+           AND = 7,   // Bitwise AND
+           OR = 8,    // Bitwise OR
+           XOR = 9,   // Bitwise XOR
            LSH = 10,  // Logical left shift
            RSH = 11,  // Logical right shift
            ALSH = 12, // Arithmetic (sign-extending) left shift

@@ -14,9 +14,9 @@
 //                              into
 // @param I_REG_A_SELECT        decimal value of regfile register for the 'A' ALU input
 // @param I_REG_B_SELECT        decimal value of regfile register for the 'B' ALU input
+// @param I_IMMEDIATE           the immediate value as the 'A' ALU input
 // @param I_IMMEDIATE_SELECT    assert to use the 'I_IMMEDIATE' value as the 'A' ALU input, reset
 //                              to use the regfile 'I_REG_A_SELECT'
-// @param I_IMMEDIATE           the immediate value as the 'A' ALU input
 // @param I_OPCODE              the ALU opcode
 // @param I_STATUS_FLAGS        the ALU status flags input
 // @param I_STATUS_FLAGS_SELECT assert to set the status flags register to 'I_STATUS_FLAGS', reset
@@ -36,8 +36,8 @@ module datapath
         input wire [15:0] I_REG_WRITE_ENABLE,
         input wire [3:0] I_REG_A_SELECT,
         input wire [3:0] I_REG_B_SELECT,
-        input wire I_IMMEDIATE_SELECT,
         input wire [15:0] I_IMMEDIATE,
+        input wire I_IMMEDIATE_SELECT,
         input wire [3:0] I_OPCODE,
         input wire [4:0] I_STATUS_FLAGS,
         input wire I_STATUS_FLAGS_SELECT,

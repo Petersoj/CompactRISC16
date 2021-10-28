@@ -25,7 +25,7 @@ module pc #(parameter integer P_ADDRESS_WIDTH = 16)
         input wire I_ADDRESS_SELECT,
         input wire I_ADDRESS_SELECT_INCREMENT,
         input wire I_ADDRESS_SELECT_DISPLACE,
-        output reg [P_ADDRESS_WIDTH - 1 : 0] O_ADDRESS);
+        output reg [P_ADDRESS_WIDTH - 1 : 0] O_ADDRESS = 0);
 
 always @(posedge I_ENABLE or negedge I_NRESET) begin
     if (!I_NRESET)

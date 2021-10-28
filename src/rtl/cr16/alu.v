@@ -16,24 +16,24 @@
 // @param O_STATUS the status flags of the operation executed
 module alu #(parameter integer P_WIDTH = 16)
        (input wire I_ENABLE,
-        input wire [3 : 0] I_OPCODE,
+        input wire [3:0] I_OPCODE,
         input wire [P_WIDTH - 1 : 0] I_A,
         input wire [P_WIDTH - 1 : 0] I_B,
         output reg [P_WIDTH - 1 : 0] O_C,
-        output reg [4 : 0] O_STATUS);
+        output reg [4:0] O_STATUS);
 
 // Parameterized Opcodes
-localparam integer
+localparam [3:0]
            ADD = 0,   // Signed addition
            ADDU = 1,  // Unsigned addition
            ADDC = 2,  // Signed addition with carry
            ADDCU = 3, // Unsigned addition with carry
-           SUB = 4,   // Unsigned and signed subtraction
-           MUL = 5,   // Signed multiplication
-           AND = 6,   // Bitwise AND
-           OR = 7,    // Bitwise OR
-           XOR = 8,   // Bitwise XOR
-           NOT = 9,   // Bitwise NOT
+           MUL = 4,   // Signed multiplication
+           SUB = 5,   // Unsigned and signed subtraction
+           NOT = 6,   // Bitwise NOT
+           AND = 7,   // Bitwise AND
+           OR = 8,    // Bitwise OR
+           XOR = 9,   // Bitwise XOR
            LSH = 10,  // Logical left shift
            RSH = 11,  // Logical right shift
            ALSH = 12, // Arithmetic (sign-extending) left shift
@@ -98,6 +98,11 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
+            MUL: begin
+                O_C = $signed(I_A) * $signed(I_B);
+                // Do not set flags for multiply instruction
+                O_STATUS = 0;
+            end
             SUB: begin
                 O_C = I_B - I_A;
                 if (I_B < I_A) begin
@@ -119,10 +124,13 @@ always @(*) begin
                 else
                     O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
-            MUL: begin
-                O_C = $signed(I_A) * $signed(I_B);
-                // Do not set flags for multiply instruction
-                O_STATUS = 0;
+            NOT: begin
+                O_C = ~I_A;
+                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
+                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+                O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
+                O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
+                O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             AND: begin
                 O_C = I_A & I_B;
@@ -142,14 +150,6 @@ always @(*) begin
             end
             XOR: begin
                 O_C = I_A ^ I_B;
-                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
-                O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
-                O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-                O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
-            end
-            NOT: begin
-                O_C = ~I_A;
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;

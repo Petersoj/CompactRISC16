@@ -30,13 +30,13 @@ wire [15:0] O_A;
 wire [15:0] O_B;
 
 // Parameterized Opcodes from 'rtl/cr16/alu.v'
-localparam integer
+localparam [3:0]
            ADD = 0,   // Signed addition
            ADDU = 1,  // Unsigned addition
            ADDC = 2,  // Signed addition with carry
            ADDCU = 3, // Unsigned addition with carry
-           SUB = 4,   // Unsigned and signed subtraction
-           MUL = 5,   // Signed multiplication
+           MUL = 4,   // Signed multiplication
+           SUB = 5,   // Unsigned and signed subtraction
            AND = 6,   // Bitwise AND
            OR = 7,    // Bitwise OR
            XOR = 8,   // Bitwise XOR
@@ -56,8 +56,8 @@ datapath uut
           .I_REG_WRITE_ENABLE(I_REG_WRITE_ENABLE),
           .I_REG_A_SELECT(I_REG_A_SELECT),
           .I_REG_B_SELECT(I_REG_B_SELECT),
-          .I_IMMEDIATE_SELECT(I_IMM_SELECT),
           .I_IMMEDIATE(I_IMMEDIATE),
+          .I_IMMEDIATE_SELECT(I_IMM_SELECT),
           .I_OPCODE(I_OPCODE),
           .I_STATUS_FLAGS({5{1'b0}}),
           .I_STATUS_FLAGS_SELECT(1'b0),
