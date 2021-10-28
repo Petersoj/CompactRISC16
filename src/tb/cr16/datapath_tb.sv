@@ -31,20 +31,18 @@ wire [15:0] O_B;
 
 // Parameterized Opcodes from 'rtl/cr16/alu.v'
 localparam [3:0]
-           ADD = 0,   // Signed addition
-           ADDU = 1,  // Unsigned addition
-           ADDC = 2,  // Signed addition with carry
-           ADDCU = 3, // Unsigned addition with carry
-           MUL = 4,   // Signed multiplication
-           SUB = 5,   // Unsigned and signed subtraction
-           AND = 6,   // Bitwise AND
-           OR = 7,    // Bitwise OR
-           XOR = 8,   // Bitwise XOR
-           NOT = 9,   // Bitwise NOT
-           LSH = 10,  // Logical left shift
-           RSH = 11,  // Logical right shift
-           ALSH = 12, // Arithmetic (sign-extending) left shift
-           ARSH = 13; // Arithmetic (sign-extending) right shift
+           ADD = 0,   // Unsigned and signed addition
+           ADDC = 1,  // Unsigned and signed addition with carry
+           MUL = 2,   // Signed multiplication
+           SUB = 3,   // Unsigned and signed subtraction
+           NOT = 4,   // Bitwise NOT
+           AND = 5,   // Bitwise AND
+           OR = 6,    // Bitwise OR
+           XOR = 7,   // Bitwise XOR
+           LSH = 8,   // Logical left shift
+           RSH = 9,   // Logical right shift
+           ALSH = 10, // Arithmetic (sign-extending) left shift
+           ARSH = 11; // Arithmetic (sign-extending) right shift
 
 // Establish the clock signal to sync the test
 always #1 I_CLK = ~I_CLK;

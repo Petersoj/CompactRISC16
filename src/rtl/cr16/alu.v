@@ -24,20 +24,18 @@ module alu #(parameter integer P_WIDTH = 16)
 
 // Parameterized Opcodes
 localparam [3:0]
-           ADD = 0,   // Signed addition
-           ADDU = 1,  // Unsigned addition
-           ADDC = 2,  // Signed addition with carry
-           ADDCU = 3, // Unsigned addition with carry
-           MUL = 4,   // Signed multiplication
-           SUB = 5,   // Unsigned and signed subtraction
-           NOT = 6,   // Bitwise NOT
-           AND = 7,   // Bitwise AND
-           OR = 8,    // Bitwise OR
-           XOR = 9,   // Bitwise XOR
-           LSH = 10,  // Logical left shift
-           RSH = 11,  // Logical right shift
-           ALSH = 12, // Arithmetic (sign-extending) left shift
-           ARSH = 13; // Arithmetic (sign-extending) right shift
+           ADD = 0,   // Unsigned and signed addition
+           ADDC = 1,  // Unsigned and signed addition with carry
+           MUL = 2,   // Signed multiplication
+           SUB = 3,   // Unsigned and signed subtraction
+           NOT = 4,   // Bitwise NOT
+           AND = 5,   // Bitwise AND
+           OR = 6,    // Bitwise OR
+           XOR = 7,   // Bitwise XOR
+           LSH = 8,   // Logical left shift
+           RSH = 9,   // Logical right shift
+           ALSH = 10, // Arithmetic (sign-extending) left shift
+           ARSH = 11; // Arithmetic (sign-extending) right shift
 
 // Status register indicies for one-hot encoding
 localparam integer
@@ -53,12 +51,15 @@ localparam integer
 always @(*) begin
     if (I_ENABLE) begin
         case (I_OPCODE)
-            ADD: begin
-                O_C = $signed(I_A) + $signed(I_B);
-                // Do not set the Carry status bit for signed arithmetic
-                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-                // Do not set the Low status bit for signed arithmetic
-                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
+            ADD,
+            ADDC: begin
+                {O_STATUS[STATUS_INDEX_CARRY], O_C} = I_OPCODE == ADD ?
+                I_B + I_A : I_B + I_A + 1'b1;
+                // Set Low status bit 'I_B' is less than 'I_A' if in an unsigned context
+                if (I_B < I_A)
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b1;
+                else
+                    O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 // Set the Flag status bit for signed carry overflow (this occurs when the MSB
                 // of the result is flipped compared to the MSB of the operands)
                 O_STATUS[STATUS_INDEX_FLAG] =
@@ -66,37 +67,11 @@ always @(*) begin
                 (I_A[P_WIDTH - 1] & I_B[P_WIDTH - 1] & ~O_C[P_WIDTH - 1]);
                 // Set the Zero status bit if sum is 0
                 O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-                // Set the Negative status bit if result is negative (sign bit is 1)
-                O_STATUS[STATUS_INDEX_NEGATIVE] = O_C[P_WIDTH - 1] == 1'b1;
-            end
-            ADDU: begin
-                // Add 'I_A' and 'I_B' and set to 'O_C' with carry status bit specified
-                {O_STATUS[STATUS_INDEX_CARRY], O_C} = I_A + I_B;
-                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
-                O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
-                O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-                O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
-            end
-            ADDC: begin
-                // Add 'I_A' and 'I_B' and 1 and set to 'O_C'
-                // This instruction is needed due to adding 'immediate high' numbers
-                // in the event that an 'immediate low' addition instruction caused a carry.
-                O_C = $signed(I_A) + $signed(I_B) + 1'b1;
-                O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
-                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
-                O_STATUS[STATUS_INDEX_FLAG] =
-                (~I_A[P_WIDTH - 1] & ~I_B[P_WIDTH - 1] & O_C[P_WIDTH - 1]) |
-                (I_A[P_WIDTH - 1] & I_B[P_WIDTH - 1] & ~O_C[P_WIDTH - 1]);
-                O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-                O_STATUS[STATUS_INDEX_NEGATIVE] = O_C[P_WIDTH - 1] == 1'b1;
-            end
-            ADDCU: begin
-                // Add 'I_A' and 'I_B' and 1 and set to 'O_C' with carry status bit specified
-                {O_STATUS[STATUS_INDEX_CARRY], O_C} = I_A + I_B + 1'b1;
-                O_STATUS[STATUS_INDEX_LOW] = 1'b0;
-                O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
-                O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
-                O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
+                // Set the Negative status bit if result is negative (sign bit is 1) and
+                // the operand sign bits were opposite or both operands are negative
+                O_STATUS[STATUS_INDEX_NEGATIVE] =
+                (I_A[P_WIDTH - 1] != I_B[P_WIDTH - 1] & O_C[P_WIDTH - 1] == 1'b1) |
+                (I_A[P_WIDTH - 1] == 1'b1 & I_B[P_WIDTH - 1] == 1'b1);
             end
             MUL: begin
                 O_C = $signed(I_A) * $signed(I_B);

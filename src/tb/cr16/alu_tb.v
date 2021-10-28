@@ -24,20 +24,18 @@ wire [4:0] O_STATUS;
 
 // Parameterized Opcodes from 'rtl/cr16/alu.v'
 localparam [3:0]
-           ADD = 0,   // Signed addition
-           ADDU = 1,  // Unsigned addition
-           ADDC = 2,  // Signed addition with carry
-           ADDCU = 3, // Unsigned addition with carry
-           MUL = 4,   // Signed multiplication
-           SUB = 5,   // Unsigned and signed subtraction
-           NOT = 6,   // Bitwise NOT
-           AND = 7,   // Bitwise AND
-           OR = 8,    // Bitwise OR
-           XOR = 9,   // Bitwise XOR
-           LSH = 10,  // Logical left shift
-           RSH = 11,  // Logical right shift
-           ALSH = 12, // Arithmetic (sign-extending) left shift
-           ARSH = 13; // Arithmetic (sign-extending) right shift
+           ADD = 0,   // Unsigned and signed addition
+           ADDC = 1,  // Unsigned and signed addition with carry
+           MUL = 2,   // Signed multiplication
+           SUB = 3,   // Unsigned and signed subtraction
+           NOT = 4,   // Bitwise NOT
+           AND = 5,   // Bitwise AND
+           OR = 6,    // Bitwise OR
+           XOR = 7,   // Bitwise XOR
+           LSH = 8,   // Logical left shift
+           RSH = 9,   // Logical right shift
+           ALSH = 10, // Arithmetic (sign-extending) left shift
+           ARSH = 11; // Arithmetic (sign-extending) right shift
 
 // Establish the clock signal to sync the test
 always #1 I_CLK = ~I_CLK;
@@ -101,31 +99,6 @@ initial begin
         end
     end
 
-    // Simulate ADDU
-    I_OPCODE = ADDU;
-    for(i = 0; i < 65_535; i = i + 1_024) begin
-        I_A = i;
-        for(j = 0; j < 65_535; j = j + 1_024) begin
-            I_B = j;
-            #2;
-            // Error if ADDU failed
-            if ((O_C != I_A + I_B) && O_STATUS[0] != 1)
-                $display("Test Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
-            // Error if the overflow bit is ever set. Overflow is reserved for signed operations.
-            if (O_STATUS[2] == 1'b1)
-                $display("Signed Overflow set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if result is 0 and flag not set.
-            if ( O_C == 0 && O_STATUS[3] != 1)
-                $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Negative bit should never be set on unsigned operation.
-            if (O_STATUS[4] == 1)
-                $display("1 Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if carry bit is not set when a carry occurs out of the MSB
-            if ((O_STATUS[0] != 1) && ((i + j)  > 65_535))
-                $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b, i+j:%0d", I_A, I_B, O_C, O_STATUS[4:0], i+j);
-        end
-    end
-
     // Simulate ADDC
     I_OPCODE = ADDC;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
@@ -147,31 +120,6 @@ initial begin
             // Error if the carry bit is ever set. Carry is reserved for unsigned operations.
             if (O_STATUS[0] == 1)
                 $display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-        end
-    end
-
-    // Simulate ADDCU
-    I_OPCODE = ADDCU;
-    for(i = 0; i < 65_535; i = i + 1_024) begin
-        I_A = i;
-        for(j = 0; j < 65_535; j = j + 1_024) begin
-            I_B = j;
-            #2;
-            // Error if ADDC produces incorrect result without implicit carry bit.
-            if ((O_C != I_A + I_B + 1) && O_STATUS[0] != 1)
-                $display("Test Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
-            // Error if the overflow bit is ever set. Overflow is reserved for signed operations.
-            if (O_STATUS[2] == 1)
-                $display("Signed Overflow set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if result is 0 and flag not set.
-            if ( O_C == 0 && O_STATUS[3] != 1)
-                $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if negative bit is set on unsigned op.
-            if (O_STATUS[4] == 1)
-                $display("3 Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if carry occurs out of MSB and the Carry flag is not set.
-            if ((O_STATUS[0] != 1) && ((i + j + 1) > 65_535))
-                $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
 
