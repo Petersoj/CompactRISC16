@@ -132,7 +132,7 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             LSH: begin
-                O_C = I_A << I_B;
+                O_C = I_B << I_A[3:0];
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
@@ -140,7 +140,7 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             RSH: begin
-                O_C = I_A >> I_B;
+                O_C = I_B >> I_A[3:0];
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
@@ -148,7 +148,7 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             ALSH: begin
-                O_C = I_A <<< I_B;
+                O_C = I_B <<< I_A[3:0];
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;
@@ -156,7 +156,7 @@ always @(*) begin
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
             end
             ARSH: begin
-                O_C = I_A >>> I_B;
+                O_C = I_B >>> I_A[3:0];
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b0;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
                 O_STATUS[STATUS_INDEX_FLAG] = 1'b0;

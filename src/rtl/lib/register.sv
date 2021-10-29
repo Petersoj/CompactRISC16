@@ -18,7 +18,7 @@ module register #(parameter integer P_WIDTH = 16)
         input wire I_ENABLE,
         input wire I_NRESET,
         input wire [P_WIDTH - 1 : 0] I_DATA,
-        output reg [P_WIDTH - 1 : 0] O_DATA);
+        output reg [P_WIDTH - 1 : 0] O_DATA = 0);
 
 always @(posedge I_CLK or negedge I_NRESET) begin
     if (!I_NRESET)
