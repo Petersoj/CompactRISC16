@@ -93,7 +93,7 @@ seven_segment_hex_mapping i_display_5
 
 // Enable CR16 until 'P_MAX_CLK_COUNT' is reached
 always @(posedge I_CLK) begin
-    if (pc >= P_MAX_PC) begin
+    if (pc > P_MAX_PC) begin
         display_bits = {8'b0, o_mem_data_b};
         cr16_enable = 1'b0;
     end
