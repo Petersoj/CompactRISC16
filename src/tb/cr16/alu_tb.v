@@ -74,6 +74,10 @@ initial begin
     I_ENABLE = 1'b1; // Enable will be permanently high.
     I_CLK = 0;
 
+	 $display("================================================================");
+    $display("Testing ADD");
+    $display("================================================================");
+	 
     // Simulate ADD
     I_OPCODE = ADD;
     for(i = -32_768; i < 32_767; i = i + 1_024) begin
@@ -98,6 +102,10 @@ initial begin
                 $display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
+	 
+	 $display("================================================================");
+    $display("Testing ADDC");
+    $display("================================================================");
 
     // Simulate ADDC
     I_OPCODE = ADDC;
@@ -115,39 +123,17 @@ initial begin
             // Error if result is 0 and flag not set.
             if ( O_C == 0 && O_STATUS[3] != 1)
                 $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            if ( O_C[15] == 1 && O_STATUS[4] != 1)
+            if (O_STATUS[4] != ((I_A[15] != I_B[15] & O_C[15] == 1'b1) | (I_A[15] == 1'b1 & I_B[15] == 1'b1)))
                 $display("2 Neg bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
             // Error if the carry bit is ever set. Carry is reserved for unsigned operations.
             if (O_STATUS[0] == 1)
                 $display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
-
-    // Simulate SUB
-    I_OPCODE = SUB;
-    for(i = -32_768; i < 32_767; i = i + 1_024) begin
-        I_A = i;
-        for(j = -32_768; j < 32_767; j = j + 1_024) begin
-            I_B = j;
-            #2;
-            // Error if SUB failed.
-            if (O_C != $signed(I_B) - $signed(I_A))
-                $display("SUB Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
-            // Error if signed overflow ocurred and the Overflow bit was not set.
-            if ((I_A[15] != I_B[15]) && (O_C[15] != I_B[15]) && (O_STATUS[2] != 1))
-                $display("Signed Overflow set incorrectly: I_A: %b, I_B: %b, i: %0d, j: %0d, O_C: %b, j-i: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, j-i, O_STATUS[4:0]);
-            // Error if result is 0 and flag not set.
-            if ( O_C == 0 && O_STATUS[3] != 1)
-                $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if A greater than B and Negative flag not set.
-            if (($signed(I_B) < $signed(I_A)) && O_STATUS[4] != 1)
-                $display("4 Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %b, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-            // Error if the carry bit is ever set. Carry is reserved for unsigned operations.
-            if (O_STATUS[1] == 1)
-                $display("Carry bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
-
-        end
-    end
+	 	 
+	 $display("================================================================");
+    $display("Testing MUL");
+    $display("================================================================");
 
     // Simulate MUL
     I_OPCODE = MUL;
@@ -161,6 +147,40 @@ initial begin
                 $display("Test Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
         end
     end
+	 
+	 $display("================================================================");
+    $display("Testing SUB");
+    $display("================================================================");
+
+    // Simulate SUB
+    I_OPCODE = SUB;
+    for(i = -32_768; i < 32_767; i = i + 1_024) begin
+        I_A = i;
+        for(j = -32_768; j < 32_767; j = j + 1_024) begin
+            I_B = j;
+            #2;
+            // Error if SUB failed.
+            if ($signed(O_C) != $signed(I_B) - $signed(I_A))
+                $display("SUB Failed: I_A: %0d, I_B: %0d, i:%0d, j%0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, O_STATUS[4:0]);
+            // Error if signed overflow ocurred and the Overflow bit was not set.
+            if ((I_A[15] != I_B[15]) && (O_C[15] != I_B[15]) && (O_STATUS[2] != 1))
+                $display("Signed Overflow set incorrectly: I_A: %b, I_B: %b, i: %0d, j: %0d, O_C: %b, j-i: %0d, flags[4:0]: %b", I_A, I_B, i, j, O_C, j-i, O_STATUS[4:0]);
+            // Error if result is 0 and flag not set.
+            if ( O_C == 0 && O_STATUS[3] != 1)
+                $display("Zero bit not set: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            // Error if A greater than B and Negative flag not set.
+            if (($signed(I_B) < $signed(I_A)) && O_STATUS[4] != 1)
+                $display("4 Neg bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %b, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
+            // Error if the carry bit is ever set. Carry is reserved for unsigned operations.
+            if (I_B < I_A != O_STATUS[1])
+                $display("Carry bit set incorrectly: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", $signed(I_A), $signed(I_B), $signed(O_C), O_STATUS[4:0]);
+
+        end
+    end
+	 
+	 $display("================================================================");
+    $display("Testing AND");
+    $display("================================================================");
 
     // Simulate AND
     I_OPCODE = AND;
@@ -173,6 +193,10 @@ initial begin
                 $display("AND failed: I_A: %b, I_B: %b, O_C: %b, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
+	 
+	 $display("================================================================");
+    $display("Testing OR");
+    $display("================================================================");
 
     // Simulate OR
     I_OPCODE = OR;
@@ -185,6 +209,10 @@ initial begin
                 $display("OR failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
+	 
+	 $display("================================================================");
+    $display("Testing XOR");
+    $display("================================================================");
 
     // Simulate XOR
     I_OPCODE = XOR;
@@ -197,6 +225,10 @@ initial begin
                 $display("XOR failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
+	 
+	 $display("================================================================");
+    $display("Testing NOT");
+    $display("================================================================");
 
     // Simulate NOT
     // Note: Only one loop is necessary because NOT doesn't involve the I_B register.
@@ -207,6 +239,10 @@ initial begin
         if (O_C != ~I_A)
             $display("NOT failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
     end
+	 
+	 $display("================================================================");
+    $display("Testing LSH");
+    $display("================================================================");
 
     // Simulate LSH
     I_OPCODE = LSH;
@@ -219,6 +255,10 @@ initial begin
                 $display("LSH failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
+	 
+	 $display("================================================================");
+    $display("Testing RSH");
+    $display("================================================================");
 
     // Simulate RSH
     I_OPCODE = RSH;
@@ -231,6 +271,10 @@ initial begin
                 $display("RSH failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
+	 
+	 $display("================================================================");
+    $display("Testing ALSH");
+    $display("================================================================");
 
     // Simulate ALSH
     I_OPCODE = ALSH;
@@ -243,6 +287,10 @@ initial begin
                 $display("ALSH failed: I_A: %0d, I_B: %0d, O_C: %0d, flags[4:0]: %b", I_A, I_B, O_C, O_STATUS[4:0]);
         end
     end
+	 
+	 $display("================================================================");
+    $display("Testing ARSH");
+    $display("================================================================");
 
     // Simulate ARSH
     I_OPCODE = ARSH;
