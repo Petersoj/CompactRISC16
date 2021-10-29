@@ -18,9 +18,6 @@
 // @param I_IMMEDIATE_SELECT    assert to use the 'I_IMMEDIATE' value as the 'A' ALU input, reset
 //                              to use the regfile 'I_REG_A_SELECT'
 // @param I_OPCODE              the ALU opcode
-// @param I_STATUS_FLAGS        the ALU status flags input
-// @param I_STATUS_FLAGS_SELECT assert to set the status flags register to 'I_STATUS_FLAGS', reset
-//                              to retain status flags from ALU computation
 // @param I_REGFILE_DATA        the input data that is muxed with the ALU output that is an input
 //                              to the regfile
 // @param I_REGFILE_DATA_SELECT 1 to use the 'I_REGFILE_DATA' as an input to the regfile, 0 to use
@@ -39,13 +36,11 @@ module datapath
         input wire [15:0] I_IMMEDIATE,
         input wire I_IMMEDIATE_SELECT,
         input wire [3:0] I_OPCODE,
-        input wire [4:0] I_STATUS_FLAGS,
-        input wire I_STATUS_FLAGS_SELECT,
         input wire [15:0] I_REGFILE_DATA,
         input wire I_REGFILE_DATA_SELECT,
         output wire [15:0] O_A,
         output wire [15:0] O_B,
-        output reg [15:0] O_RESULT_BUS,
+        output wire [15:0] O_RESULT_BUS,
         output reg [4:0] O_STATUS_FLAGS);
 
 wire [15:0][15:0] regfile_data; // Output wire array of the register file
@@ -54,13 +49,9 @@ wire [15:0] regfile_b;          // 'I_REG_B_SELECT' muxed output of regfile
 wire [15:0] alu_input_a;        // 'A' input to ALU
 wire [15:0] alu_input_b;        // 'B' input to ALU
 wire [15:0] alu_output;         // Output of ALU
-wire [15:0] result_bus;         // Output of input data mux and ALU to regfile
-wire [4:0] alu_status_flags;    // Output of ALU flags
-wire [4:0] status_flags;        // The status flags value muxed between the ALU and 'I_STATUS_FLAGS'
 
 assign O_A = alu_input_a;
 assign O_B = alu_input_b;
-assign O_RESULT_BUS = result_bus;
 assign alu_input_b = regfile_b; // This assigment determines which ALU input is not muxed with the 'I_IMMEDIATE'
 
 // Instantiate two 16-to-1 16-bit muxes (one for register 'A' and register 'B')
@@ -89,7 +80,7 @@ mux #(.P_WIDTH(2),
 regfile i_regfile
         (.I_CLK(I_CLK),
          .I_NRESET(I_NRESET),
-         .I_REG_BUS(result_bus),
+         .I_REG_BUS(O_RESULT_BUS),
          .I_REG_ENABLE(I_REG_WRITE_ENABLE & {'d16{I_ENABLE}}),
          .O_REG_DATA(regfile_data));
 
@@ -99,7 +90,7 @@ mux #(.P_WIDTH(2),
     i_mux_regfile_data_select
     (.I_INPUT({I_REGFILE_DATA, alu_output}),
      .I_SELECT(I_REGFILE_DATA_SELECT),
-     .O_OUTPUT(result_bus));
+     .O_OUTPUT(O_RESULT_BUS));
 
 // Instantiate the ALU
 alu #(.P_WIDTH(16))
@@ -109,23 +100,6 @@ alu #(.P_WIDTH(16))
      .I_A(alu_input_a),
      .I_B(alu_input_b),
      .O_C(alu_output),
-     .O_STATUS(alu_status_flags));
-
-// Instantiate a mux to select between the 'alu_status_flags' and 'I_STATUS_FLAGS'
-mux #(.P_WIDTH(2),
-      .P_DEPTH(5))
-    i_mux_alu_status_flag_select
-    (.I_INPUT({I_STATUS_FLAGS, alu_status_flags}),
-     .I_SELECT(I_STATUS_FLAGS_SELECT),
-     .O_OUTPUT(status_flags));
-
-// Instantiate the ALU status flags register to hold status flags every clock cycle
-register #(.P_WIDTH(5))
-         i_status_flags_register
-         (.I_CLK(I_CLK),
-          .I_ENABLE(I_ENABLE),
-          .I_NRESET(I_NRESET),
-          .I_DATA(status_flags),
-          .O_DATA(O_STATUS_FLAGS));
+     .O_STATUS(O_STATUS_FLAGS));
 
 endmodule

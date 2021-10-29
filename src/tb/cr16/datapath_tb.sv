@@ -57,8 +57,6 @@ datapath uut
           .I_IMMEDIATE(I_IMMEDIATE),
           .I_IMMEDIATE_SELECT(I_IMM_SELECT),
           .I_OPCODE(I_OPCODE),
-          .I_STATUS_FLAGS({5{1'b0}}),
-          .I_STATUS_FLAGS_SELECT(1'b0),
           .I_REGFILE_DATA(I_REGFILE_DATA),
           .I_REGFILE_DATA_SELECT(I_REGFILE_DATA_SELECT),
           .O_A(O_A),
