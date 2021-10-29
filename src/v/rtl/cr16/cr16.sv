@@ -28,6 +28,7 @@
 // @param O_RESULT_BUS           the datapath result bus which is connected to the mux of the ALU
 //                               output and the regfile data input
 // @param O_STATUS_FLAGS         the ALU status flags which updates after the execute state
+// @param O_PC                   the program counter (instruction address)
 module cr16
        (input wire I_CLK,
         input wire I_ENABLE,
@@ -41,7 +42,8 @@ module cr16
         output reg [15:0] O_EXT_MEM_ADDRESS,
         output reg O_EXT_MEM_WRITE_ENABLE,
         output wire [15:0] O_RESULT_BUS,
-        output wire [4:0] O_STATUS_FLAGS);
+        output wire [4:0] O_STATUS_FLAGS,
+        output wire [16:0] O_PC);
 
 // Define states of FSM
 localparam P_STATE_BIT_WIDTH = 3;
@@ -130,6 +132,7 @@ reg pc_address_select;
 reg pc_address_select_increment;
 reg pc_address_select_displace;
 wire [15:0] pc_o_address;
+assign O_PC = pc_o_address;
 
 // Ports for 'i_datapath'
 reg [15:0] reg_write_enable;

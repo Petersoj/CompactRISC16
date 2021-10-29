@@ -1,10 +1,10 @@
 # Copyright (C) 2020  Intel Corporation. All rights reserved.
-# Your use of Intel Corporation's design tools, logic functions 
-# and other software and tools, and any partner logic 
-# functions, and any output files from any of the foregoing 
-# (including device programming or simulation files), and any 
-# associated documentation or information are expressly subject 
-# to the terms and conditions of the Intel Program License 
+# Your use of Intel Corporation's design tools, logic functions
+# and other software and tools, and any partner logic
+# functions, and any output files from any of the foregoing
+# (including device programming or simulation files), and any
+# associated documentation or information are expressly subject
+# to the terms and conditions of the Intel Program License
 # Subscription Agreement, the Intel Quartus Prime License Agreement,
 # the Intel FPGA IP License Agreement, or other applicable license
 # agreement, including, without limitation, that your use is for
@@ -14,58 +14,73 @@
 # https://fpgasoftware.intel.com/eula.
 
 # Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-# File: C:\Users\jacob\Documents\ECE 3710\CompactRISC16\resources\pin_assignments\cr16_top\5CSEMA5F31C6N_cr16_top.csv
-# Generated on: Fri Oct 29 02:20:05 2021
+# Generated on: Fri Oct 29 11:13:43 2021
 
 # Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
 
-To,Direction,Location,I/O Bank,VREF Group,Fitter Location,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Transceiver Analog Settings Protocol,VCCR_GXB/VCCT_GXB Voltage,Transceiver I/O Pin Termination,Transceiver Dedicated Refclk Pin Termination,Transmitter Common Mode Driver Voltage,Transmitter Slew Rate Control,Transmitter Differential Output Voltage,Receiver Buffer Common Mode Voltage,Strict Preservation
-I_CLK,Input,PIN_Y16,3B,B3B_N0,PIN_AB27,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[9],Input,PIN_AE12,3A,B3A_N0,PIN_AE12,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[8],Input,PIN_AD10,3A,B3A_N0,PIN_AD10,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[7],Input,PIN_AC9,3A,B3A_N0,PIN_AC9,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[6],Input,PIN_AE11,3A,B3A_N0,PIN_AE11,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[5],Input,PIN_AD12,3A,B3A_N0,PIN_AD12,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[4],Input,PIN_AD11,3A,B3A_N0,PIN_AD11,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[3],Input,PIN_AF10,3A,B3A_N0,PIN_AF10,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[2],Input,PIN_AF9,3A,B3A_N0,PIN_AF9,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[1],Input,PIN_AC12,3A,B3A_N0,PIN_AC12,3.3-V LVTTL,,,,,,,,,,,,,
-I_MEM_ADDRESS_B[0],Input,PIN_AB12,3A,B3A_N0,PIN_AB12,3.3-V LVTTL,,,,,,,,,,,,,
-I_NRESET,Input,PIN_AA14,3B,B3B_N0,PIN_Y27,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[3],Output,,,,,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[2],Output,,,,,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[1],Output,,,,,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[0],Output,,,,,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[0][0],Output,PIN_AE26,5A,B5A_N0,PIN_AC14,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[0][1],Output,PIN_AE27,5A,B5A_N0,PIN_AH7,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[0][2],Output,PIN_AE28,5A,B5A_N0,PIN_AK13,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[0][3],Output,PIN_AG27,5A,B5A_N0,PIN_AK14,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[0][4],Output,PIN_AF28,5A,B5A_N0,PIN_AB15,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[0][5],Output,PIN_AG28,5A,B5A_N0,PIN_AJ7,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[0][6],Output,PIN_AH28,5A,B5A_N0,PIN_AJ9,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[1][0],Output,PIN_AJ29,5A,B5A_N0,PIN_AK9,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[1][1],Output,PIN_AH29,5A,B5A_N0,PIN_AH8,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[1][2],Output,PIN_AH30,5A,B5A_N0,PIN_AK7,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[1][3],Output,PIN_AG30,5A,B5A_N0,PIN_AH14,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[1][4],Output,PIN_AF29,5A,B5A_N0,PIN_AH13,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[1][5],Output,PIN_AF30,5A,B5A_N0,PIN_AJ5,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[1][6],Output,PIN_AD27,5A,B5A_N0,PIN_AK11,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[2][0],Output,PIN_AB23,5A,B5A_N0,PIN_AF15,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[2][1],Output,PIN_AE29,5B,B5B_N0,PIN_AJ4,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[2][2],Output,PIN_AD29,5B,B5B_N0,PIN_AJ25,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[2][3],Output,PIN_AC28,5B,B5B_N0,PIN_AD14,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[2][4],Output,PIN_AD30,5B,B5B_N0,PIN_AK8,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[2][5],Output,PIN_AC29,5B,B5B_N0,PIN_AG12,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[2][6],Output,PIN_AC30,5B,B5B_N0,PIN_AF13,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[3][0],Output,PIN_AD26,5A,B5A_N0,PIN_AJ6,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[3][1],Output,PIN_AC27,5A,B5A_N0,PIN_AE13,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[3][2],Output,PIN_AD25,5A,B5A_N0,PIN_AE14,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[3][3],Output,PIN_AC25,5A,B5A_N0,PIN_AK2,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[3][4],Output,PIN_AB28,5B,B5B_N0,PIN_AK4,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[3][5],Output,PIN_AB25,5A,B5A_N0,PIN_AH12,3.3-V LVTTL,,,,,,,,,,,,,
-O_7_SEGMENT_DISPLAY[3][6],Output,PIN_AB22,5A,B5A_N0,PIN_E12,3.3-V LVTTL,,,,,,,,,,,,,
-O_LED_FLAGS[4],Output,PIN_W17,4A,B4A_N0,PIN_AH5,3.3-V LVTTL,,,,,,,,,,,,,
-O_LED_FLAGS[3],Output,PIN_V18,4A,B4A_N0,PIN_AH3,3.3-V LVTTL,,,,,,,,,,,,,
-O_LED_FLAGS[2],Output,PIN_V17,4A,B4A_N0,PIN_AF8,3.3-V LVTTL,,,,,,,,,,,,,
-O_LED_FLAGS[1],Output,PIN_W16,4A,B4A_N0,PIN_AG6,3.3-V LVTTL,,,,,,,,,,,,,
-O_LED_FLAGS[0],Output,PIN_V16,4A,B4A_N0,PIN_AG7,3.3-V LVTTL,,,,,,,,,,,,,
+To,Direction,Location,I/O Bank,VREF Group,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Transceiver Analog Settings Protocol,VCCR_GXB/VCCT_GXB Voltage,Transceiver I/O Pin Termination,Transceiver Dedicated Refclk Pin Termination,Transmitter Common Mode Driver Voltage,Transmitter Slew Rate Control,Transmitter Differential Output Voltage,Receiver Buffer Common Mode Voltage,Strict Preservation
+I_NRESET,Unknown,PIN_AA14,3B,B3B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_CLK,Unknown,PIN_Y16,3B,B3B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[9],Unknown,PIN_AE12,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[8],Unknown,PIN_AD10,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[7],Unknown,PIN_AC9,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[6],Unknown,PIN_AE11,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[5],Unknown,PIN_AD12,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[4],Unknown,PIN_AD11,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[3],Unknown,PIN_AF10,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[2],Unknown,PIN_AF9,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[1],Unknown,PIN_AC12,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+I_MEM_ADDRESS_B[0],Unknown,PIN_AB12,3A,B3A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[5],Unknown,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[4],Unknown,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3],Unknown,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2],Unknown,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1],Unknown,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0],Unknown,,,,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][0],Unknown,PIN_AE26,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][1],Unknown,PIN_AE27,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][2],Unknown,PIN_AE28,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][3],Unknown,PIN_AG27,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][4],Unknown,PIN_AF28,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][5],Unknown,PIN_AG28,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[0][6],Unknown,PIN_AH28,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][0],Unknown,PIN_AJ29,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][1],Unknown,PIN_AH29,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][2],Unknown,PIN_AH30,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][3],Unknown,PIN_AG30,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][4],Unknown,PIN_AF29,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][5],Unknown,PIN_AF30,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[1][6],Unknown,PIN_AD27,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][0],Unknown,PIN_AB23,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][1],Unknown,PIN_AE29,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][2],Unknown,PIN_AD29,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][3],Unknown,PIN_AC28,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][4],Unknown,PIN_AD30,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][5],Unknown,PIN_AC29,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[2][6],Unknown,PIN_AC30,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][0],Unknown,PIN_AD26,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][1],Unknown,PIN_AC27,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][2],Unknown,PIN_AD25,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][3],Unknown,PIN_AC25,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][4],Unknown,PIN_AB28,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][5],Unknown,PIN_AB25,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[3][6],Unknown,PIN_AB22,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[4][0],Unknown,PIN_AA24,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[4][1],Unknown,PIN_Y23,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[4][2],Unknown,PIN_Y24,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[4][3],Unknown,PIN_W22,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[4][4],Unknown,PIN_W24,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[4][5],Unknown,PIN_V23,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[4][6],Unknown,PIN_W25,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[5][0],Unknown,PIN_V25,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[5][1],Unknown,PIN_AA28,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[5][2],Unknown,PIN_Y27,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[5][3],Unknown,PIN_AB27,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[5][4],Unknown,PIN_AB26,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[5][5],Unknown,PIN_AA26,5B,B5B_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_7_SEGMENT_DISPLAY[5][6],Unknown,PIN_AA25,5A,B5A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[4],Unknown,PIN_W17,4A,B4A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[3],Unknown,PIN_V18,4A,B4A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[2],Unknown,PIN_V17,4A,B4A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[1],Unknown,PIN_W16,4A,B4A_N0,3.3-V LVTTL,,,,,,,,,,,,,
+O_LED_FLAGS[0],Unknown,PIN_V16,4A,B4A_N0,3.3-V LVTTL,,,,,,,,,,,,,

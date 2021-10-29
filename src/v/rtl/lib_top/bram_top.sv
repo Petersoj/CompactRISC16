@@ -34,7 +34,7 @@ parameter [3:0] S0 = 'b0,
           S8 = 'd8;
 
 // Instantiate BRAM module with given init file.
-bram #(.P_BRAM_INIT_FILE("resources/bram_init/bram_top_init.dat"),
+bram #(.P_BRAM_INIT_FILE("resources/bram_init/lib_top/bram_top_init.dat"),
        .P_BRAM_INIT_FILE_START_ADDRESS('d0),
        .P_DATA_WIDTH('d16),
        .P_ADDRESS_WIDTH('d10))
