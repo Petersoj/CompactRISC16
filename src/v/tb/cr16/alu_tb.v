@@ -90,10 +90,10 @@ initial begin
             if ((~a[15] & ~b[15] & c[15]) | (a[15] & b[15] & ~c[15]) && (status[2] != 1'b1))
                 $display("Signed Overflow not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if result is 0 and flag not set.
-            if ( c == 0 && status[3] != 1)
+            if (c == 0 && status[3] != 1)
                 $display("Zero bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if the answer is negative and the negative bit was not set.
-            if ( status[4] != (((a[15] != b[15]) & (c[15] == 1'b1)) | ((a[15] == 1'b1) & (b[15] == 1'b1))))
+            if (status[4] != (((a[15] != b[15]) & (c[15] == 1'b1)) | ((a[15] == 1'b1) & (b[15] == 1'b1))))
                 $display("0 Neg bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             expected = (b + a) >> 16;
             if (status[0] != expected)
@@ -119,12 +119,12 @@ initial begin
             if ((~a[15] & ~b[15] & c[15]) | (a[15] & b[15] & ~c[15]) && (status[2] != 1'b1))
                 $display("Signed Overflow not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if result is 0 and flag not set.
-            if ( c == 0 && status[3] != 1)
+            if (c == 0 && status[3] != 1)
                 $display("Zero bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             if (status[4] != ((a[15] != b[15] & c[15] == 1'b1) | (a[15] == 1'b1 & b[15] == 1'b1)))
                 $display("2 Neg bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if the carry bit is ever set. Carry is reserved for unsigned operations.
-				expected = (b + a + 1'b1) >> 16;
+            expected = (b + a + 1'b1) >> 16;
             if (status[0] != expected)
                 $display("Carry bit set incorrectly: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
@@ -165,7 +165,7 @@ initial begin
             if ((a[15] != b[15]) && (c[15] != b[15]) && (status[2] != 1))
                 $display("Signed Overflow set incorrectly: a: %b, b: %b, i: %0d, j: %0d, c: %b, j-i: %0d, flags[4:0]: %b", a, b, i, j, c, j-i, status[4:0]);
             // Error if result is 0 and flag not set.
-            if ( c == 0 && status[3] != 1)
+            if (c == 0 && status[3] != 1)
                 $display("Zero bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if A greater than B and Negative flag not set.
             if (($signed(b) < $signed(a)) && status[4] != 1)
@@ -250,8 +250,8 @@ initial begin
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             b = j;
             #2;
-				a = a & 'hF;
-				expected = b << a;
+            a = a & 'hF;
+            expected = b << a;
             if (c != expected)
                 $display("LSH failed: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
@@ -268,8 +268,8 @@ initial begin
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             b = j;
             #2;
-				a = a & 'hF;
-				expected = b >> a;
+            a = a & 'hF;
+            expected = b >> a;
             if (c != expected)
                 $display("RSH failed: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
@@ -286,8 +286,8 @@ initial begin
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             b = j;
             #2;
-				a = a & 'hF;
-				expected = b <<< a;
+            a = a & 'hF;
+            expected = b <<< a;
             if (c != expected)
                 $display("ALSH failed: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
@@ -304,8 +304,8 @@ initial begin
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             b = j;
             #2;
-				a = a & 'hF;
-				expected = b >>> a;
+            a = a & 'hF;
+            expected = b >>> a;
             if (c != expected)
                 $display("ARSH failed: a: %0d, b: %0d, c: %0d, expected: %0d, flags[4:0]: %b", a, b, c, expected, status[4:0]);
         end
