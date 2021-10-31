@@ -40,7 +40,7 @@ localparam [3:0]
 // Establish the clock signal to sync the test
 always #1 clk = ~clk;
 
-integer i, j;
+integer i, j, expected;
 
 // Instantiate the Unit Under Test (UUT)
 alu uut
@@ -93,10 +93,10 @@ initial begin
             if ( c == 0 && status[3] != 1)
                 $display("Zero bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if the answer is negative and the negative bit was not set.
-            if ( c[15] == 1 && status[4] != 1)
+            if ( status[4] != (((a[15] != b[15]) & (c[15] == 1'b1)) | ((a[15] == 1'b1) & (b[15] == 1'b1))))
                 $display("0 Neg bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
-            // Error if the carry bit is ever set. Carry is reserved for unsigned operations.
-            if (status[0] == 1)
+            expected = (b + a) >> 16;
+            if (status[0] != expected)
                 $display("Carry bit set incorrectly: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
     end
@@ -124,7 +124,8 @@ initial begin
             if (status[4] != ((a[15] != b[15] & c[15] == 1'b1) | (a[15] == 1'b1 & b[15] == 1'b1)))
                 $display("2 Neg bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if the carry bit is ever set. Carry is reserved for unsigned operations.
-            if (status[0] == 1)
+				expected = (b + a + 1'b1) >> 16;
+            if (status[0] != expected)
                 $display("Carry bit set incorrectly: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
     end
@@ -249,7 +250,9 @@ initial begin
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             b = j;
             #2;
-            if (c != (a << b))
+				a = a & 'hF;
+				expected = b << a;
+            if (c != expected)
                 $display("LSH failed: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
     end
@@ -265,7 +268,9 @@ initial begin
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             b = j;
             #2;
-            if (c != (a >> b))
+				a = a & 'hF;
+				expected = b >> a;
+            if (c != expected)
                 $display("RSH failed: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
     end
@@ -281,7 +286,9 @@ initial begin
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             b = j;
             #2;
-            if (c != (a <<< b))
+				a = a & 'hF;
+				expected = b <<< a;
+            if (c != expected)
                 $display("ALSH failed: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
         end
     end
@@ -297,8 +304,10 @@ initial begin
         for(j = -32_768; j < 32_767; j = j + 1_024) begin
             b = j;
             #2;
-            if (c != (a >>> b))
-                $display("ARSH failed: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
+				a = a & 'hF;
+				expected = b >>> a;
+            if (c != expected)
+                $display("ARSH failed: a: %0d, b: %0d, c: %0d, expected: %0d, flags[4:0]: %b", a, b, c, expected, status[4:0]);
         end
     end
 
