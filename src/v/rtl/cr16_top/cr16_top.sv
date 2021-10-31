@@ -70,7 +70,6 @@ cr16 i_cr16
       .O_STATUS_FLAGS(O_LED_FLAGS),
       .O_PC(pc));
 
-
 // Instantiate 7-segment hex mappings to display 'display_bits'
 seven_segment_hex_mapping i_display_0
                           (.I_VALUE(display_bits[3:0]),
@@ -91,7 +90,7 @@ seven_segment_hex_mapping i_display_5
                           (.I_VALUE(display_bits[23:20]),
                            .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[5]));
 
-// Enable CR16 until 'P_MAX_CLK_COUNT' is reached
+// Enable CR16 for all 'pc' before 'P_MAX_PC'
 always @(posedge I_CLK) begin
     if (pc > P_MAX_PC) begin
         display_bits = {8'b0, o_mem_data_b};

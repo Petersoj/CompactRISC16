@@ -81,7 +81,7 @@ regfile i_regfile
         (.I_CLK(I_CLK),
          .I_NRESET(I_NRESET),
          .I_REG_BUS(O_RESULT_BUS),
-         .I_REG_ENABLE(I_REG_WRITE_ENABLE & {'d16{I_ENABLE}}),
+         .I_REG_ENABLE(I_REG_WRITE_ENABLE & {16{I_ENABLE}}),
          .O_REG_DATA(regfile_data));
 
 // Instantiate a mux to select between the 'I_REGFILE_DATA' input and ALU output
@@ -95,8 +95,7 @@ mux #(.P_WIDTH(2),
 // Instantiate the ALU
 alu #(.P_WIDTH(16))
     i_alu
-    (.I_ENABLE(I_ENABLE),
-     .I_OPCODE(I_OPCODE),
+    (.I_OPCODE(I_OPCODE),
      .I_A(alu_input_a),
      .I_B(alu_input_b),
      .O_C(alu_output),

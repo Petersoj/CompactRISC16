@@ -19,6 +19,8 @@
 # Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
 
 To,Direction,Location,I/O Bank,VREF Group,Fitter Location,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Transceiver Analog Settings Protocol,VCCR_GXB/VCCT_GXB Voltage,Transceiver I/O Pin Termination,Transceiver Dedicated Refclk Pin Termination,Transmitter Common Mode Driver Voltage,Transmitter Slew Rate Control,Transmitter Differential Output Voltage,Receiver Buffer Common Mode Voltage,Strict Preservation
+I_NRESET,Input,PIN_AA14,3B,B3B_N0,PIN_AJ20,3.3-V LVTTL,,,,,,,,,,,,,
+I_CLK,Input,PIN_Y16,3B,B3B_N0,PIN_Y27,3.3-V LVTTL,,,,,,,,,,,,,
 I_INPUT[7],Input,PIN_AC9,3A,B3A_N0,PIN_AK19,3.3-V LVTTL,,,,,,,,,,,,,
 I_INPUT[6],Input,PIN_AE11,3A,B3A_N0,PIN_AJ21,3.3-V LVTTL,,,,,,,,,,,,,
 I_INPUT[5],Input,PIN_AD12,3A,B3A_N0,PIN_AG22,3.3-V LVTTL,,,,,,,,,,,,,
@@ -27,8 +29,6 @@ I_INPUT[3],Input,PIN_AF10,3A,B3A_N0,PIN_AD17,3.3-V LVTTL,,,,,,,,,,,,,
 I_INPUT[2],Input,PIN_AF9,3A,B3A_N0,PIN_AF19,3.3-V LVTTL,,,,,,,,,,,,,
 I_INPUT[1],Input,PIN_AC12,3A,B3A_N0,PIN_AG20,3.3-V LVTTL,,,,,,,,,,,,,
 I_INPUT[0],Input,PIN_AB12,3A,B3A_N0,PIN_AE19,3.3-V LVTTL,,,,,,,,,,,,,
-I_RST,Input,PIN_AA14,3B,B3B_N0,PIN_AJ20,3.3-V LVTTL,,,,,,,,,,,,,
-I_STEP,Input,PIN_Y16,3B,B3B_N0,PIN_Y27,3.3-V LVTTL,,,,,,,,,,,,,
 O_7_SEGMENT_DISPLAY_0[6],Output,PIN_AH28,5A,B5A_N0,PIN_AJ19,3.3-V LVTTL,,,,,,,,,,,,,
 O_7_SEGMENT_DISPLAY_0[5],Output,PIN_AG28,5A,B5A_N0,PIN_V17,3.3-V LVTTL,,,,,,,,,,,,,
 O_7_SEGMENT_DISPLAY_0[4],Output,PIN_AF28,5A,B5A_N0,PIN_AA16,3.3-V LVTTL,,,,,,,,,,,,,

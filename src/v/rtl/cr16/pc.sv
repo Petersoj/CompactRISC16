@@ -29,8 +29,8 @@ module pc #(parameter integer P_ADDRESS_WIDTH = 16)
 
 always @(posedge I_ENABLE or negedge I_NRESET) begin
     if (!I_NRESET)
-        O_ADDRESS = 1'd0;
-    else begin
+        O_ADDRESS = {P_ADDRESS_WIDTH{1'b0}};
+    else
         if (I_ADDRESS_SELECT)
             if (I_ADDRESS_SELECT_INCREMENT)
                 O_ADDRESS = I_ADDRESS + 1'd1;
@@ -39,7 +39,6 @@ always @(posedge I_ENABLE or negedge I_NRESET) begin
             else
                 O_ADDRESS = I_ADDRESS;
         else
-            O_ADDRESS += 1'd1;
-    end
+            O_ADDRESS++;
 end
 endmodule

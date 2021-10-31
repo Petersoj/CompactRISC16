@@ -8,9 +8,9 @@
 //
 
 module alu_top
-       (input wire[7:0] I_INPUT,
-        input I_RST,
-        input I_STEP,
+       (input I_CLK,
+        input I_NRESET,
+        input wire[7:0] I_INPUT,
         output wire [6:0] O_7_SEGMENT_DISPLAY_0,
         output wire [6:0] O_7_SEGMENT_DISPLAY_1,
         output wire [6:0] O_7_SEGMENT_DISPLAY_2,
@@ -32,8 +32,7 @@ wire [15:0] c;
 
 alu #(.P_WIDTH(16))
     i_alu
-    (.I_ENABLE(1'b1),
-     .I_OPCODE(opcode),
+    (.I_OPCODE(opcode),
      .I_A(a),
      .I_B(b),
      .O_C(c),
@@ -44,8 +43,8 @@ seven_segment_hex_mapping i_display_1(.I_VALUE(c[7:4]), .O_7_SEGMENT(O_7_SEGMENT
 seven_segment_hex_mapping i_display_2(.I_VALUE(c[11:8]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_2));
 seven_segment_hex_mapping i_display_3(.I_VALUE(c[15:12]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY_3));
 
-always@(negedge I_STEP or negedge I_RST) begin
-    if (!I_RST) begin
+always@(negedge I_CLK or negedge I_NRESET) begin
+    if (!I_NRESET) begin
         state <= STATE_HIGH_A;
         opcode <= 0;
         a <= 0;

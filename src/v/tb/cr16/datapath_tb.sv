@@ -12,57 +12,57 @@
 module datapath_tb();
 
 // Inputs
-reg [15:0] I_REG_WRITE_ENABLE; // Enables write to register
-reg I_NRESET;
-reg [3:0] I_OPCODE;
-reg I_CLK;
-reg [3:0] I_REG_A_SELECT; // 4 bit selectors for register values to ALU
-reg [3:0] I_REG_B_SELECT;
-reg [15:0] I_IMMEDIATE;
-reg I_IMM_SELECT; // 1 if loading immediate, 0 otherwise
-reg [15:0] I_REGFILE_DATA;
-reg I_REGFILE_DATA_SELECT;
+reg [15:0] reg_write_enable; // Enables write to register
+reg nreset;
+reg [3:0] opcode;
+reg clk;
+reg [3:0] reg_a_select; // 4 bit selectors for register values to ALU
+reg [3:0] reg_b_select;
+reg [15:0] immediate;
+reg immediate_select; // 1 if loading immediate, 0 otherwise
+reg [15:0] regfile_data;
+reg regfile_data_select;
 
 // Outputs
-wire [15:0] O_RESULT_BUS;
-wire [4:0] O_STATUS_FLAGS;
-wire [15:0] O_A;
-wire [15:0] O_B;
+wire [15:0] result_bus;
+wire [4:0] status_flags;
+wire [15:0] a;
+wire [15:0] b;
 
 // Parameterized Opcodes from 'rtl/cr16/alu.v'
 localparam [3:0]
-           ADD = 0,   // Unsigned and signed addition
-           ADDC = 1,  // Unsigned and signed addition with carry
-           MUL = 2,   // Signed multiplication
-           SUB = 3,   // Unsigned and signed subtraction
-           NOT = 4,   // Bitwise NOT
-           AND = 5,   // Bitwise AND
-           OR = 6,    // Bitwise OR
-           XOR = 7,   // Bitwise XOR
-           LSH = 8,   // Logical left shift
-           RSH = 9,   // Logical right shift
-           ALSH = 10, // Arithmetic (sign-extending) left shift
-           ARSH = 11; // Arithmetic (sign-extending) right shift
+           ADD = 0,
+           ADDC = 1,
+           MUL = 2,
+           SUB = 3,
+           NOT = 4,
+           AND = 5,
+           OR = 6,
+           XOR = 7,
+           LSH = 8,
+           RSH = 9,
+           ALSH = 10,
+           ARSH = 11;
 
 // Establish the clock signal to sync the test
-always #1 I_CLK = ~I_CLK;
+always #1 clk = ~clk;
 
 datapath uut
-         (.I_CLK(I_CLK),
+         (.I_CLK(clk),
           .I_ENABLE(1'b1),
-          .I_NRESET(I_NRESET),
-          .I_REG_WRITE_ENABLE(I_REG_WRITE_ENABLE),
-          .I_REG_A_SELECT(I_REG_A_SELECT),
-          .I_REG_B_SELECT(I_REG_B_SELECT),
-          .I_IMMEDIATE(I_IMMEDIATE),
-          .I_IMMEDIATE_SELECT(I_IMM_SELECT),
-          .I_OPCODE(I_OPCODE),
-          .I_REGFILE_DATA(I_REGFILE_DATA),
-          .I_REGFILE_DATA_SELECT(I_REGFILE_DATA_SELECT),
-          .O_A(O_A),
-          .O_B(O_B),
-          .O_RESULT_BUS(O_RESULT_BUS),
-          .O_STATUS_FLAGS(O_STATUS_FLAGS));
+          .I_NRESET(nreset),
+          .I_REG_WRITE_ENABLE(reg_write_enable),
+          .I_REG_A_SELECT(reg_a_select),
+          .I_REG_B_SELECT(reg_b_select),
+          .I_IMMEDIATE(immediate),
+          .I_IMMEDIATE_SELECT(immediate_select),
+          .I_OPCODE(opcode),
+          .I_REGFILE_DATA(regfile_data),
+          .I_REGFILE_DATA_SELECT(regfile_data_select),
+          .O_A(a),
+          .O_B(b),
+          .O_RESULT_BUS(result_bus),
+          .O_STATUS_FLAGS(status_flags));
 
 integer i, num, prevNum, temp;
 
@@ -71,21 +71,21 @@ initial begin
     $display("========================== BEGIN SIM ===========================");
     $display("================================================================");
 
-    I_CLK = 'b1;
+    clk = 'b1;
 
     // Set initial register values to 0
     #2;
-    I_NRESET = 'b0;
+    nreset = 'b0;
     #2;
-    I_NRESET = 'b1;
-    I_REG_WRITE_ENABLE = 'b0;
-    I_REG_A_SELECT = 'b0;
-    I_REG_B_SELECT = 'b0;
-    I_IMMEDIATE = 'd0;
-    I_IMM_SELECT = 'd0;
-    I_OPCODE = ADD;
-    I_REGFILE_DATA = 'd0;
-    I_REGFILE_DATA_SELECT = 'b0;
+    nreset = 'b1;
+    reg_write_enable = 'b0;
+    reg_a_select = 'b0;
+    reg_b_select = 'b0;
+    immediate = 'd0;
+    immediate_select = 'd0;
+    opcode = ADD;
+    regfile_data = 'd0;
+    regfile_data_select = 'b0;
     #2;
 
     $display("================================================================");
@@ -93,36 +93,36 @@ initial begin
     $display("================================================================");
 
     // Load 1 into registers 1 and 2
-    I_IMMEDIATE = 1;
-    I_IMM_SELECT = 'd1;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0001;
+    immediate = 1;
+    immediate_select = 'd1;
+    reg_write_enable = 'b0000_0000_0000_0001;
     #2;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
+    reg_write_enable = 'b0000_0000_0000_0010;
     #2;
-    I_REG_WRITE_ENABLE = 'b0;
+    reg_write_enable = 'b0;
 
     // Begin test
-    I_REG_A_SELECT = 'b0000;
-    I_REG_B_SELECT = 'b0001;
-    I_IMM_SELECT = 0;
+    reg_a_select = 'b0000;
+    reg_b_select = 'b0001;
+    immediate_select = 0;
     #2;
 
     num = 1;
     prevNum = 0;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
+    reg_write_enable = 'b0000_0000_0000_0100;
     for(i = 0; i < 15; i = i + 1) begin
         #5;
 
-        if ((num + prevNum) != O_RESULT_BUS)
-            $display("Fibbonacci test failed: Expected: %0d, Actual: %0d", num + prevNum, O_RESULT_BUS);
+        if ((num + prevNum) != result_bus)
+            $display("Fibbonacci test failed: Expected: %0d, Actual: %0d", num + prevNum, result_bus);
 
         temp = num;
         num = temp + prevNum;
         prevNum = temp;
 
-        I_REG_A_SELECT = I_REG_A_SELECT + 'b0001;
-        I_REG_B_SELECT = I_REG_B_SELECT + 'b0001;
-        I_REG_WRITE_ENABLE <<= 1;
+        reg_a_select = reg_a_select + 'b0001;
+        reg_b_select = reg_b_select + 'b0001;
+        reg_write_enable <<= 1;
         #2;
     end
 
@@ -132,34 +132,34 @@ initial begin
 
     // Set initial register values to 0
     #2;
-    I_NRESET = 'b0;
+    nreset = 'b0;
     #2;
-    I_NRESET = 'b1;
-    I_REG_WRITE_ENABLE = 'b0;
-    I_REG_A_SELECT = 'b0;
-    I_REG_B_SELECT = 'b0;
-    I_IMMEDIATE = 'd0;
-    I_IMM_SELECT = 'd0;
-    I_OPCODE = SUB;
-    I_REGFILE_DATA = 'd0;
-    I_REGFILE_DATA_SELECT = 'b0;
+    nreset = 'b1;
+    reg_write_enable = 'b0;
+    reg_a_select = 'b0;
+    reg_b_select = 'b0;
+    immediate = 'd0;
+    immediate_select = 'd0;
+    opcode = SUB;
+    regfile_data = 'd0;
+    regfile_data_select = 'b0;
     #2;
 
     // Load 1 into register 2
-    I_IMMEDIATE = 1;
-    I_IMM_SELECT = 1;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
+    immediate = 1;
+    immediate_select = 1;
+    reg_write_enable = 'b0000_0000_0000_0010;
     #2;
-    I_IMM_SELECT = 0;
+    immediate_select = 0;
 
     // Begin test
-    I_REG_A_SELECT = 0;
-    I_REG_B_SELECT = 1;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
+    reg_a_select = 0;
+    reg_b_select = 1;
+    reg_write_enable = 'b0000_0000_0000_0100;
     #2;
 
-    if (O_RESULT_BUS != 'b1111_1111_1111_1111)
-        $display("Test Failed in signed operations: Expected: %b, Actual: %b", 16'b1111_1111_1111_1111, O_RESULT_BUS);
+    if (result_bus != 'b1111_1111_1111_1111)
+        $display("Test Failed in signed operations: Expected: %b, Actual: %b", 16'b1111_1111_1111_1111, result_bus);
 
     $display("\n================================================================");
     $display("Testing Boolean Operations");
@@ -167,69 +167,69 @@ initial begin
 
     // Set initial register values to 0
     #2;
-    I_NRESET = 'b0;
+    nreset = 'b0;
     #2;
-    I_NRESET = 'b1;
-    I_REG_WRITE_ENABLE = 'b0;
-    I_REG_A_SELECT = 'b0;
-    I_REG_B_SELECT = 'd5;
-    I_IMMEDIATE = 'd0;
-    I_IMM_SELECT = 'd0;
-    I_OPCODE = 'd0;
-    I_REGFILE_DATA = 'd0;
-    I_REGFILE_DATA_SELECT = 'b0;
+    nreset = 'b1;
+    reg_write_enable = 'b0;
+    reg_a_select = 'b0;
+    reg_b_select = 'd5;
+    immediate = 'd0;
+    immediate_select = 'd0;
+    opcode = 'd0;
+    regfile_data = 'd0;
+    regfile_data_select = 'b0;
     #2;
 
     // Load 7 (0111) into register 0
-    I_IMMEDIATE = 'd7;
-    I_IMM_SELECT = 1;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0001;
+    immediate = 'd7;
+    immediate_select = 1;
+    reg_write_enable = 'b0000_0000_0000_0001;
     #2;
     // Load 4 (0100) into register 1
-    I_IMMEDIATE = 'd4;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
+    immediate = 'd4;
+    reg_write_enable = 'b0000_0000_0000_0010;
     #2;
-    I_IMM_SELECT = 0;
+    immediate_select = 0;
 
     // Begin test
-    I_REG_A_SELECT = 0;
-    I_REG_B_SELECT = 1;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
+    reg_a_select = 0;
+    reg_b_select = 1;
+    reg_write_enable = 'b0000_0000_0000_0100;
 
     // Test AND
-    I_OPCODE = AND;
+    opcode = AND;
     #2;
-    if (O_RESULT_BUS != 4)
-        $display("Boolean test failed in AND Expected: %b, Actual: %b", 16'd4, O_RESULT_BUS);
+    if (result_bus != 4)
+        $display("Boolean test failed in AND Expected: %b, Actual: %b", 16'd4, result_bus);
 
-    I_REG_WRITE_ENABLE <<= 1;
+    reg_write_enable <<= 1;
     #2;
 
     // Test OR
-    I_OPCODE = OR;
+    opcode = OR;
     #2;
-    if (O_RESULT_BUS != 7)
-        $display("Boolean test failed in OR Expected: %b, Actual: %b", 16'd7, O_RESULT_BUS);
+    if (result_bus != 7)
+        $display("Boolean test failed in OR Expected: %b, Actual: %b", 16'd7, result_bus);
 
-    I_REG_WRITE_ENABLE <<= 1;
+    reg_write_enable <<= 1;
     #2;
 
     // Test XOR
-    I_OPCODE = XOR;
+    opcode = XOR;
     #2;
-    if (O_RESULT_BUS != 3)
-        $display("Boolean test failed in XOR Expected: %b, Actual: %b", 16'd3, O_RESULT_BUS);
+    if (result_bus != 3)
+        $display("Boolean test failed in XOR Expected: %b, Actual: %b", 16'd3, result_bus);
 
-    I_REG_WRITE_ENABLE <<= 1;
+    reg_write_enable <<= 1;
     #2;
 
     // Test NOT
-    I_OPCODE = NOT;
+    opcode = NOT;
     #2;
-    if (O_RESULT_BUS != ~16'd7)
-        $display("Boolean test failed in NOT Expected: %b, Actual: %b", ~16'd7, O_RESULT_BUS);
+    if (result_bus != ~16'd7)
+        $display("Boolean test failed in NOT Expected: %b, Actual: %b", ~16'd7, result_bus);
 
-    I_REG_WRITE_ENABLE <<= 1;
+    reg_write_enable <<= 1;
     #2;
 
     $display("\n================================================================");
@@ -238,47 +238,47 @@ initial begin
 
     // Set initial register values to 0
     #2;
-    I_NRESET = 'b0;
+    nreset = 'b0;
     #2;
-    I_NRESET = 'b1;
-    I_REG_WRITE_ENABLE = 'b0;
-    I_REG_A_SELECT = 'b0;
-    I_REG_B_SELECT = 'b0;
-    I_IMMEDIATE = 'd0;
-    I_IMM_SELECT = 'd0;
-    I_OPCODE = 'd10;
-    I_REGFILE_DATA = 'd0;
-    I_REGFILE_DATA_SELECT = 'b0;
+    nreset = 'b1;
+    reg_write_enable = 'b0;
+    reg_a_select = 'b0;
+    reg_b_select = 'b0;
+    immediate = 'd0;
+    immediate_select = 'd0;
+    opcode = 'd10;
+    regfile_data = 'd0;
+    regfile_data_select = 'b0;
     #2;
 
     // Begin Test
     // Load 5 into first register
-    I_REGFILE_DATA = 'd5;
-    I_REGFILE_DATA_SELECT = 'b1;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0001;
+    regfile_data = 'd5;
+    regfile_data_select = 'b1;
+    reg_write_enable = 'b0000_0000_0000_0001;
     #2;
 
-    if (O_RESULT_BUS != 5)
-        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd5, O_RESULT_BUS);
+    if (result_bus != 5)
+        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd5, result_bus);
 
     // Load 6 into second register
-    I_REGFILE_DATA = 'd6;
-    I_REGFILE_DATA_SELECT = 'b1;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0010;
+    regfile_data = 'd6;
+    regfile_data_select = 'b1;
+    reg_write_enable = 'b0000_0000_0000_0010;
     #2;
 
-    if (O_RESULT_BUS != 6)
-        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd6, O_RESULT_BUS);
+    if (result_bus != 6)
+        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd6, result_bus);
 
     // Add first and second registers into third register
-    I_REG_A_SELECT = 0;
-    I_REG_B_SELECT = 1;
-    I_REGFILE_DATA_SELECT = 'b0;
-    I_REG_WRITE_ENABLE = 'b0000_0000_0000_0100;
-    I_OPCODE = 'b0000;
+    reg_a_select = 0;
+    reg_b_select = 1;
+    regfile_data_select = 'b0;
+    reg_write_enable = 'b0000_0000_0000_0100;
+    opcode = 'b0000;
     #2;
-    if (O_RESULT_BUS != 11)
-        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd11, O_RESULT_BUS);
+    if (result_bus != 11)
+        $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd11, result_bus);
 
     $display("\n================================================================");
     $display("=========================== END SIM ============================");

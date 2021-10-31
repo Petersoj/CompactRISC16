@@ -11,8 +11,8 @@
 module datapath_top
        (input wire I_CLK,
         input wire I_NRESET,
-        output wire [4:0] O_LED_FLAGS,
-        output wire [6:0] O_7_SEGMENT_DISPLAY [3:0]);
+        output wire [6:0] O_7_SEGMENT_DISPLAY [3:0],
+        output wire [4:0] O_LED_FLAGS);
 
 // Instantiate wires to connect the FSM to the datapath and the 7-seg.
 reg [15:0] reg_enable;
@@ -49,45 +49,46 @@ seven_segment_hex_mapping i_display_2(.I_VALUE(write_port[11:8]), .O_7_SEGMENT(O
 seven_segment_hex_mapping i_display_3(.I_VALUE(write_port[15:12]), .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[3]));
 
 // Declare the next state.
-reg [3:0] NS;
+reg [3:0] state;
 
 // Parameter aliases for states.
-parameter [3:0] S0 = 4'b0000,
-          S1 = 4'b0001,
-          S2 = 4'b0010,
-          S3 = 4'b0011,
-          S4 = 4'b0100,
-          S5 = 4'b0101,
-          S6 = 4'b0110,
-          S7 = 4'b0111,
-          S8 = 4'b1000;
+parameter [3:0]
+          S0 = 4'd0,
+          S1 = 4'd1,
+          S2 = 4'd2,
+          S3 = 4'd3,
+          S4 = 4'd4,
+          S5 = 4'd5,
+          S6 = 4'd6,
+          S7 = 4'd7,
+          S8 = 4'd8;
 
 // Next state and sequential logic.
 always @(posedge I_CLK or negedge I_NRESET) begin
     if (!I_NRESET)
-        NS = S0;
+        state = S0;
     else
-    case (NS)
+    case (state)
         S0:
-            NS = S1;
+            state = S1;
         S1:
-            NS = S2;
+            state = S2;
         S2:
-            NS = S3;
+            state = S3;
         S3:
-            NS = S4;
+            state = S4;
         S4:
-            NS = S5;
+            state = S5;
         S5:
-            NS = S6;
+            state = S6;
         S6:
-            NS = S7;
+            state = S7;
         S7:
-            NS = S8;
+            state = S8;
         S8:
-            NS = S0;
+            state = S0;
         default:
-            NS = S0;
+            state = S0;
     endcase
 end
 
@@ -95,8 +96,8 @@ end
 // the Fibonacci sequence. After states 0-7, the values in the registers should appear as:
 //  1   1   2   3   5   8  13  21
 // r0  r1  r2  r3  r4  r5  r6  r7
-always @(NS) begin
-    case (NS)
+always @(state) begin
+    case (state)
         // Reset.
         S0: begin
             reg_enable = 'd0;
