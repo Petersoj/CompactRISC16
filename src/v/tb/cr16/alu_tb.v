@@ -168,10 +168,10 @@ initial begin
             if (c == 0 && status[3] != 1)
                 $display("Zero bit not set: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if A greater than B and Negative flag not set.
-            if (($signed(b) < $signed(a)) && status[4] != 1)
+            if (($signed(b) > $signed(a)) && status[4] != 1)
                 $display("4 Neg bit set incorrectly: a: %0d, b: %0d, c: %b, flags[4:0]: %b", a, b, c, status[4:0]);
             // Error if the carry bit is ever set. Carry is reserved for unsigned operations.
-            if (b < a != status[1])
+            if (b > a != status[1])
                 $display("Carry bit set incorrectly: a: %0d, b: %0d, c: %0d, flags[4:0]: %b", $signed(a), $signed(b), $signed(c), status[4:0]);
 
         end

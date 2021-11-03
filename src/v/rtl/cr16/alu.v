@@ -37,13 +37,14 @@ localparam [3:0]
 
 // Status register indicies for one-hot encoding
 localparam integer
-           STATUS_INDEX_CARRY = 0,    // MSB carry out for unsigned addition and subtraction
-           STATUS_INDEX_LOW = 1,      // 'I_B' < 'I_A' for unsigned subtraction
-           STATUS_INDEX_FLAG = 2,     // MSB carry out for signed addition,
-                                      // borrow for signed subtraction
-           STATUS_INDEX_ZERO = 3,     // 'O_C' == 0
-           STATUS_INDEX_NEGATIVE = 4; // Sign bit set for signed addition,
-                                      // 'I_B' < 'I_A' for signed subtraction
+           STATUS_INDEX_CARRY = 0,    // Asserted if unsigned addition has carry out,
+                                      // reset if unsigned subtraction has borrow
+           STATUS_INDEX_LOW = 1,      // Asserted if 'I_B' > 'I_A' in unsigned addition/subtraction
+           STATUS_INDEX_FLAG = 2,     // Asserted if signed addition has carry out,
+                                      // asserted if signed subtraction has borrow
+           STATUS_INDEX_ZERO = 3,     // Always asserted if 'O_C' == 0
+           STATUS_INDEX_NEGATIVE = 4; // Asserted if (un)signed addition/subtraction has negative
+                                      // result, regardless of overflow/underflow
 
 // Combinational logic case block
 always @(*) begin
@@ -52,7 +53,6 @@ always @(*) begin
         ADDC: begin
             {O_STATUS[STATUS_INDEX_CARRY], O_C} = I_OPCODE == ADD ?
             I_B + I_A : I_B + I_A + 1'b1;
-            // Set Low status bit 'I_B' is less than 'I_A' if in an unsigned context
             if (I_B > I_A)
                 O_STATUS[STATUS_INDEX_LOW] = 1'b1;
             else
@@ -60,8 +60,7 @@ always @(*) begin
             // Set the Flag status bit for signed carry overflow (this occurs when the MSB
             // of the result is flipped compared to the MSB of the operands)
             O_STATUS[STATUS_INDEX_FLAG] =
-            (~I_A[P_WIDTH - 1] & ~I_B[P_WIDTH - 1] & O_C[P_WIDTH - 1]) |
-            (I_A[P_WIDTH - 1] & I_B[P_WIDTH - 1] & ~O_C[P_WIDTH - 1]);
+            (I_A[P_WIDTH - 1] == I_B[P_WIDTH - 1]) & (I_A[P_WIDTH - 1] != O_C[P_WIDTH - 1]);
             // Set the Zero status bit if sum is 0
             O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
             // Set the Negative status bit if result is negative (sign bit is 1) and
