@@ -105,14 +105,14 @@ CS & 0010 & Carry Set & \code{C == 1} & \code{C=1} \\ \hline
 CC & 0011 & Carry Clear & \code{C == 0} & \code{C=0} \\ \hline
 FS & 0100 & Flag Set & \code{F == 1} & \code{F=1} \\ \hline
 FC & 0101 & Flag Clear & \code{F == 0} & \code{F=0} \\ \hline
-LT & 0110 & Less Than & \code{signed: Rsrc < Rdest} & \code{N=0 and Z=0} \\ \hline
-LE & 0111 & Less than or Equal & \code{signed: Rsrc <= Rdest} & \code{N=0} \\ \hline
-LO & 1000 & Lower than & \code{unsigned: Rsrc < Rdest} & \code{L=0 and Z=0} \\ \hline
-LS & 1001 & Lower than or Same as & \code{unsigned: Rsrc <= Rdest} & \code{L=0} \\ \hline
-GT & 1010 & Greater Than & \code{signed: Rsrc > Rdest} & \code{N=1} \\ \hline
-GE & 1011 & Greater than or Equal & \code{signed: Rsrc >= Rdest} & \code{N=1 or Z=1} \\ \hline
-HI & 1100 & Higher than & \code{unsigned: Rsrc > Rdest} & \code{L=1} \\ \hline
-HS & 1101 & Higher than or Same as & \code{unsigned: Rsrc >= Rdest} & \code{L=1 or Z=1} \\ \hline
+LT & 0110 & Less Than & \code{signed: Rdest < Rsrc} & \code{N=0 and Z=0} \\ \hline
+LE & 0111 & Less than or Equal & \code{signed: Rdest <= Rsrc} & \code{N=0} \\ \hline
+LO & 1000 & Lower than & \code{unsigned: Rdest < Rsrc} & \code{L=0 and Z=0} \\ \hline
+LS & 1001 & Lower than or Same as & \code{unsigned: Rdest <= Rsrc} & \code{L=0} \\ \hline
+GT & 1010 & Greater Than & \code{signed: Rdest > Rsrc} & \code{N=1} \\ \hline
+GE & 1011 & Greater than or Equal & \code{signed: Rdest >= Rsrc} & \code{N=1 or Z=1} \\ \hline
+HI & 1100 & Higher than & \code{unsigned: Rdest > Rsrc} & \code{L=1} \\ \hline
+HS & 1101 & Higher than or Same as & \code{unsigned: Rdest >= Rsrc} & \code{L=1 or Z=1} \\ \hline
 UC & 1110 & Unconditional & & \code{N/A} \\ \hline
 & 1111 & Never Jump & & \code{N/A} \\ \hline
 \end{longtable}

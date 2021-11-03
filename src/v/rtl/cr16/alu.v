@@ -53,7 +53,7 @@ always @(*) begin
             {O_STATUS[STATUS_INDEX_CARRY], O_C} = I_OPCODE == ADD ?
             I_B + I_A : I_B + I_A + 1'b1;
             // Set Low status bit 'I_B' is less than 'I_A' if in an unsigned context
-            if (I_B < I_A)
+            if (I_B > I_A)
                 O_STATUS[STATUS_INDEX_LOW] = 1'b1;
             else
                 O_STATUS[STATUS_INDEX_LOW] = 1'b0;
@@ -77,7 +77,7 @@ always @(*) begin
         end
         SUB: begin
             O_C = I_B - I_A;
-            if (I_B < I_A) begin
+            if (I_B > I_A) begin
                 O_STATUS[STATUS_INDEX_CARRY] = 1'b1;
                 O_STATUS[STATUS_INDEX_LOW] = 1'b1;
             end
@@ -91,7 +91,7 @@ always @(*) begin
             O_STATUS[STATUS_INDEX_ZERO] = O_C == 0;
             // Use comparater instead of checking sign bit of 'O_C' so that this negative flag
             // is still set correctly in the event of an overflow/borrow.
-            if ($signed(I_B) < $signed(I_A))
+            if ($signed(I_B) > $signed(I_A))
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b1;
             else
                 O_STATUS[STATUS_INDEX_NEGATIVE] = 1'b0;
