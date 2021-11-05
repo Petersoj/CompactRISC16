@@ -4,7 +4,7 @@ VERILOG_FORMATTER_PATH=$(dirname $0)/istyle-verilog-formatter
 VERILOG_FORMATTER_BIN=${VERILOG_FORMATTER_PATH}/bin/release/iStyle
 
 if [ ! -f "$VERILOG_FORMATTER_BIN" ]; then
-    echo "${VERILOG_FORMATTER_BIN} doesn\'t exist. Running 'make'..."
+    echo "${VERILOG_FORMATTER_BIN} doesn't exist. Running 'make'..."
     make --directory "$VERILOG_FORMATTER_PATH"
 fi
 

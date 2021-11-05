@@ -86,3 +86,17 @@ docs/**/*.pdfsync
 #
 # END Ignore LaTeX
 #
+
+#
+# BEGIN Ignore IntelliJ/Eclipse
+#
+
+compiler/bin/
+compiler/out/
+compiler/build/
+compiler/.gradle/
+compiler/.idea/
+
+#
+# END Ignore IntelliJ/Eclipse
+#

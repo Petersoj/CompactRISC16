@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'io.github.compactrisc16.compiler'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'com.beust', name: 'jcommander', version: '1.81'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+mainClassName = 'io.github.compactrisc16.compiler.Compiler'
+
+applicationName = 'compiler'
+
+distTar.enabled = false
+distZip.enabled = false
+build {
+    dependsOn installDist // Creates shell scripts to run the built jars
+}
