@@ -57,7 +57,7 @@ end
 always @(posedge I_CLK) begin
     if (I_WRITE_ENABLE_A) begin
         ram[I_ADDRESS_A] <= I_DATA_A;
-        O_DATA_A <= O_DATA_A;
+        O_DATA_A         <= O_DATA_A;
     end
     else
         O_DATA_A <= ram[I_ADDRESS_A];
@@ -67,7 +67,7 @@ end
 always @(posedge I_CLK) begin
     if (I_WRITE_ENABLE_B) begin
         ram[I_ADDRESS_B] <= I_DATA_B;
-        O_DATA_B <= O_DATA_B;
+        O_DATA_B         <= O_DATA_B;
     end
     else
         O_DATA_B <= ram[I_ADDRESS_B];

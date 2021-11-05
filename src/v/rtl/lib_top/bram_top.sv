@@ -23,15 +23,16 @@ reg write_enable_a, write_enable_b;
 wire [15:0] o_data_a, o_data_b;
 
 // Parameters for states
-parameter [3:0] S0 = 'b0,
-          S1 = 'd1,
-          S2 = 'd2,
-          S3 = 'd3,
-          S4 = 'd4,
-          S5 = 'd5,
-          S6 = 'd6,
-          S7 = 'd7,
-          S8 = 'd8;
+parameter [3:0]
+          S0 = 4'b0,
+          S1 = 4'd1,
+          S2 = 4'd2,
+          S3 = 4'd3,
+          S4 = 4'd4,
+          S5 = 4'd5,
+          S6 = 4'd6,
+          S7 = 4'd7,
+          S8 = 4'd8;
 
 // Instantiate BRAM module with given init file.
 bram #(.P_BRAM_INIT_FILE("resources/bram_init/lib_top/bram_top_init.dat"),
@@ -97,85 +98,85 @@ always @(next_state) begin
     case (next_state)
         // Reset state (read 0th memory address on both ports (shows 0303 on 7-segments)).
         S0: begin
-            address_a = 10'd0;
-            address_b = 10'd0;
+            address_a      = 10'd0;
+            address_b      = 10'd0;
             write_enable_a = 1'b0;
             write_enable_b = 1'b0;
-            i_data_a = 16'h0000;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h0000;
+            i_data_b       = 16'h0000;
         end
         // Read 1st memory address on port A (shows 0x02).
         S1: begin
-            address_a = 10'd1;
-            address_b = 10'd0;
+            address_a      = 10'd1;
+            address_b      = 10'd0;
             write_enable_a = 1'b0;
             write_enable_b = 1'b0;
-            i_data_a = 16'h0000;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h0000;
+            i_data_b       = 16'h0000;
         end
         // Read 2nd memory address on port B (shows 0x01).
         S2: begin
-            address_a = 10'd1;
-            address_b = 10'd2;
+            address_a      = 10'd1;
+            address_b      = 10'd2;
             write_enable_a = 1'b0;
             write_enable_b = 1'b0;
-            i_data_a = 16'h0000;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h0000;
+            i_data_b       = 16'h0000;
         end
         // Read 1021st memory address on port A (shows 0x21).
         S3: begin
-            address_a = 10'd1021;
-            address_b = 10'd2;
+            address_a      = 10'd1021;
+            address_b      = 10'd2;
             write_enable_a = 1'b0;
             write_enable_b = 1'b0;
-            i_data_a = 16'h0000;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h0000;
+            i_data_b       = 16'h0000;
         end
         // Read 1022nd memory address on port B (shows 0x22).
         S4: begin
-            address_a = 10'd1021;
-            address_b = 10'd1022;
+            address_a      = 10'd1021;
+            address_b      = 10'd1022;
             write_enable_a = 1'b0;
             write_enable_b = 1'b0;
-            i_data_a = 16'h0000;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h0000;
+            i_data_b       = 16'h0000;
         end
         // Read 1023rd memory address on port A (shows 0x23).
         S5: begin
-            address_a = 10'd1023;
-            address_b = 10'd1022;
+            address_a      = 10'd1023;
+            address_b      = 10'd1022;
             write_enable_a = 1'b0;
             write_enable_b = 1'b0;
-            i_data_a = 16'h0000;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h0000;
+            i_data_b       = 16'h0000;
         end
         // Overwrite 1023rd memory address via port A.
         S6: begin
-            address_a = 10'd1023;
-            address_b = 10'd1022;
+            address_a      = 10'd1023;
+            address_b      = 10'd1022;
             write_enable_a = 1'b1;
             write_enable_b = 1'b0;
-            i_data_a = 16'h00AA;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h00AA;
+            i_data_b       = 16'h0000;
         end
         // Read overwritten 1023rd memory address on port B while simultaneously writting to 0th
         // memory address via port A (shows AA23 on 7-segments).
         S7: begin
-            address_a = 10'd0;
-            address_b = 10'd1023;
+            address_a      = 10'd0;
+            address_b      = 10'd1023;
             write_enable_a = 1'b1;
             write_enable_b = 1'b0;
-            i_data_a = 16'h0001;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h0001;
+            i_data_b       = 16'h0000;
         end
         // Read updated 0th memory address on port A and port B (shows 0101).
         S8: begin
-            address_a = 10'd0;
-            address_b = 10'd0;
+            address_a      = 10'd0;
+            address_b      = 10'd0;
             write_enable_a = 1'b0;
             write_enable_b = 1'b0;
-            i_data_a = 16'h0001;
-            i_data_b = 16'h0000;
+            i_data_a       = 16'h0001;
+            i_data_b       = 16'h0000;
         end
     endcase
 end

@@ -48,7 +48,6 @@ initial begin
         for (input_value = 0; input_value < 2 ** 16; input_value += 15) begin
             input_16_1 = input_value;
             #1;
-
             if (output_16_1 != input_16_1[select])
                 $display("16-to-1 mux test failed with select: %0d, input_value: %0b, output_16_1: %0b", select, input_value, output_16_1);
         end
@@ -60,12 +59,9 @@ initial begin
 
     for (select = 0; select < 4; select++) begin
         select_4_1 = select;
-
         for (input_4_1_index = 0; input_4_1_index < $size(input_4_1); input_4_1_index++)
             input_4_1[input_4_1_index] = input_4_1_index[1:0];
-
         #1;
-
         if (output_4_1 != input_4_1[select])
             $display("4-to-1 mux test failed with select: %0d, input_value: %0b, output_16_1: %0b", select, input_4_1, output_4_1);
     end

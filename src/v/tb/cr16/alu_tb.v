@@ -24,18 +24,18 @@ wire [4:0] status;
 
 // Parameterized Opcodes from 'rtl/cr16/alu.v'
 localparam [3:0]
-           ADD = 0,
-           ADDC = 1,
-           MUL = 2,
-           SUB = 3,
-           NOT = 4,
-           AND = 5,
-           OR = 6,
-           XOR = 7,
-           LSH = 8,
-           RSH = 9,
-           ALSH = 10,
-           ARSH = 11;
+           ADD  = 4'd0,
+           ADDC = 4'd1,
+           MUL  = 4'd2,
+           SUB  = 4'd3,
+           NOT  = 4'd4,
+           AND  = 4'd5,
+           OR   = 4'd6,
+           XOR  = 4'd7,
+           LSH  = 4'd8,
+           RSH  = 4'd9,
+           ALSH = 4'd10,
+           ARSH = 4'd11;
 
 // Establish the clock signal to sync the test
 always #1 clk = ~clk;

@@ -23,11 +23,12 @@ wire [15:0][15:0] reg_data;
 always #5 clk = ~clk;
 
 // Instantiate the Unit Under Test (UUT).
-regfile uut(.I_CLK(clk),
-            .I_NRESET(1'b1),
-            .I_REG_BUS(reg_bus),
-            .I_REG_ENABLE(reg_enable),
-            .O_REG_DATA(reg_data));
+regfile uut
+        (.I_CLK(clk),
+         .I_NRESET(1'b1),
+         .I_REG_BUS(reg_bus),
+         .I_REG_ENABLE(reg_enable),
+         .O_REG_DATA(reg_data));
 
 integer i, j;
 

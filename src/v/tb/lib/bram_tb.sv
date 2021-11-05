@@ -45,13 +45,13 @@ initial begin
     $display("================================================================");
 
     // Initialize enable and address pointers.
-    clk = 0;
-    address_a = 10'b0000000000;
-    address_b = 10'b0000000000;
+    clk            = 0;
+    address_a      = 10'b0000000000;
+    address_b      = 10'b0000000000;
     write_enable_a = 1'b0;
     write_enable_b = 1'b0;
-    i_data_a = 16'h0000;
-    i_data_b = 16'h0000;
+    i_data_a       = 16'h0000;
+    i_data_b       = 16'h0000;
 
     $display("\n================================================================");
     $display("Test 1: Read sequential values addresses 0-7 on port A.");
@@ -89,15 +89,15 @@ initial begin
     $display("port A, read them on port B to verify correctness.");
     $display("================================================================");
 
-    address_a = 10'b0000000000;
-    address_b = 10'b0000000000;
+    address_a      = 10'b0000000000;
+    address_b      = 10'b0000000000;
     write_enable_b = 1'b0;
 
     // Write i * 2 into bram
     for (i = 0; i < 8; i++) begin
         write_enable_a = 1'b0;
-        i_data_a = i[15:0] * 2;
-        address_a = i[9:0];
+        i_data_a       = i[15:0] * 2;
+        address_a      = i[9:0];
         #2;
         write_enable_a = 1'b1;
         #2;
@@ -118,15 +118,15 @@ initial begin
     $display("port B, read them on port A to verify correctness.");
     $display("================================================================");
 
-    address_a = 10'b0000000000;
-    address_b = 10'b0000000000;
+    address_a      = 10'b0000000000;
+    address_b      = 10'b0000000000;
     write_enable_a = 1'b0;
 
     // Write i * 3 into bram
     for (i = 0; i < 8; i++) begin
         write_enable_b = 1'b0;
-        i_data_b = i[15:0] * 3;
-        address_b = i[9:0];
+        i_data_b       = i[15:0] * 3;
+        address_b      = i[9:0];
         #2;
         write_enable_b = 1'b1;
         #2;

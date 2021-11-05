@@ -31,18 +31,18 @@ wire [15:0] b;
 
 // Parameterized Opcodes from 'rtl/cr16/alu.v'
 localparam [3:0]
-           ADD = 0,
-           ADDC = 1,
-           MUL = 2,
-           SUB = 3,
-           NOT = 4,
-           AND = 5,
-           OR = 6,
-           XOR = 7,
-           LSH = 8,
-           RSH = 9,
-           ALSH = 10,
-           ARSH = 11;
+           ADD  = 4'd0,
+           ADDC = 4'd1,
+           MUL  = 4'd2,
+           SUB  = 4'd3,
+           NOT  = 4'd4,
+           AND  = 4'd5,
+           OR   = 4'd6,
+           XOR  = 4'd7,
+           LSH  = 4'd8,
+           RSH  = 4'd9,
+           ALSH = 4'd10,
+           ARSH = 4'd11;
 
 // Establish the clock signal to sync the test
 always #1 clk = ~clk;
@@ -77,14 +77,14 @@ initial begin
     #2;
     nreset = 'b0;
     #2;
-    nreset = 'b1;
-    reg_write_enable = 'b0;
-    reg_a_select = 'b0;
-    reg_b_select = 'b0;
-    immediate = 'd0;
-    immediate_select = 'd0;
-    opcode = ADD;
-    regfile_data = 'd0;
+    nreset              = 'b1;
+    reg_write_enable    = 'b0;
+    reg_a_select        = 'b0;
+    reg_b_select        = 'b0;
+    immediate           = 'd0;
+    immediate_select    = 'd0;
+    opcode              = ADD;
+    regfile_data        = 'd0;
     regfile_data_select = 'b0;
     #2;
 
@@ -93,7 +93,7 @@ initial begin
     $display("================================================================");
 
     // Load 1 into registers 1 and 2
-    immediate = 1;
+    immediate        = 1;
     immediate_select = 'd1;
     reg_write_enable = 'b0000_0000_0000_0001;
     #2;
@@ -102,13 +102,13 @@ initial begin
     reg_write_enable = 'b0;
 
     // Begin test
-    reg_a_select = 'b0000;
-    reg_b_select = 'b0001;
+    reg_a_select     = 'b0000;
+    reg_b_select     = 'b0001;
     immediate_select = 0;
     #2;
 
-    num = 1;
-    prevNum = 0;
+    num              = 1;
+    prevNum          = 0;
     reg_write_enable = 'b0000_0000_0000_0100;
     for(i = 0; i < 15; i = i + 1) begin
         #5;
@@ -116,12 +116,12 @@ initial begin
         if ((num + prevNum) != result_bus)
             $display("Fibbonacci test failed: Expected: %0d, Actual: %0d", num + prevNum, result_bus);
 
-        temp = num;
-        num = temp + prevNum;
+        temp    = num;
+        num     = temp + prevNum;
         prevNum = temp;
 
-        reg_a_select = reg_a_select + 'b0001;
-        reg_b_select = reg_b_select + 'b0001;
+        reg_a_select     = reg_a_select + 'b0001;
+        reg_b_select     = reg_b_select + 'b0001;
         reg_write_enable <<= 1;
         #2;
     end
@@ -134,27 +134,27 @@ initial begin
     #2;
     nreset = 'b0;
     #2;
-    nreset = 'b1;
-    reg_write_enable = 'b0;
-    reg_a_select = 'b0;
-    reg_b_select = 'b0;
-    immediate = 'd0;
-    immediate_select = 'd0;
-    opcode = SUB;
-    regfile_data = 'd0;
+    nreset              = 'b1;
+    reg_write_enable    = 'b0;
+    reg_a_select        = 'b0;
+    reg_b_select        = 'b0;
+    immediate           = 'd0;
+    immediate_select    = 'd0;
+    opcode              = SUB;
+    regfile_data        = 'd0;
     regfile_data_select = 'b0;
     #2;
 
     // Load 1 into register 2
-    immediate = 1;
+    immediate        = 1;
     immediate_select = 1;
     reg_write_enable = 'b0000_0000_0000_0010;
     #2;
     immediate_select = 0;
 
     // Begin test
-    reg_a_select = 0;
-    reg_b_select = 1;
+    reg_a_select     = 0;
+    reg_b_select     = 1;
     reg_write_enable = 'b0000_0000_0000_0100;
     #2;
 
@@ -169,31 +169,31 @@ initial begin
     #2;
     nreset = 'b0;
     #2;
-    nreset = 'b1;
-    reg_write_enable = 'b0;
-    reg_a_select = 'b0;
-    reg_b_select = 'd5;
-    immediate = 'd0;
-    immediate_select = 'd0;
-    opcode = 'd0;
-    regfile_data = 'd0;
+    nreset              = 'b1;
+    reg_write_enable    = 'b0;
+    reg_a_select        = 'b0;
+    reg_b_select        = 'd5;
+    immediate           = 'd0;
+    immediate_select    = 'd0;
+    opcode              = 'd0;
+    regfile_data        = 'd0;
     regfile_data_select = 'b0;
     #2;
 
     // Load 7 (0111) into register 0
-    immediate = 'd7;
+    immediate        = 'd7;
     immediate_select = 1;
     reg_write_enable = 'b0000_0000_0000_0001;
     #2;
     // Load 4 (0100) into register 1
-    immediate = 'd4;
+    immediate        = 'd4;
     reg_write_enable = 'b0000_0000_0000_0010;
     #2;
     immediate_select = 0;
 
     // Begin test
-    reg_a_select = 0;
-    reg_b_select = 1;
+    reg_a_select     = 0;
+    reg_b_select     = 1;
     reg_write_enable = 'b0000_0000_0000_0100;
 
     // Test AND
@@ -240,42 +240,42 @@ initial begin
     #2;
     nreset = 'b0;
     #2;
-    nreset = 'b1;
-    reg_write_enable = 'b0;
-    reg_a_select = 'b0;
-    reg_b_select = 'b0;
-    immediate = 'd0;
-    immediate_select = 'd0;
-    opcode = 'd10;
-    regfile_data = 'd0;
+    nreset              = 'b1;
+    reg_write_enable    = 'b0;
+    reg_a_select        = 'b0;
+    reg_b_select        = 'b0;
+    immediate           = 'd0;
+    immediate_select    = 'd0;
+    opcode              = 'd10;
+    regfile_data        = 'd0;
     regfile_data_select = 'b0;
     #2;
 
     // Begin Test
     // Load 5 into first register
-    regfile_data = 'd5;
+    regfile_data        = 'd5;
     regfile_data_select = 'b1;
-    reg_write_enable = 'b0000_0000_0000_0001;
+    reg_write_enable    = 'b0000_0000_0000_0001;
     #2;
 
     if (result_bus != 5)
         $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd5, result_bus);
 
     // Load 6 into second register
-    regfile_data = 'd6;
+    regfile_data        = 'd6;
     regfile_data_select = 'b1;
-    reg_write_enable = 'b0000_0000_0000_0010;
+    reg_write_enable    = 'b0000_0000_0000_0010;
     #2;
 
     if (result_bus != 6)
         $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd6, result_bus);
 
     // Add first and second registers into third register
-    reg_a_select = 0;
-    reg_b_select = 1;
+    reg_a_select        = 0;
+    reg_b_select        = 1;
     regfile_data_select = 'b0;
-    reg_write_enable = 'b0000_0000_0000_0100;
-    opcode = 'b0000;
+    reg_write_enable    = 'b0000_0000_0000_0100;
+    opcode              = 'b0000;
     #2;
     if (result_bus != 11)
         $display("Reg Data Select test failed Expected: %b, Actual: %b", 16'd11, result_bus);

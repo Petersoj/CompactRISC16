@@ -22,12 +22,12 @@ module register #(parameter integer P_WIDTH = 16)
 
 always @(posedge I_CLK or negedge I_NRESET) begin
     if (!I_NRESET)
-        O_DATA <= 0;
+        O_DATA = 0;
     else begin
         if (I_ENABLE)
-            O_DATA <= I_DATA;
+            O_DATA = I_DATA;
         else
-            O_DATA <= O_DATA;
+            O_DATA = O_DATA;
     end
 end
 endmodule
