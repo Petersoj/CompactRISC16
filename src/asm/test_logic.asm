@@ -1,13 +1,11 @@
-ADDI  r3, 15
-ADDI  r4, 240
-OR    r3, r4
-ANDI  r3, 42
-AND   r3, r1
-NOT   r4
-LSHI  r4, 4
-ADDI  r5, 2
-RSH   r4, r5
-AND   r4, r0
-MULI  r4, -1
-ARSHI r4, 4
-ALSH  r4, r5
+ADDI  r3, 15     // Load 000F into r3
+ADDI  r4, 240    // Load FFF0 into r4
+OR    r3, r4     // r3 gets FFFF
+ANDI  r3, 42     // r3 gets 002A
+AND   r3, r4     // r3 gets FF20
+NOT   r4, r4     // r4 gets 000F
+LSHI  r4, 4      // r4 gets 00F0
+ADDI  r5, 2      // r5 gets 0002
+RSH   r4, r5     // r4 gets 003D
+ARSHI r4, 4      // r4 gets 0003
+ALSH  r4, r5     // r4 gets 000D
