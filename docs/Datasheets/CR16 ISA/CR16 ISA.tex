@@ -54,7 +54,7 @@ SUB & Rdest, Rsrc & \code{Rdest = Rdest - Rsrc} & 0000 & Rdest & 0011 & Rsrc & \
 SUBI & Rdest, Imm & \code{Rdest = Rdest - Imm} & 0100 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
 CMP & Rdest, Rsrc & \code{Rdest - Rsrc} & 0000 & Rdest & 0100 & Rsrc & \\ \hline
 CMPI & Rdest, Imm & \code{Rdest - Imm} & 0101 & Rdest & ImmHi & ImmLo & Sign extended Imm \\ \hline
-NOT & Rdest, Rsrc & \code{Rdest = !Rdest} & 0000 & Rdest & 0101 & xxxx & \\ \hline
+NOT & Rdest, Rsrc & \code{Rdest = !Rsrc} & 0000 & Rdest & 0101 & Rsrc & \\ \hline
 NOTI & Rdest, Imm & \code{Rdest = !Imm} & 0110 & Rdest & ImmHi & ImmLo & Zero extended Imm \\ \hline
 AND & Rdest, Rsrc & \code{Rdest = Rdest & Rsrc} & 0000 & Rdest & 0110 & Rsrc & \\ \hline
 ANDI & Rdest, Imm & \code{Rdest = Rdest & Imm} & 0111 & Rdest & ImmHi & ImmLo & Zero extended Imm \\ \hline
