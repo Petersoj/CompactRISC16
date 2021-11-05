@@ -9,7 +9,7 @@ This is an implementation of the CompactRISC (CR16) CPU written in Verilog for t
 - Nate Hansen
 
 ## Compiler
-To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16 ISA/CR16 ISA.pdf), run the `compiler/compiler` shell script with the given arguments as outlined below. Note that the Java Runtime Environment is required to run the compiler and must be of version 8 or greater. Also note that you may need to make the script executable via: `chmod 755 compiler/compiler`.
+To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf), run the `compiler/compiler` shell script with the given arguments as outlined below. Some example programs are given in [`src/asm`](src/asm). Note that the Java Runtime Environment is required to run the compiler and must be of version 8 or greater. Also note that you may need to make the script executable via: `chmod 755 compiler/compiler`.
 ```
 Usage: compiler [options] <assembly code file path>
   Options:
@@ -61,4 +61,3 @@ For example, to recursively format Verilog source files in the `src` directory, 
 .formatter/verilog/format src
 ```
 The [`istyle-verilog-formatter`](https://github.com/thomasrussellmurphy/istyle-verilog-formatter) is used as a submodule in the [`.formatter/verilog`](.formatter/verilog) directory. Either clone this repository with `git clone --recurse-submodules` or use `git submodule init; git submodule update` to clone the `istyle-verilog-formatter` repository into the `.formatter/verilog` directory so that the `format` script can run properly. The `format` shell script will run `make` if the `iStyle` binary is not already present in the `istyle-verilog-formatter` directory. Note: you may need to make the script executable via: `chmod 755 .formatter/verilog/format`.
-
