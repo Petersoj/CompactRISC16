@@ -65,31 +65,31 @@ seven_segment_hex_mapping i_display_3_data_b
                            .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[3]));
 
 // State advancement block.
-always @(negedge I_NRESET or posedge I_STEP) begin
-    if (~I_NRESET)
-        next_state = S0;
+always @(posedge I_STEP or negedge I_NRESET) begin
+    if (!I_NRESET)
+        next_state <= S0;
     else
     case (next_state)
         S0:
-            next_state = S1;
+            next_state <= S1;
         S1:
-            next_state = S2;
+            next_state <= S2;
         S2:
-            next_state = S3;
+            next_state <= S3;
         S3:
-            next_state = S4;
+            next_state <= S4;
         S4:
-            next_state = S5;
+            next_state <= S5;
         S5:
-            next_state = S6;
+            next_state <= S6;
         S6:
-            next_state = S7;
+            next_state <= S7;
         S7:
-            next_state = S8;
+            next_state <= S8;
         S8:
-            next_state = S0;
+            next_state <= S0;
         default:
-            next_state = S0;
+            next_state <= S0;
     endcase
 end
 
@@ -98,85 +98,85 @@ always @(next_state) begin
     case (next_state)
         // Reset state (read 0th memory address on both ports (shows 0303 on 7-segments)).
         S0: begin
-            address_a      = 10'd0;
-            address_b      = 10'd0;
-            write_enable_a = 1'b0;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h0000;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd0;
+            address_b      <= 10'd0;
+            write_enable_a <= 1'b0;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h0000;
+            i_data_b       <= 16'h0000;
         end
         // Read 1st memory address on port A (shows 0x02).
         S1: begin
-            address_a      = 10'd1;
-            address_b      = 10'd0;
-            write_enable_a = 1'b0;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h0000;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd1;
+            address_b      <= 10'd0;
+            write_enable_a <= 1'b0;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h0000;
+            i_data_b       <= 16'h0000;
         end
         // Read 2nd memory address on port B (shows 0x01).
         S2: begin
-            address_a      = 10'd1;
-            address_b      = 10'd2;
-            write_enable_a = 1'b0;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h0000;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd1;
+            address_b      <= 10'd2;
+            write_enable_a <= 1'b0;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h0000;
+            i_data_b       <= 16'h0000;
         end
         // Read 1021st memory address on port A (shows 0x21).
         S3: begin
-            address_a      = 10'd1021;
-            address_b      = 10'd2;
-            write_enable_a = 1'b0;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h0000;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd1021;
+            address_b      <= 10'd2;
+            write_enable_a <= 1'b0;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h0000;
+            i_data_b       <= 16'h0000;
         end
         // Read 1022nd memory address on port B (shows 0x22).
         S4: begin
-            address_a      = 10'd1021;
-            address_b      = 10'd1022;
-            write_enable_a = 1'b0;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h0000;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd1021;
+            address_b      <= 10'd1022;
+            write_enable_a <= 1'b0;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h0000;
+            i_data_b       <= 16'h0000;
         end
         // Read 1023rd memory address on port A (shows 0x23).
         S5: begin
-            address_a      = 10'd1023;
-            address_b      = 10'd1022;
-            write_enable_a = 1'b0;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h0000;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd1023;
+            address_b      <= 10'd1022;
+            write_enable_a <= 1'b0;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h0000;
+            i_data_b       <= 16'h0000;
         end
         // Overwrite 1023rd memory address via port A.
         S6: begin
-            address_a      = 10'd1023;
-            address_b      = 10'd1022;
-            write_enable_a = 1'b1;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h00AA;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd1023;
+            address_b      <= 10'd1022;
+            write_enable_a <= 1'b1;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h00AA;
+            i_data_b       <= 16'h0000;
         end
         // Read overwritten 1023rd memory address on port B while simultaneously writting to 0th
         // memory address via port A (shows AA23 on 7-segments).
         S7: begin
-            address_a      = 10'd0;
-            address_b      = 10'd1023;
-            write_enable_a = 1'b1;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h0001;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd0;
+            address_b      <= 10'd1023;
+            write_enable_a <= 1'b1;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h0001;
+            i_data_b       <= 16'h0000;
         end
         // Read updated 0th memory address on port A and port B (shows 0101).
         S8: begin
-            address_a      = 10'd0;
-            address_b      = 10'd0;
-            write_enable_a = 1'b0;
-            write_enable_b = 1'b0;
-            i_data_a       = 16'h0001;
-            i_data_b       = 16'h0000;
+            address_a      <= 10'd0;
+            address_b      <= 10'd0;
+            write_enable_a <= 1'b0;
+            write_enable_b <= 1'b0;
+            i_data_a       <= 16'h0001;
+            i_data_b       <= 16'h0000;
         end
     endcase
 end

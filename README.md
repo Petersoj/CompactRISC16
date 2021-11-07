@@ -40,6 +40,8 @@ Usage: compiler [options] <assembly code file path>
 - If there are 2 or more consecutive lines (including no comments between the consecutive lines) that assign a `parameter`, `localparam`, `wire`, or `reg` to a constant or to a single-line expression, then the equals signs in those lines should be aligned.
 - If a single-line expression/assignment needs to be split into multiple lines, then the following lines should be further indented by 8 spaces, or if the subsequent lines can fit within the 100 character column limit, then the subsequent lines should be further indented until they are aligned to the expression/assigment on the first line.
 - No line should be greater than 100 characters.
+- Use non-blocking assignments (e.g. `<=`) in sequential `@always` blocks and blocking assignments (e.g. `=`) in combinational `@always` blocks.
+  - An `@always` block is sequential if it is sensitive to the `posedge` or `negedge` of an input signal, whereas it is combinational if it is sensitive to signals without the `posedge` or `negedge` modifier included in the sensitivity list.
 - Module sections should generally follow the following format, from top of file to bottom of file:
   - Module signature with parameter list, then input wires, then output reg/wires
   - `localparam`s that defines constants for the rest of the module

@@ -50,8 +50,8 @@ wire [15:0] alu_input_a;        // 'A' input to ALU
 wire [15:0] alu_input_b;        // 'B' input to ALU
 wire [15:0] alu_output;         // Output of ALU
 
-assign O_A = alu_input_a;
-assign O_B = alu_input_b;
+assign O_A = regfile_a;
+assign O_B = regfile_b;
 assign alu_input_b = regfile_b; // This assigment determines which ALU input is not muxed with the 'I_IMMEDIATE'
 
 // Instantiate two 16-to-1 16-bit muxes (one for register 'A' and register 'B')

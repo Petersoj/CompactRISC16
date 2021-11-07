@@ -54,35 +54,35 @@ seven_segment_hex_mapping i_display_3
 
 always@(negedge I_CLK or negedge I_NRESET) begin
     if (!I_NRESET) begin
-        state  = S_HIGH_A;
-        opcode = 0;
-        a      = 0;
-        b      = 0;
+        state  <= S_HIGH_A;
+        opcode <= 0;
+        a      <= 0;
+        b      <= 0;
     end
     else begin
         case (state)
             S_HIGH_A: begin
-                a[15:8] = I_INPUT;
-                state   = S_LOW_A;
+                a[15:8] <= I_INPUT;
+                state   <= S_LOW_A;
             end
             S_LOW_A: begin
-                a[7:0] = I_INPUT;
-                state  = S_HIGH_B;
+                a[7:0] <= I_INPUT;
+                state  <= S_HIGH_B;
             end
             S_HIGH_B: begin
-                b[15:8] = I_INPUT;
-                state   = S_LOW_B;
+                b[15:8] <= I_INPUT;
+                state   <= S_LOW_B;
             end
             S_LOW_B: begin
-                b[7:0] = I_INPUT;
-                state  = S_OPCODE;
+                b[7:0] <= I_INPUT;
+                state  <= S_OPCODE;
             end
             S_OPCODE: begin
-                opcode = I_INPUT[4:0];
-                state  = S_HIGH_A;
+                opcode <= I_INPUT[4:0];
+                state  <= S_HIGH_A;
             end
             default: begin
-                state = S_HIGH_A;
+                state <= S_HIGH_A;
             end
         endcase
     end

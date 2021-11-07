@@ -46,10 +46,18 @@ module cr16
         output wire [16:0] O_PC);
 
 // Define states of FSM
-localparam P_STATE_BIT_WIDTH = 3;
+localparam P_STATE_BIT_WIDTH = 4;
 localparam [P_STATE_BIT_WIDTH - 1 : 0]
-           S_FETCH  = 0,
-           S_DECODE = 1;
+           S_FETCH               = 0,
+           S_DECODE              = 1,
+           S_EXECUTE_ALU         = 2,
+           S_EXECUTE_MOV         = 3,
+           S_EXECUTE_LOAD        = 4,
+           S_EXECUTE_LOAD_LOAD   = 5,
+           S_EXECUTE_LOAD_DONE   = 6,
+           S_EXECUTE_STORE       = 7,
+           S_EXECUTE_STORE_STORE = 8,
+           S_EXECUTE_STORE_DONE  = 9;
 
 // Parameterized Opcodes with extensions
 localparam [7:0]
@@ -120,7 +128,7 @@ localparam [3:0]
 // State register
 reg [P_STATE_BIT_WIDTH - 1 : 0] state = S_FETCH;
 
-// Declare reg for temporary instruction storage and wires for general instruction decoding
+// Declare reg for temporary instruction storage and reg/wires for general instruction decoding
 reg [15:0] instruction;
 wire [3:0] instr_opcode         = instruction[15:12];
 wire [3:0] instr_opcode_ext     = instruction[7:4];
@@ -130,25 +138,29 @@ wire [3:0] instr_rsrc           = instruction[3:0];
 wire [3:0] instr_immhi          = instruction[7:4];
 wire [3:0] instr_immlo          = instruction[3:0];
 wire [7:0] instr_immhi_immlo    = {instr_immhi, instr_immlo};
+// Asserted if 'instruction' has an opcode extension
+wire instr_has_opcode_ext = instr_opcode == 4'b0000 || instr_opcode == 4'b1111;
+// Asserted if 'instruction' has an immediate value
+wire instr_has_imm = !instr_has_opcode_ext ||
+                     instr_opcode_and_ext == LSHI || instr_opcode_and_ext == RSHI ||
+                     instr_opcode_and_ext == ALSHI || instr_opcode_and_ext == ARSHI;
 
-// Registers for ALU and wires for decoding ALU instruction
-reg [15:0] alu_immediate;
-// Asserted if 'instr_opcode' represents an ALU immediate instruction
-wire instr_alu_is_imm = instr_opcode != 4'b0000 && instr_opcode != 4'b1111 ||
-                        instr_opcode_and_ext == LSHI || instr_opcode_and_ext == RSHI ||
-                        instr_opcode_and_ext == ALSHI || instr_opcode_and_ext == ARSHI;
-// Asserted if 'instr_opcode' contains the ImmHi and ImmLo values for the ALU
-wire instr_alu_has_immhi_immlo = instr_opcode != 4'b0000 && instr_opcode != 4'b1111;
+// Registers for decoding ALU instructions
+reg [15:0] instr_alu_immediate;
+reg instr_alu_immediate_select;
+reg [3:0] instr_alu_opcode;
 
-// Wires for decoding MOV instruction
+// Wires for decoding 'MOV' instruction
 wire [15:0] instr_mov_imm_lower = {8'b0, instr_immhi_immlo};
 wire [15:0] instr_mov_imm_upper = {instr_immhi_immlo, 8'b0};
 
-// TODO remove this
-assign immediate = alu_immediate;
-assign immediate_select = instr_alu_is_imm;
-assign reg_a_select = instr_rsrc;
-assign reg_b_select = instr_rdest;
+// Wires for decoding 'LOAD', 'LOADX' 'STORE', and 'STOREX' instructions
+wire [3:0] instr_load_raddr  = instr_rsrc;
+wire [3:0] instr_store_raddr = instr_rdest;
+wire [3:0] instr_store_rsrc  = instr_rsrc;
+// Wire to multiplex between input memory data ports
+wire [15:0] instr_load_i_mem_data_port = instr_opcode_and_ext == LOADX
+                                         ? I_EXT_MEM_DATA : I_MEM_DATA;
 
 // Used to persist the ALU status flags
 reg [4:0] status_flags;
@@ -174,8 +186,8 @@ reg regfile_data_select;
 wire [15:0] a, b; // 'a' is Rsrc, 'b' is Rdest
 wire [4:0] alu_status_flags;
 
-// Ports for 'i_decoder_regfile_dest_reg'
-wire [15:0] regfile_dest_reg;
+// Ports for 'i_decoder_regfile_instr_dest_reg'
+wire [15:0] regfile_instr_dest_reg;
 
 // Instantiate the Program Counter
 pc #(.P_ADDRESS_WIDTH(16))
@@ -208,158 +220,326 @@ datapath i_datapath
 
 // Instantiate a decoder to decode a given 'dest' register index into the write enable signal
 // of the specified register in the regfile. Note that the 'instr_rdest' is used instead of
-// 'instr_immlo_rsrc' since 'A' in the datapath is muxed with immediate values so 'B' will determine
+// 'instr_rsrc' since 'A' in the datapath is muxed with immediate values so 'B' will determine
 // which register the immediates, results, etc. are written to.
-decoder4_16 i_decoder_regfile_dest_reg
+decoder4_16 i_decoder_regfile_instr_dest_reg
             (.I_DATA(instr_rdest),
-             .I_ENABLE(1'b1),
-             .O_DATA(regfile_dest_reg));
+             .O_DATA(regfile_instr_dest_reg));
 
 // Clocked CR16 FSM block
 always @(posedge I_CLK or negedge I_NRESET) begin
-    if (!I_NRESET)
-        state = S_FETCH;
+    if (!I_NRESET) begin
+        state        = S_FETCH;
+        instruction  = 16'b0;
+        status_flags = 5'b0;
+
+        pc_enable                   = 1'b0;
+        pc_i_address                = 16'b0;
+        pc_address_select           = 1'b0;
+        pc_address_select_increment = 1'b0;
+        pc_address_select_displace  = 1'b0;
+
+        reg_write_enable    = 16'b0;
+        reg_a_select        = 4'b0;
+        reg_b_select        = 4'b0;
+        immediate           = 16'b0;
+        immediate_select    = 1'b0;
+        alu_opcode          = 4'b0;
+        regfile_data        = 16'b0;
+        regfile_data_select = 1'b0;
+
+        O_MEM_DATA             = 16'b0;
+        O_MEM_ADDRESS          = 16'b0;
+        O_MEM_WRITE_ENABLE     = 1'b0;
+        O_EXT_MEM_DATA         = 16'b0;
+        O_EXT_MEM_ADDRESS      = 16'b0;
+        O_EXT_MEM_WRITE_ENABLE = 1'b0;
+    end
     else if (I_ENABLE)
         case (state)
             S_FETCH: begin
-                state = S_DECODE;
+                state        <= S_DECODE;
+                instruction  <= I_MEM_DATA;
+                status_flags <= status_flags;
 
-                instruction  = I_MEM_DATA;
-                status_flags = status_flags;
+                pc_enable                   <= 1'b1;
+                pc_i_address                <= pc_i_address;
+                pc_address_select           <= 1'b0;
+                pc_address_select_increment <= 1'b0;
+                pc_address_select_displace  <= 1'b0;
 
-                pc_enable                   = 1'b0;
-                pc_i_address                = 16'b0;
-                pc_address_select           = 1'b0;
-                pc_address_select_increment = 1'b0;
-                pc_address_select_displace  = 1'b0;
+                reg_write_enable    <= 16'b0;
+                reg_a_select        <= reg_a_select;
+                reg_b_select        <= reg_b_select;
+                immediate           <= immediate;
+                immediate_select    <= 1'b0;
+                alu_opcode          <= alu_opcode;
+                regfile_data        <= regfile_data;
+                regfile_data_select <= 1'b0;
 
-                reg_write_enable    = 16'b0;
-                regfile_data        = 16'b0;
-                regfile_data_select = 1'b0;
-
-                O_MEM_DATA             = 16'b0;
-                O_MEM_ADDRESS          = pc_o_address;
-                O_MEM_WRITE_ENABLE     = 1'b0;
-                O_EXT_MEM_DATA         = 16'b0;
-                O_EXT_MEM_ADDRESS      = 16'b0;
-                O_EXT_MEM_WRITE_ENABLE = 1'b0;
+                O_MEM_DATA             <= O_MEM_DATA;
+                O_MEM_ADDRESS          <= O_MEM_ADDRESS;
+                O_MEM_WRITE_ENABLE     <= 1'b0;
+                O_EXT_MEM_DATA         <= O_EXT_MEM_DATA;
+                O_EXT_MEM_ADDRESS      <= O_EXT_MEM_ADDRESS;
+                O_EXT_MEM_WRITE_ENABLE <= 1'b0;
             end
             S_DECODE: begin
-                // If 'instruction' is an ALU instruction, it can be executed on the decode stage
-                // since all combinational decoding logic has been done in the fetch stage
-                if (alu_opcode != ALU_CLEAR) begin
-                    state            = S_FETCH;
-                    status_flags     = alu_status_flags;
-                    pc_enable        = 1'b1;
-                    reg_write_enable = regfile_dest_reg;
+                pc_enable <= 1'b0;
+
+                if (instr_has_opcode_ext)
+                    case (instr_opcode_and_ext)
+                        ADD,
+                        ADDC,
+                        MUL,
+                        SUB,
+                        CMP,
+                        NOT,
+                        AND,
+                        OR,
+                        XOR,
+                        LSH,
+                        LSHI,
+                        RSH,
+                        RSHI,
+                        ALSH,
+                        ALSHI,
+                        ARSH,
+                        ARSHI: begin
+                            state            <= S_EXECUTE_ALU;
+                            reg_a_select     <= instr_rsrc;
+                            reg_b_select     <= instr_rdest;
+                            immediate        <= instr_alu_immediate;
+                            immediate_select <= instr_alu_immediate_select;
+                            alu_opcode       <= instr_alu_opcode;
+                        end
+                        MOV: begin
+                            state        <= S_EXECUTE_MOV;
+                            reg_a_select <= instr_rsrc;
+                        end
+                        LOAD,
+                        LOADX: begin
+                            state        <= S_EXECUTE_LOAD;
+                            reg_a_select <= instr_load_raddr;
+                        end
+                        STORE,
+                        STOREX: begin
+                            state        <= S_EXECUTE_STORE;
+                            reg_b_select <= instr_store_raddr;
+                            reg_a_select <= instr_store_rsrc;
+                        end
+                        default:
+                            state <= S_FETCH;
+                    endcase
+                else
+                    case (instr_opcode)
+                        ADDI,
+                        ADDCI,
+                        MULI,
+                        SUBI,
+                        CMPI,
+                        NOTI,
+                        ANDI,
+                        ORI,
+                        XORI: begin
+                            state            <= S_EXECUTE_ALU;
+                            reg_a_select     <= instr_rsrc;
+                            reg_b_select     <= instr_rdest;
+                            immediate        <= instr_alu_immediate;
+                            immediate_select <= instr_alu_immediate_select;
+                            alu_opcode       <= instr_alu_opcode;
+                        end
+                        MOVIL,
+                        MOVIU:
+                            state <= S_EXECUTE_MOV;
+                        default:
+                            state <= S_FETCH;
+                    endcase
+
+                O_MEM_ADDRESS <= pc_o_address;
+            end
+            S_EXECUTE_ALU: begin
+                state            <= S_FETCH;
+                status_flags     <= alu_status_flags;
+                reg_write_enable <= regfile_instr_dest_reg;
+            end
+            S_EXECUTE_MOV: begin
+                state <= S_FETCH;
+
+                reg_write_enable <= regfile_instr_dest_reg;
+                if (instr_opcode_and_ext == MOV)
+                    regfile_data <= a;
+                else if (instr_opcode == MOVIL)
+                    regfile_data <= instr_mov_imm_lower;
+                else if (instr_opcode == MOVIU)
+                    regfile_data <= instr_mov_imm_upper;
+                regfile_data_select <= 1'b1;
+            end
+            S_EXECUTE_LOAD: begin
+                state <= S_EXECUTE_LOAD_LOAD;
+
+                if (instr_opcode_and_ext == LOAD) begin
+                    O_MEM_ADDRESS      <= a;
+                    O_MEM_WRITE_ENABLE <= 1'b0;
                 end
                 else begin
-                    state = S_FETCH;
+                    O_EXT_MEM_ADDRESS      <= a;
+                    O_EXT_MEM_WRITE_ENABLE <= 1'b0;
                 end
             end
+            S_EXECUTE_LOAD_LOAD: begin
+                state <= S_EXECUTE_LOAD_DONE;
+
+                O_MEM_ADDRESS <= pc_o_address;
+            end
+            S_EXECUTE_LOAD_DONE: begin
+                state <= S_FETCH;
+
+                reg_write_enable    <= regfile_instr_dest_reg;
+                regfile_data        <= instr_load_i_mem_data_port;
+                regfile_data_select <= 1'b1;
+
+                O_MEM_ADDRESS <= pc_o_address;
+            end
+            S_EXECUTE_STORE: begin
+                state <= S_EXECUTE_STORE_STORE;
+
+                if (instr_opcode_and_ext == STORE) begin
+                    O_MEM_DATA         <= a;
+                    O_MEM_ADDRESS      <= b;
+                    O_MEM_WRITE_ENABLE <= 1'b1;
+                end
+                else begin
+                    O_EXT_MEM_DATA         <= a;
+                    O_EXT_MEM_ADDRESS      <= b;
+                    O_EXT_MEM_WRITE_ENABLE <= 1'b1;
+                end
+            end
+            S_EXECUTE_STORE_STORE: begin
+                state <= S_EXECUTE_STORE_DONE;
+
+                O_MEM_ADDRESS          <= pc_o_address;
+                O_MEM_WRITE_ENABLE     <= 1'b0;
+                O_EXT_MEM_WRITE_ENABLE <= 1'b0;
+            end
+            S_EXECUTE_STORE_DONE: begin
+                state <= S_FETCH;
+            end
             default: begin
-                state = S_FETCH;
+                state <= S_FETCH;
             end
         endcase
 end
 
-// ALU instruction to 'alu_opcode' mapping block
-always @(instr_opcode, instr_opcode_and_ext, instr_alu_has_immhi_immlo) begin
-    if (instr_alu_has_immhi_immlo)
-        case (instr_opcode)
-            ADDI:
-                alu_opcode = ALU_ADD;
-            ADDCI:
-                alu_opcode = ALU_ADDC;
-            MULI:
-                alu_opcode = ALU_MUL;
-            SUBI:
-                alu_opcode = ALU_SUB;
-            CMPI:
-                alu_opcode = ALU_SUB;
-            NOTI:
-                alu_opcode = ALU_NOT;
-            ANDI:
-                alu_opcode = ALU_AND;
-            ORI:
-                alu_opcode = ALU_OR;
-            XORI:
-                alu_opcode = ALU_XOR;
-            default:
-                alu_opcode = ALU_CLEAR;
-        endcase
-    else
-        case (instr_opcode_and_ext)
-            ADD:
-                alu_opcode = ALU_ADD;
-            ADDC:
-                alu_opcode = ALU_ADDC;
-            MUL:
-                alu_opcode = ALU_MUL;
-            SUB:
-                alu_opcode = ALU_SUB;
-            CMP:
-                alu_opcode = ALU_SUB;
-            NOT:
-                alu_opcode = ALU_NOT;
-            AND:
-                alu_opcode = ALU_AND;
-            OR:
-                alu_opcode = ALU_OR;
-            XOR:
-                alu_opcode = ALU_XOR;
-            LSH,
-            LSHI:
-                alu_opcode = ALU_LSH;
-            RSH,
-            RSHI:
-                alu_opcode = ALU_RSH;
-            ALSH,
-            ALSHI:
-                alu_opcode = ALU_ALSH;
-            ARSH,
-            ARSHI:
-                alu_opcode = ALU_ARSH;
-            default:
-                alu_opcode = ALU_CLEAR;
-        endcase
-end
-
-// ALU instruction to 'alu_immediate' mapping block
-always @(instr_opcode, instr_opcode_and_ext, instr_alu_is_imm, instr_alu_has_immhi_immlo,
+// ALU instruction to 'instr_alu_immediate' mapping block
+always @(instr_opcode, instr_opcode_and_ext, instr_has_opcode_ext, instr_has_imm,
          instr_immhi_immlo, instr_immlo) begin
-    if (instr_alu_is_imm)
-        if (instr_alu_has_immhi_immlo)
+    if (instr_has_imm)
+        if (instr_has_opcode_ext)
+            case (instr_opcode_and_ext)
+                LSHI,
+                RSHI,
+                ALSHI,
+                ARSHI: begin
+                    // Zero extend immediates for bit shifting
+                    instr_alu_immediate        = {12'b0, instr_immlo};
+                    instr_alu_immediate_select = 1'b1;
+                end
+                default: begin
+                    instr_alu_immediate        = 16'b0;
+                    instr_alu_immediate_select = 1'b0;
+                end
+            endcase
+        else
             case (instr_opcode)
                 ADDI,
                 ADDCI,
                 MULI,
                 SUBI,
-                CMPI:
+                CMPI: begin
                     // Sign extend immediates for arithmetic instructions by concatentating the sign bit
-                    // of 'instr_immhi_immlo' as the upper bits of 'alu_immediate'
-                    alu_immediate = {{8{instr_immhi_immlo[7]}}, instr_immhi_immlo};
+                    // of 'instr_immhi_immlo' as the upper bits of 'instr_alu_immediate'
+                    instr_alu_immediate        = {{8{instr_immhi_immlo[7]}}, instr_immhi_immlo};
+                    instr_alu_immediate_select = 1'b1;
+                end
                 NOTI,
                 ANDI,
                 ORI,
-                XORI:
+                XORI: begin
                     // Zero extend immediates for boolean logic
-                    alu_immediate = {8'b0, instr_immhi_immlo};
-                default:
-                    alu_immediate = 16'b0;
+                    instr_alu_immediate        = {8'b0, instr_immhi_immlo};
+                    instr_alu_immediate_select = 1'b1;
+                end
+                default: begin
+                    instr_alu_immediate        = 16'b0;
+                    instr_alu_immediate_select = 1'b0;
+                end
             endcase
-        else
-            case (instr_opcode_and_ext)
-                LSHI,
-                RSHI,
-                ALSHI,
-                ARSHI:
-                    // Zero extend immediates for bit shifting
-                    alu_immediate = {12'b0, instr_immlo};
-                default:
-                    alu_immediate = 16'b0;
-            endcase
+    else begin
+        instr_alu_immediate        = 16'b0;
+        instr_alu_immediate_select = 1'b0;
+    end
+end
+
+// ALU instruction to 'alu_opcode' mapping block
+always @(instr_opcode, instr_opcode_and_ext, instr_has_opcode_ext) begin
+    if (instr_has_opcode_ext)
+        case (instr_opcode_and_ext)
+            ADD:
+                instr_alu_opcode = ALU_ADD;
+            ADDC:
+                instr_alu_opcode = ALU_ADDC;
+            MUL:
+                instr_alu_opcode = ALU_MUL;
+            SUB:
+                instr_alu_opcode = ALU_SUB;
+            CMP:
+                instr_alu_opcode = ALU_SUB;
+            NOT:
+                instr_alu_opcode = ALU_NOT;
+            AND:
+                instr_alu_opcode = ALU_AND;
+            OR:
+                instr_alu_opcode = ALU_OR;
+            XOR:
+                instr_alu_opcode = ALU_XOR;
+            LSH,
+            LSHI:
+                instr_alu_opcode = ALU_LSH;
+            RSH,
+            RSHI:
+                instr_alu_opcode = ALU_RSH;
+            ALSH,
+            ALSHI:
+                instr_alu_opcode = ALU_ALSH;
+            ARSH,
+            ARSHI:
+                instr_alu_opcode = ALU_ARSH;
+            default:
+                instr_alu_opcode = ALU_CLEAR;
+        endcase
     else
-        alu_immediate = 16'b0;
+        case (instr_opcode)
+            ADDI:
+                instr_alu_opcode = ALU_ADD;
+            ADDCI:
+                instr_alu_opcode = ALU_ADDC;
+            MULI:
+                instr_alu_opcode = ALU_MUL;
+            SUBI:
+                instr_alu_opcode = ALU_SUB;
+            CMPI:
+                instr_alu_opcode = ALU_SUB;
+            NOTI:
+                instr_alu_opcode = ALU_NOT;
+            ANDI:
+                instr_alu_opcode = ALU_AND;
+            ORI:
+                instr_alu_opcode = ALU_OR;
+            XORI:
+                instr_alu_opcode = ALU_XOR;
+            default:
+                instr_alu_opcode = ALU_CLEAR;
+        endcase
 end
 endmodule

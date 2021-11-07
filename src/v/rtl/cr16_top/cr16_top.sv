@@ -16,9 +16,16 @@ module cr16_top
         output wire [6:0] O_7_SEGMENT_DISPLAY [5:0],
         output wire [4:0] O_LED_FLAGS);
 
+// This value specified the number of clock cycles that should elapse before passing on
+// 'I_CLK' to 'i_cr16'. This is used to "warm up" BRAM to prepare its outputs for the
+// 'i_cr16' inputs.
+localparam [15:0] P_COLD_CLK_CYCLES = 16'd1;
+
 // This value specifies the max program count (instruction address) that the CR16 processor
 // should advance to until it is disabled.
-localparam [15:0] P_MAX_PC = 16'h0008;
+localparam [15:0] P_MAX_PC = 16'd32;
+
+reg [15:0] clk_count = 16'b0;
 
 wire [15:0] i_mem_data_a;
 wire [15:0] i_mem_address_a;
@@ -38,7 +45,7 @@ localparam integer P_DISPLAY_BIT_WIDTH = 4 * 6;
 reg [P_DISPLAY_BIT_WIDTH - 1 : 0] display_bits = {P_DISPLAY_BIT_WIDTH{1'd0}};
 
 // Instantiate BRAM module with given init file
-bram #(.P_BRAM_INIT_FILE("resources/bram_init/cr16_top/cr16_top_init_test_add_fibonacci.dat"),
+bram #(.P_BRAM_INIT_FILE("resources/bram_init/cr16_top/cr16_top_init_test_load_store_fibonacci.dat"),
        .P_BRAM_INIT_FILE_START_ADDRESS('d0),
        .P_DATA_WIDTH('d16),
        .P_ADDRESS_WIDTH('d10)) // Synthesis takes a long time with 16 bits, use 10 bits for testing
@@ -55,7 +62,7 @@ bram #(.P_BRAM_INIT_FILE("resources/bram_init/cr16_top/cr16_top_init_test_add_fi
 
 // Instantiate CR16 module
 cr16 i_cr16
-     (.I_CLK(I_CLK),
+     (.I_CLK(clk_count > P_COLD_CLK_CYCLES ? I_CLK : 1'b0),
       .I_ENABLE(cr16_enable),
       .I_NRESET(I_NRESET),
       .I_MEM_DATA(o_mem_data_a),
@@ -90,14 +97,25 @@ seven_segment_hex_mapping i_display_5
                           (.I_VALUE(display_bits[23:20]),
                            .O_7_SEGMENT(O_7_SEGMENT_DISPLAY[5]));
 
-// Enable CR16 for all 'pc' before 'P_MAX_PC'
-always @(posedge I_CLK) begin
+// Increment 'clk_count' when it's less than 'P_COLD_CLK_CYCLES'
+always @(posedge I_CLK or negedge I_NRESET) begin
+    if (!I_NRESET)
+        clk_count <= 0;
+    else
+        if (clk_count <= P_COLD_CLK_CYCLES)
+            clk_count <= clk_count + 1'b1;
+        else
+            clk_count <= clk_count;
+end
+
+// Combinationally enable CR16 for all 'pc' before 'P_MAX_PC'
+always @(pc, o_mem_data_b, result_bus) begin
     if (pc > P_MAX_PC) begin
         display_bits = {8'b0, o_mem_data_b};
         cr16_enable  = 1'b0;
     end
     else begin
-        display_bits = {result_bus, o_mem_data_b[7:0]};
+        display_bits = {pc[7:0], result_bus};
         cr16_enable  = 1'b1;
     end
 end

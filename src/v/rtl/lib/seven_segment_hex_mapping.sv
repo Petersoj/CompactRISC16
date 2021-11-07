@@ -16,37 +16,37 @@ module seven_segment_hex_mapping
 
 always @(*) begin
     case (I_VALUE)
-        0:
+        4'd0:
             O_7_SEGMENT = 7'b1000000;
-        1:
+        4'd1:
             O_7_SEGMENT = 7'b1111001;
-        2:
+        4'd2:
             O_7_SEGMENT = 7'b0100100;
-        3:
+        4'd3:
             O_7_SEGMENT = 7'b0110000;
-        4:
+        4'd4:
             O_7_SEGMENT = 7'b0011001;
-        5:
+        4'd5:
             O_7_SEGMENT = 7'b0010010;
-        6:
+        4'd6:
             O_7_SEGMENT = 7'b0000010;
-        7:
+        4'd7:
             O_7_SEGMENT = 7'b1111000;
-        8:
+        4'd8:
             O_7_SEGMENT = 7'b0000000;
-        9:
+        4'd9:
             O_7_SEGMENT = 7'b0011000;
-        10:
+        4'd10:
             O_7_SEGMENT = 7'b0001000;
-        11:
+        4'd11:
             O_7_SEGMENT = 7'b0000011;
-        12:
+        4'd12:
             O_7_SEGMENT = 7'b1000110;
-        13:
+        4'd13:
             O_7_SEGMENT = 7'b0100001;
-        14:
+        4'd14:
             O_7_SEGMENT = 7'b0000110;
-        15:
+        4'd15:
             O_7_SEGMENT = 7'b0001110;
     endcase
 end
