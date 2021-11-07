@@ -78,9 +78,9 @@ B[condition] & Displacement Imm & \code{if [condition]:}\linebreak\code{PC += Im
 CALL & Rtarget & \code{Pushes PC onto stack,}\linebreak\code{PC = Rtarget} & 1111 & xxxx & 0011 & Rtarget & Used for nested subroutines \\ \hline
 CALLD & Displacement Imm & \code{Pushes PC onto stack,}\linebreak\code{PC += Imm} & 1101 & ImmHi & ImmMid & ImmLo & Used for nested subroutines. Immediate is sign extended 2's complement for program counter/address displacement. \\ \hline
 RET &  & \code{Pops top of stack into PC, PC++} & 1111 & xxxx & 0100 & xxxx & Used to return from nested subroutine \\ \hline
-LPC & Rdest & \code{Rdest = PC} & 1111 & Rdest & 0101 & xxxx & Sets Rdest to the current instruction address/PC \\ \hline
-LSF & Rdest & \code{Rdest[4:0] = status flags} & 1111 & Rdest & 0110 & xxxx & Sets 5 least significant bits of Rdest to the current status flags \\ \hline
-SSF & Rsrc & \code{Status flags = Rsrc[4:0]} & 1111 & xxxx & 0111 & Rsrc & Sets current status flags to 5 least significant bits of Rsrc \\ \hline
+LPC & Rdest & \code{Rdest = PC + 1} & 1111 & Rdest & 0101 & xxxx & Sets Rdest to the current instruction address/PC + 1 \\ \hline
+LSF & Rdest & \code{Rdest = status flags} & 1111 & Rdest & 0110 & xxxx & Sets Rdest to the current status flags (zero extended) \\ \hline
+SSF & Rsrc & \code{Status flags = Rsrc[4:0]} & 1111 & xxxx & 0111 & Rsrc & Sets the current status flags to \code{Rsrc[4:0]} \\ \hline
 PUSH & Rsrc & \code{rsp--, Main memory value at rsp = Rsrc} & 1111 & xxxx & 1000 & Rsrc & Pushes Rsrc onto top of stack \\ \hline
 POP & Rdest & \code{Rdest = Main memory value at rsp, rsp++} & 1111 & Rdest & 1001 & xxxx & Pops top of stack into Rdest \\ \hline
 LOAD & Rdest, Raddr & \code{Rdest = Main memory value at Raddr} & 1111 & Rdest & 1010 & Raddr & Used to load data at Raddr into Rdest from main memory \\ \hline

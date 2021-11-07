@@ -43,7 +43,7 @@ module cr16
         output reg O_EXT_MEM_WRITE_ENABLE,
         output wire [15:0] O_RESULT_BUS,
         output wire [4:0] O_STATUS_FLAGS,
-        output wire [16:0] O_PC);
+        output wire [15:0] O_PC);
 
 // Define states of FSM
 localparam P_STATE_BIT_WIDTH = 4;
@@ -52,12 +52,10 @@ localparam [P_STATE_BIT_WIDTH - 1 : 0]
            S_DECODE              = 1,
            S_EXECUTE_ALU         = 2,
            S_EXECUTE_MOV         = 3,
-           S_EXECUTE_LOAD        = 4,
-           S_EXECUTE_LOAD_LOAD   = 5,
-           S_EXECUTE_LOAD_DONE   = 6,
-           S_EXECUTE_STORE       = 7,
-           S_EXECUTE_STORE_STORE = 8,
-           S_EXECUTE_STORE_DONE  = 9;
+           S_EXECUTE_SSF         = 4,
+           S_EXECUTE_LOAD        = 5,
+           S_EXECUTE_LOAD_FINISH = 6,
+           S_EXECUTE_STORE       = 7;
 
 // Parameterized Opcodes with extensions
 localparam [7:0]
@@ -229,31 +227,24 @@ decoder4_16 i_decoder_regfile_instr_dest_reg
 // Clocked CR16 FSM block
 always @(posedge I_CLK or negedge I_NRESET) begin
     if (!I_NRESET) begin
-        state        = S_FETCH;
-        instruction  = 16'b0;
-        status_flags = 5'b0;
+        state        <= S_FETCH;
+        instruction  <= 16'b0;
+        status_flags <= 5'b0;
 
-        pc_enable                   = 1'b0;
-        pc_i_address                = 16'b0;
-        pc_address_select           = 1'b0;
-        pc_address_select_increment = 1'b0;
-        pc_address_select_displace  = 1'b0;
+        pc_enable                   <= 1'b0;
+        pc_i_address                <= 16'b0;
+        pc_address_select           <= 1'b0;
+        pc_address_select_increment <= 1'b0;
+        pc_address_select_displace  <= 1'b0;
 
-        reg_write_enable    = 16'b0;
-        reg_a_select        = 4'b0;
-        reg_b_select        = 4'b0;
-        immediate           = 16'b0;
-        immediate_select    = 1'b0;
-        alu_opcode          = 4'b0;
-        regfile_data        = 16'b0;
-        regfile_data_select = 1'b0;
-
-        O_MEM_DATA             = 16'b0;
-        O_MEM_ADDRESS          = 16'b0;
-        O_MEM_WRITE_ENABLE     = 1'b0;
-        O_EXT_MEM_DATA         = 16'b0;
-        O_EXT_MEM_ADDRESS      = 16'b0;
-        O_EXT_MEM_WRITE_ENABLE = 1'b0;
+        reg_write_enable    <= 16'b0;
+        reg_a_select        <= 4'b0;
+        reg_b_select        <= 4'b0;
+        immediate           <= 16'b0;
+        immediate_select    <= 1'b0;
+        alu_opcode          <= 4'b0;
+        regfile_data        <= 16'b0;
+        regfile_data_select <= 1'b0;
     end
     else if (I_ENABLE)
         case (state)
@@ -276,13 +267,6 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                 alu_opcode          <= alu_opcode;
                 regfile_data        <= regfile_data;
                 regfile_data_select <= 1'b0;
-
-                O_MEM_DATA             <= O_MEM_DATA;
-                O_MEM_ADDRESS          <= O_MEM_ADDRESS;
-                O_MEM_WRITE_ENABLE     <= 1'b0;
-                O_EXT_MEM_DATA         <= O_EXT_MEM_DATA;
-                O_EXT_MEM_ADDRESS      <= O_EXT_MEM_ADDRESS;
-                O_EXT_MEM_WRITE_ENABLE <= 1'b0;
             end
             S_DECODE: begin
                 pc_enable <= 1'b0;
@@ -306,7 +290,8 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         ALSHI,
                         ARSH,
                         ARSHI: begin
-                            state            <= S_EXECUTE_ALU;
+                            state <= S_EXECUTE_ALU;
+
                             reg_a_select     <= instr_rsrc;
                             reg_b_select     <= instr_rdest;
                             immediate        <= instr_alu_immediate;
@@ -317,6 +302,26 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                             state        <= S_EXECUTE_MOV;
                             reg_a_select <= instr_rsrc;
                         end
+                        LPC: begin
+                            // 'LPC' can be executed in this 'S_DECODE' state
+                            state <= S_FETCH;
+
+                            reg_write_enable    <= regfile_instr_dest_reg;
+                            regfile_data        <= pc_o_address;
+                            regfile_data_select <= 1'b1;
+                        end
+                        LSF: begin
+                            // 'LSF' can be executed in this 'S_DECODE' state
+                            state <= S_FETCH;
+
+                            reg_write_enable    <= regfile_instr_dest_reg;
+                            regfile_data        <= {11'b0, status_flags};
+                            regfile_data_select <= 1'b1;
+                        end
+                        SSF: begin
+                            state        <= S_EXECUTE_SSF;
+                            reg_a_select <= instr_rsrc;
+                        end
                         LOAD,
                         LOADX: begin
                             state        <= S_EXECUTE_LOAD;
@@ -324,7 +329,8 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         end
                         STORE,
                         STOREX: begin
-                            state        <= S_EXECUTE_STORE;
+                            state <= S_EXECUTE_STORE;
+
                             reg_b_select <= instr_store_raddr;
                             reg_a_select <= instr_store_rsrc;
                         end
@@ -342,7 +348,8 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         ANDI,
                         ORI,
                         XORI: begin
-                            state            <= S_EXECUTE_ALU;
+                            state <= S_EXECUTE_ALU;
+
                             reg_a_select     <= instr_rsrc;
                             reg_b_select     <= instr_rdest;
                             immediate        <= instr_alu_immediate;
@@ -355,11 +362,10 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         default:
                             state <= S_FETCH;
                     endcase
-
-                O_MEM_ADDRESS <= pc_o_address;
             end
             S_EXECUTE_ALU: begin
-                state            <= S_FETCH;
+                state <= S_FETCH;
+
                 status_flags     <= alu_status_flags;
                 reg_write_enable <= regfile_instr_dest_reg;
             end
@@ -375,54 +381,21 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                     regfile_data <= instr_mov_imm_upper;
                 regfile_data_select <= 1'b1;
             end
+            S_EXECUTE_SSF: begin
+                state        <= S_FETCH;
+                status_flags <= a[4:0];
+            end
             S_EXECUTE_LOAD: begin
-                state <= S_EXECUTE_LOAD_LOAD;
-
-                if (instr_opcode_and_ext == LOAD) begin
-                    O_MEM_ADDRESS      <= a;
-                    O_MEM_WRITE_ENABLE <= 1'b0;
-                end
-                else begin
-                    O_EXT_MEM_ADDRESS      <= a;
-                    O_EXT_MEM_WRITE_ENABLE <= 1'b0;
-                end
+                state <= S_EXECUTE_LOAD_FINISH;
             end
-            S_EXECUTE_LOAD_LOAD: begin
-                state <= S_EXECUTE_LOAD_DONE;
-
-                O_MEM_ADDRESS <= pc_o_address;
-            end
-            S_EXECUTE_LOAD_DONE: begin
+            S_EXECUTE_LOAD_FINISH: begin
                 state <= S_FETCH;
 
                 reg_write_enable    <= regfile_instr_dest_reg;
                 regfile_data        <= instr_load_i_mem_data_port;
                 regfile_data_select <= 1'b1;
-
-                O_MEM_ADDRESS <= pc_o_address;
             end
             S_EXECUTE_STORE: begin
-                state <= S_EXECUTE_STORE_STORE;
-
-                if (instr_opcode_and_ext == STORE) begin
-                    O_MEM_DATA         <= a;
-                    O_MEM_ADDRESS      <= b;
-                    O_MEM_WRITE_ENABLE <= 1'b1;
-                end
-                else begin
-                    O_EXT_MEM_DATA         <= a;
-                    O_EXT_MEM_ADDRESS      <= b;
-                    O_EXT_MEM_WRITE_ENABLE <= 1'b1;
-                end
-            end
-            S_EXECUTE_STORE_STORE: begin
-                state <= S_EXECUTE_STORE_DONE;
-
-                O_MEM_ADDRESS          <= pc_o_address;
-                O_MEM_WRITE_ENABLE     <= 1'b0;
-                O_EXT_MEM_WRITE_ENABLE <= 1'b0;
-            end
-            S_EXECUTE_STORE_DONE: begin
                 state <= S_FETCH;
             end
             default: begin
@@ -540,6 +513,70 @@ always @(instr_opcode, instr_opcode_and_ext, instr_has_opcode_ext) begin
                 instr_alu_opcode = ALU_XOR;
             default:
                 instr_alu_opcode = ALU_CLEAR;
+        endcase
+end
+
+// Always block to combinationally assign memory interface outputs based on 'state'
+// and 'instruction'. By combinationally assigning the memory outputs, this saves the FSM
+// some clock cycles since it doesn't have to assign memory outputs once datapath selections
+// are ready, as they are done combinationally upon datapath selections and state changes.
+always @(I_NRESET, state, instr_has_opcode_ext, instr_opcode_and_ext, pc_o_address, a, b) begin
+    if (!I_NRESET) begin
+        O_MEM_DATA             = 16'b0;
+        O_MEM_ADDRESS          = 16'b0;
+        O_MEM_WRITE_ENABLE     = 1'b0;
+        O_EXT_MEM_DATA         = 16'b0;
+        O_EXT_MEM_ADDRESS      = 16'b0;
+        O_EXT_MEM_WRITE_ENABLE = 1'b0;
+    end
+    else
+        // 'state' in this combinational logic context should actually be interpreted
+        // as 'next_state'
+        case (state)
+            S_EXECUTE_LOAD: begin
+                if (instr_opcode_and_ext == LOAD) begin
+                    O_MEM_DATA             = 16'b0;
+                    O_MEM_ADDRESS          = a;
+                    O_MEM_WRITE_ENABLE     = 1'b0;
+                    O_EXT_MEM_DATA         = 16'b0;
+                    O_EXT_MEM_ADDRESS      = 16'b0;
+                    O_EXT_MEM_WRITE_ENABLE = 1'b0;
+                end
+                else begin
+                    O_MEM_DATA             = 16'b0;
+                    O_MEM_ADDRESS          = pc_o_address;
+                    O_MEM_WRITE_ENABLE     = 1'b0;
+                    O_EXT_MEM_DATA         = 16'b0;
+                    O_EXT_MEM_ADDRESS      = a;
+                    O_EXT_MEM_WRITE_ENABLE = 1'b0;
+                end
+            end
+            S_EXECUTE_STORE: begin
+                if (instr_opcode_and_ext == STORE) begin
+                    O_MEM_DATA             = a;
+                    O_MEM_ADDRESS          = b;
+                    O_MEM_WRITE_ENABLE     = 1'b1;
+                    O_EXT_MEM_DATA         = 16'b0;
+                    O_EXT_MEM_ADDRESS      = 16'b0;
+                    O_EXT_MEM_WRITE_ENABLE = 1'b0;
+                end
+                else begin
+                    O_MEM_DATA             = 16'b0;
+                    O_MEM_ADDRESS          = 16'b0;
+                    O_MEM_WRITE_ENABLE     = 1'b0;
+                    O_EXT_MEM_DATA         = a;
+                    O_EXT_MEM_ADDRESS      = b;
+                    O_EXT_MEM_WRITE_ENABLE = 1'b1;
+                end
+            end
+            default: begin
+                O_MEM_DATA             = 16'b0;
+                O_MEM_ADDRESS          = pc_o_address;
+                O_MEM_WRITE_ENABLE     = 1'b0;
+                O_EXT_MEM_DATA         = 16'b0;
+                O_EXT_MEM_ADDRESS      = 16'b0;
+                O_EXT_MEM_WRITE_ENABLE = 1'b0;
+            end
         endcase
 end
 endmodule
