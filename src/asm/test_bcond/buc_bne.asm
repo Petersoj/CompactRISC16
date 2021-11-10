@@ -6,5 +6,5 @@ main:
      SUBI  r1, 1    // y--
 .L2:
      CMP   r0, r1   // x != y?
-     BNE   -2
+     BNE   -3
      ADD   r2, r1   // store the final value of y in r2

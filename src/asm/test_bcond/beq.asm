@@ -5,5 +5,5 @@ main:
      SUBI  r0, 1
 .L2:
      CMPI  r0, 5
-     BEQ   -3
+     BEQ   -3      // 1111_1101
      ADD   r1, r0  // x = 4
