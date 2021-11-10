@@ -48,14 +48,17 @@ module cr16
 // Define states of FSM
 localparam P_STATE_BIT_WIDTH = 4;
 localparam [P_STATE_BIT_WIDTH - 1 : 0]
-           S_FETCH               = 0,
-           S_DECODE              = 1,
-           S_EXECUTE_ALU         = 2,
-           S_EXECUTE_MOV         = 3,
-           S_EXECUTE_SSF         = 4,
-           S_EXECUTE_LOAD        = 5,
-           S_EXECUTE_LOAD_FINISH = 6,
-           S_EXECUTE_STORE       = 7;
+           S_FETCH                 = 0,
+           S_DECODE                = 1,
+           S_EXECUTE_ALU           = 2,
+           S_EXECUTE_MOV           = 3,
+           S_EXECUTE_SSF           = 4,
+           S_EXECUTE_J_COND        = 5,
+           S_EXECUTE_J_COND_FINISH = 6,
+           S_EXECUTE_B_COND        = 7,
+           S_EXECUTE_LOAD          = 8,
+           S_EXECUTE_LOAD_FINISH   = 9,
+           S_EXECUTE_STORE         = 10;
 
 // Parameterized Opcodes with extensions
 localparam [7:0]
@@ -77,7 +80,7 @@ localparam [7:0]
            ARSH   = 8'b0000_1111,
            ARSHI  = 8'b1111_0000,
            MOV    = 8'b1111_0001,
-           JCOND  = 8'b1111_0010,
+           J_COND = 8'b1111_0010,
            CALL   = 8'b1111_0011,
            RET    = 8'b1111_0100,
            LPC    = 8'b1111_0101,
@@ -92,19 +95,19 @@ localparam [7:0]
 
 // Parameterized Opcodes without extensions
 localparam [3:0]
-           ADDI  = 4'b0001,
-           ADDCI = 4'b0010,
-           MULI  = 4'b0011,
-           SUBI  = 4'b0100,
-           CMPI  = 4'b0101,
-           NOTI  = 4'b0110,
-           ANDI  = 4'b0111,
-           ORI   = 4'b1000,
-           XORI  = 4'b1001,
-           MOVIL = 4'b1010,
-           MOVIU = 4'b1011,
-           BCOND = 4'b1100,
-           CALLD = 4'b1101;
+           ADDI   = 4'b0001,
+           ADDCI  = 4'b0010,
+           MULI   = 4'b0011,
+           SUBI   = 4'b0100,
+           CMPI   = 4'b0101,
+           NOTI   = 4'b0110,
+           ANDI   = 4'b0111,
+           ORI    = 4'b1000,
+           XORI   = 4'b1001,
+           MOVIL  = 4'b1010,
+           MOVIU  = 4'b1011,
+           B_COND = 4'b1100,
+           CALLD  = 4'b1101;
 
 // Parameterized ALU Opcodes
 localparam [3:0]
@@ -122,6 +125,32 @@ localparam [3:0]
            ALU_ARSH  = 4'd11,
            ALU_CLEAR = 4'd12; // Pseudo ALU opcode that represents default case in ALU
                               // which sets ALU outputs to zero
+
+// Parameterized ALU status register indicies for one-hot encoding
+localparam integer
+           ALU_STATUS_INDEX_CARRY    = 0, // Z flag
+           ALU_STATUS_INDEX_LOW      = 1, // L flag
+           ALU_STATUS_INDEX_FLAG     = 2, // F flag
+           ALU_STATUS_INDEX_ZERO     = 3, // Z flag
+           ALU_STATUS_INDEX_NEGATIVE = 4; // N flag
+
+// Parameterized 'J_COND' and 'B_COND' condition bit patterns
+localparam [3:0]
+           COND_EQ = 4'b0000, // Equal                    Z=1
+           COND_NE = 4'b0001, // Not Equal                Z=0
+           COND_CS = 4'b0010, // Carry Set                C=1
+           COND_CC = 4'b0011, // Carry Clear              C=0
+           COND_FS = 4'b0100, // Flag Set                 F=1
+           COND_FC = 4'b0101, // Flag Clear               F=0
+           COND_LT = 4'b0110, // Less Than                N=0 and Z=0
+           COND_LE = 4'b0111, // Less than or Equal       N=0
+           COND_LO = 4'b1000, // Lower than               L=0 and Z=0
+           COND_LS = 4'b1001, // Lower than or Same as    L=0
+           COND_GT = 4'b1010, // Greater Than             N=1
+           COND_GE = 4'b1011, // Greater than or Equal    N=1 or Z=1
+           COND_HI = 4'b1100, // Higher than              L=1
+           COND_HS = 4'b1101, // Higher than or Same as   L=1 or Z=1
+           COND_UC = 4'b1110; // Unconditional
 
 // State register
 reg [P_STATE_BIT_WIDTH - 1 : 0] state = S_FETCH;
@@ -160,6 +189,11 @@ wire [3:0] instr_store_rsrc  = instr_rsrc;
 wire [15:0] instr_load_i_mem_data_port = instr_opcode_and_ext == LOADX
                                          ? I_EXT_MEM_DATA : I_MEM_DATA;
 
+// Reg/wires to decode 'J_COND' and 'B_COND'
+wire [3:0] instr_cond_condition = instr_rdest;
+wire [3:0] instr_cond_rtarget   = instr_rsrc;
+reg instr_cond_true;
+
 // Used to persist the ALU status flags
 reg [4:0] status_flags;
 assign O_STATUS_FLAGS = status_flags;
@@ -190,7 +224,8 @@ wire [15:0] regfile_instr_dest_reg;
 // Instantiate the Program Counter
 pc #(.P_ADDRESS_WIDTH(16))
    i_pc
-   (.I_ENABLE(pc_enable),
+   (.I_CLK(I_CLK),
+    .I_ENABLE(pc_enable),
     .I_NRESET(I_NRESET),
     .I_ADDRESS(pc_i_address),
     .I_ADDRESS_SELECT(pc_address_select),
@@ -269,9 +304,9 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                 regfile_data_select <= 1'b0;
             end
             S_DECODE: begin
-                pc_enable <= 1'b0;
+                if (instr_has_opcode_ext) begin
+                    pc_enable <= 1'b0;
 
-                if (instr_has_opcode_ext)
                     case (instr_opcode_and_ext)
                         ADD,
                         ADDC,
@@ -301,6 +336,14 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         MOV: begin
                             state        <= S_EXECUTE_MOV;
                             reg_a_select <= instr_rsrc;
+                        end
+                        J_COND: begin
+                            if (instr_cond_true) begin
+                                state        <= S_EXECUTE_J_COND;
+                                reg_a_select <= instr_cond_rtarget;
+                            end
+                            else
+                                state <= S_FETCH;
                         end
                         LPC: begin
                             // 'LPC' can be executed in this 'S_DECODE' state
@@ -337,7 +380,8 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         default:
                             state <= S_FETCH;
                     endcase
-                else
+                end
+                else begin
                     case (instr_opcode)
                         ADDI,
                         ADDCI,
@@ -350,6 +394,8 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         XORI: begin
                             state <= S_EXECUTE_ALU;
 
+                            pc_enable <= 1'b0;
+
                             reg_a_select     <= instr_rsrc;
                             reg_b_select     <= instr_rdest;
                             immediate        <= instr_alu_immediate;
@@ -357,11 +403,30 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                             alu_opcode       <= instr_alu_opcode;
                         end
                         MOVIL,
-                        MOVIU:
-                            state <= S_EXECUTE_MOV;
-                        default:
-                            state <= S_FETCH;
+                        MOVIU: begin
+                            state     <= S_EXECUTE_MOV;
+                            pc_enable <= 1'b0;
+                        end
+                        B_COND: begin
+                            if (instr_cond_true) begin
+                                state <= S_EXECUTE_B_COND;
+
+                                pc_enable                  <= 1'b1;
+                                pc_i_address               <= instr_immhi_immlo;
+                                pc_address_select          <= 1'b1;
+                                pc_address_select_displace <= 1'b1;
+                            end
+                            else begin
+                                state     <= S_FETCH;
+                                pc_enable <= 1'b0;
+                            end
+                        end
+                        default: begin
+                            state     <= S_FETCH;
+                            pc_enable <= 1'b0;
+                        end
                     endcase
+                end
             end
             S_EXECUTE_ALU: begin
                 state <= S_FETCH;
@@ -380,6 +445,21 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                 else if (instr_opcode == MOVIU)
                     regfile_data <= instr_mov_imm_upper;
                 regfile_data_select <= 1'b1;
+            end
+            S_EXECUTE_J_COND: begin
+                state <= S_EXECUTE_J_COND_FINISH;
+
+                pc_enable         <= 1'b1;
+                pc_i_address      <= a;
+                pc_address_select <= 1'b1;
+            end
+            S_EXECUTE_J_COND_FINISH: begin
+                state     <= S_FETCH;
+                pc_enable <= 1'b0;
+            end
+            S_EXECUTE_B_COND: begin
+                state     <= S_FETCH;
+                pc_enable <= 1'b0;
             end
             S_EXECUTE_SSF: begin
                 state        <= S_FETCH;
@@ -514,6 +594,49 @@ always @(instr_opcode, instr_opcode_and_ext, instr_has_opcode_ext) begin
             default:
                 instr_alu_opcode = ALU_CLEAR;
         endcase
+end
+
+// Always block to combinationally determine if 'instr_cond_condition' has a condition
+// bit pattern that matches the corresponding 'status_flags'
+always @(instr_cond_condition, status_flags) begin
+    case (instr_cond_condition)
+        COND_EQ:
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_ZERO];
+        COND_NE:
+            instr_cond_true = ~status_flags[ALU_STATUS_INDEX_ZERO];
+        COND_CS:
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_CARRY];
+        COND_CC:
+            instr_cond_true = ~status_flags[ALU_STATUS_INDEX_CARRY];
+        COND_FS:
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_FLAG];
+        COND_FC:
+            instr_cond_true = ~status_flags[ALU_STATUS_INDEX_FLAG];
+        COND_LT:
+            instr_cond_true = ~status_flags[ALU_STATUS_INDEX_NEGATIVE] &
+                              ~status_flags[ALU_STATUS_INDEX_ZERO];
+        COND_LE:
+            instr_cond_true = ~status_flags[ALU_STATUS_INDEX_NEGATIVE];
+        COND_LO:
+            instr_cond_true = ~status_flags[ALU_STATUS_INDEX_LOW] &
+                              ~status_flags[ALU_STATUS_INDEX_ZERO];
+        COND_LS:
+            instr_cond_true = ~status_flags[ALU_STATUS_INDEX_LOW];
+        COND_GT:
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_NEGATIVE];
+        COND_GE:
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_NEGATIVE] &
+                              status_flags[ALU_STATUS_INDEX_ZERO];
+        COND_HI:
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_LOW];
+        COND_HS:
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_LOW] &
+                              status_flags[ALU_STATUS_INDEX_ZERO];
+        COND_UC:
+            instr_cond_true = 1'b1;
+        default:
+            instr_cond_true = 1'b0;
+    endcase
 end
 
 // Always block to combinationally assign memory interface outputs based on 'state'
