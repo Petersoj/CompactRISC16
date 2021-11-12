@@ -45,7 +45,7 @@ localparam integer P_DISPLAY_BIT_WIDTH = 4 * 6;
 reg [P_DISPLAY_BIT_WIDTH - 1 : 0] display_bits = {P_DISPLAY_BIT_WIDTH{1'd0}};
 
 // Instantiate BRAM module with given init file
-bram #(.P_BRAM_INIT_FILE("resources/bram_init/cr16_top/cr16_top_init_test_load_store_fibonacci.dat"),
+bram #(.P_BRAM_INIT_FILE("resources/bram_init/cr16_top/test_load_store/fibonacci.dat"),
        .P_BRAM_INIT_FILE_START_ADDRESS('d0),
        .P_DATA_WIDTH('d16),
        .P_ADDRESS_WIDTH('d10)) // Synthesis takes a long time with 16 bits, use 10 bits for testing
