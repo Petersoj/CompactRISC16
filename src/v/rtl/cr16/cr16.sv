@@ -53,12 +53,14 @@ localparam [P_STATE_BIT_WIDTH - 1 : 0]
            S_EXECUTE_ALU           = 2,
            S_EXECUTE_MOV           = 3,
            S_EXECUTE_SSF           = 4,
-           S_EXECUTE_J_COND        = 5,
-           S_EXECUTE_J_COND_FINISH = 6,
-           S_EXECUTE_B_COND        = 7,
-           S_EXECUTE_LOAD          = 8,
-           S_EXECUTE_LOAD_FINISH   = 9,
-           S_EXECUTE_STORE         = 10;
+           S_EXECUTE_J_COND_SETUP  = 5,
+           S_EXECUTE_J_COND        = 6,
+           S_EXECUTE_J_COND_WAIT   = 7,
+           S_EXECUTE_B_COND        = 8,
+           S_EXECUTE_B_COND_WAIT   = 9,
+           S_EXECUTE_LOAD_WAIT     = 10,
+           S_EXECUTE_LOAD_REGFILE  = 11,
+           S_EXECUTE_STORE_WAIT    = 12;
 
 // Parameterized Opcodes with extensions
 localparam [7:0]
@@ -284,6 +286,8 @@ always @(posedge I_CLK or negedge I_NRESET) begin
     else if (I_ENABLE)
         case (state)
             S_FETCH: begin
+                // TODO remove redundant non-blocking assignments
+
                 state        <= S_DECODE;
                 instruction  <= I_MEM_DATA;
                 status_flags <= status_flags;
@@ -339,7 +343,7 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         end
                         J_COND: begin
                             if (instr_cond_true) begin
-                                state        <= S_EXECUTE_J_COND;
+                                state        <= S_EXECUTE_J_COND_SETUP;
                                 reg_a_select <= instr_cond_rtarget;
                             end
                             else
@@ -367,12 +371,12 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         end
                         LOAD,
                         LOADX: begin
-                            state        <= S_EXECUTE_LOAD;
+                            state        <= S_EXECUTE_LOAD_WAIT;
                             reg_a_select <= instr_load_raddr;
                         end
                         STORE,
                         STOREX: begin
-                            state <= S_EXECUTE_STORE;
+                            state <= S_EXECUTE_STORE_WAIT;
 
                             reg_b_select <= instr_store_raddr;
                             reg_a_select <= instr_store_rsrc;
@@ -412,7 +416,7 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                                 state <= S_EXECUTE_B_COND;
 
                                 pc_enable                  <= 1'b1;
-                                pc_i_address               <= instr_immhi_immlo;
+                                pc_i_address               <= {{8{instr_immhi_immlo[7]}}, instr_immhi_immlo};
                                 pc_address_select          <= 1'b1;
                                 pc_address_select_displace <= 1'b1;
                             end
@@ -431,8 +435,9 @@ always @(posedge I_CLK or negedge I_NRESET) begin
             S_EXECUTE_ALU: begin
                 state <= S_FETCH;
 
-                status_flags     <= alu_status_flags;
-                reg_write_enable <= regfile_instr_dest_reg;
+                status_flags <= alu_status_flags;
+                if (instr_opcode_and_ext != CMP && instr_opcode != CMPI)
+                    reg_write_enable <= regfile_instr_dest_reg;
             end
             S_EXECUTE_MOV: begin
                 state <= S_FETCH;
@@ -446,36 +451,42 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                     regfile_data <= instr_mov_imm_upper;
                 regfile_data_select <= 1'b1;
             end
-            S_EXECUTE_J_COND: begin
-                state <= S_EXECUTE_J_COND_FINISH;
+            S_EXECUTE_J_COND_SETUP: begin
+                state <= S_EXECUTE_J_COND;
 
                 pc_enable         <= 1'b1;
                 pc_i_address      <= a;
                 pc_address_select <= 1'b1;
             end
-            S_EXECUTE_J_COND_FINISH: begin
-                state     <= S_FETCH;
+            S_EXECUTE_J_COND: begin
+                state     <= S_EXECUTE_J_COND_WAIT;
                 pc_enable <= 1'b0;
             end
+            S_EXECUTE_J_COND_WAIT: begin
+                state <= S_FETCH;
+            end
             S_EXECUTE_B_COND: begin
-                state     <= S_FETCH;
+                state     <= S_EXECUTE_B_COND_WAIT;
                 pc_enable <= 1'b0;
+            end
+            S_EXECUTE_B_COND_WAIT: begin
+                state <= S_FETCH;
             end
             S_EXECUTE_SSF: begin
                 state        <= S_FETCH;
                 status_flags <= a[4:0];
             end
-            S_EXECUTE_LOAD: begin
-                state <= S_EXECUTE_LOAD_FINISH;
+            S_EXECUTE_LOAD_WAIT: begin
+                state <= S_EXECUTE_LOAD_REGFILE;
             end
-            S_EXECUTE_LOAD_FINISH: begin
+            S_EXECUTE_LOAD_REGFILE: begin
                 state <= S_FETCH;
 
                 reg_write_enable    <= regfile_instr_dest_reg;
                 regfile_data        <= instr_load_i_mem_data_port;
                 regfile_data_select <= 1'b1;
             end
-            S_EXECUTE_STORE: begin
+            S_EXECUTE_STORE_WAIT: begin
                 state <= S_FETCH;
             end
             default: begin
@@ -656,7 +667,7 @@ always @(I_NRESET, state, instr_has_opcode_ext, instr_opcode_and_ext, pc_o_addre
         // 'state' in this combinational logic context should actually be interpreted
         // as 'next_state'
         case (state)
-            S_EXECUTE_LOAD: begin
+            S_EXECUTE_LOAD_WAIT: begin
                 if (instr_opcode_and_ext == LOAD) begin
                     O_MEM_DATA             = 16'b0;
                     O_MEM_ADDRESS          = a;
@@ -674,7 +685,7 @@ always @(I_NRESET, state, instr_has_opcode_ext, instr_opcode_and_ext, pc_o_addre
                     O_EXT_MEM_WRITE_ENABLE = 1'b0;
                 end
             end
-            S_EXECUTE_STORE: begin
+            S_EXECUTE_STORE_WAIT: begin
                 if (instr_opcode_and_ext == STORE) begin
                     O_MEM_DATA             = a;
                     O_MEM_ADDRESS          = b;
