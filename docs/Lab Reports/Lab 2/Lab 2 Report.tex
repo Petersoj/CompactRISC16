@@ -9,7 +9,7 @@
 \usepackage{ragged2e}
 \usepackage{multirow} % For multirows in tables
 \usepackage{float} % Appending the [H] option forces the placement of a figure in the place it's in the code
-\graphicspath{ {./lab_2_figures/} }
+\graphicspath{ {./resources/figures/} }
 % Used for a left-aligned table cell with given width
 \newcolumntype{P}[1]{>{\RaggedRight\hspace{0pt}}p{#1}}
 
@@ -174,7 +174,7 @@ The CR16 register file consists of 16 general-purpose, 16-bit registers. The blo
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=1.0]{lab_2_figures/regfile_block_diagram.pdf}
+    \includegraphics[scale=1.0]{resources/figures/regfile_block_diagram.pdf}
     \caption{Block diagram of the CR16 register file.}
     \label{fig:regfile_block_diagram}
 \end{figure}
@@ -212,7 +212,7 @@ The multiplexer logic at read ports A and B is quite extensive. The register fil
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.3]{lab_2_figures/16-to-1-mux.JPG}
+    \includegraphics[scale=0.3]{resources/figures/16-to-1-mux.JPG}
     \caption{16-to-1 Multiplexer with 4-bit selector as seen in Quartus RTL viewer.}
     \label{fig:16_to_1_mux}
 \end{figure}
@@ -220,7 +220,7 @@ To establish one read port, we instantiate 16 of these 16-to-1 multiplexers and 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.50]{lab_2_figures/read_port_mux_connections.JPG}
+    \includegraphics[scale=0.50]{resources/figures/read_port_mux_connections.JPG}
     \caption{Read Port to 16x16-to-1 Mux Connections}
     \label{fig:read_port_mux_connections}
 \end{figure}
@@ -230,7 +230,7 @@ To control the use of immediate values, we can use a vector of 2-to-1 multiplexe
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.45]{lab_2_figures/block_diagram_datapath.JPG}
+    \includegraphics[scale=0.45]{resources/figures/block_diagram_datapath.JPG}
     \caption{Block diagram for datapath. Global enables and resets omitted for graphic clarity.}
     \label{fig:datapath_block_diagram}
 \end{figure}
@@ -260,7 +260,7 @@ We reviewed the synthesis reports of the datapath module independent of the FSM 
 \subsection{Synthesis Reports}
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.5]{lab_2_figures/analysis_and_synthesis_summary.JPG}
+    \includegraphics[scale=0.5]{resources/figures/analysis_and_synthesis_summary.JPG}
     \caption{Summary data from the Quartus map synthesis report after synthesizing "cr16\_datapath.v" as the top-level module.}
     \label{fig:datapath_analysis_summary}
 \end{figure}
@@ -269,7 +269,7 @@ As is shown in the summary of the synthesis report (Fig. \ref{fig:datapath_analy
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.5]{lab_2_figures/analysis_and_synthesis_netlist.JPG}
+    \includegraphics[scale=0.5]{resources/figures/analysis_and_synthesis_netlist.JPG}
     \caption{Netlist data from the Quartus map synthesis report after synthesizing "cr16\_datapath.v" as the top-level module.}
     \label{fig:datapath_analysis_netlist}
 \end{figure}
@@ -277,7 +277,7 @@ As is shown in the summary of the synthesis report (Fig. \ref{fig:datapath_analy
 Considering the average fan-out of our design is also a crucial element of efficiency analysis. While we do not have any other implementations of this particular piece of hardware to which we could compare our design, it is instructive to review the data. Total fan-out in our implementation is reported to be 3653, which is considerable. Average fan-out for each net is 4.08. The maximum fanout node is the global reset input, which is connected to each register in the Regfile and the flags register. The fanout of this node is so high (277) because each 16-bit register is likely synthesized using an array of 1-bit flip-flops. This means that the I\_NRESET signal will be connected to 16 flip-flops * 16 registers, or about 256 ports. The other 21 connections exist within the Regfile and the flags register. Other fanout occurs like this among connections like I\_ENABLE that have to be connected to many single-bit elements of the low level hardware synthesis.
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.5]{lab_2_figures/analysis_and_synthesis_resources.JPG}
+    \includegraphics[scale=0.5]{resources/figures/analysis_and_synthesis_resources.JPG}
     \caption{Resource data from the Quartus map synthesis report after synthesizing "cr16\_datapath.v" as the top-level module.}
     \label{fig:datapath_analysis_resources}
 \end{figure}
@@ -287,7 +287,7 @@ Overall it's hard to claim that our design is more or less efficient than others
 We conducted timing analysis using the Quartus Timing Analyzer tool. This analysis contains the maximum time delay data from the input ports to the output ports of the datapath module, independent of the testing FSM and top-level module. We have included the top 25 longest propagation paths in Fig. \ref{fig:datapath_timing_table}.
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.6]{lab_2_figures/timing_analysis_datapath.JPG}
+    \includegraphics[scale=0.6]{resources/figures/timing_analysis_datapath.JPG}
     \caption{Timing analysis of top 25 maximum propagation times along the datapath from all inputs to all outputs.}
     \label{fig:datapath_timing_table}
 \end{figure}
