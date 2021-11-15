@@ -46,21 +46,27 @@ module cr16
         output wire [15:0] O_PC);
 
 // Define states of FSM
-localparam P_STATE_BIT_WIDTH = 4;
+localparam P_STATE_BIT_WIDTH = 5;
 localparam [P_STATE_BIT_WIDTH - 1 : 0]
            S_FETCH                 = 0,
            S_DECODE                = 1,
            S_EXECUTE_ALU           = 2,
            S_EXECUTE_MOV           = 3,
-           S_EXECUTE_SSF           = 4,
-           S_EXECUTE_J_COND_SETUP  = 5,
-           S_EXECUTE_J_COND        = 6,
-           S_EXECUTE_J_COND_WAIT   = 7,
-           S_EXECUTE_B_COND        = 8,
-           S_EXECUTE_B_COND_WAIT   = 9,
-           S_EXECUTE_LOAD_WAIT     = 10,
-           S_EXECUTE_LOAD_REGFILE  = 11,
-           S_EXECUTE_STORE_WAIT    = 12;
+           S_EXECUTE_J_COND        = 4,
+           S_EXECUTE_CALL          = 5,
+           S_EXECUTE_CALLD         = 6,
+           S_EXECUTE_RET           = 7,
+           S_EXECUTE_RET_SET_PC    = 8,
+           S_EXECUTE_SSF           = 9,
+           S_EXECUTE_PUSH          = 10,
+           S_EXECUTE_POP           = 11,
+           S_EXECUTE_POP_REGFILE   = 12,
+           S_EXECUTE_LOAD          = 13,
+           S_EXECUTE_LOAD_REGFILE  = 14,
+           S_EXECUTE_STORE         = 15,
+           // The following states are transitioned to for multiple 'S_EXECUTE' states
+           S_DISABLE_PC_FETCH_WAIT = 16,
+           S_FETCH_WAIT            = 17;
 
 // Parameterized Opcodes with extensions
 localparam [7:0]
@@ -154,6 +160,11 @@ localparam [3:0]
            COND_HS = 4'b1101, // Higher than or Same as   L=1 or Z=1
            COND_UC = 4'b1110; // Unconditional
 
+// Define regfile index for 'stack pointer' register
+localparam [3:0] RSP = 4'd15;
+// Define regfile 'write enable' for 'stack pointer' register
+localparam [15:0] REGFILE_WRITE_ENABLE_RSP = {1'b1, 15'b0};
+
 // State register
 reg [P_STATE_BIT_WIDTH - 1 : 0] state = S_FETCH;
 
@@ -192,9 +203,14 @@ wire [15:0] instr_load_i_mem_data_port = instr_opcode_and_ext == LOADX
                                          ? I_EXT_MEM_DATA : I_MEM_DATA;
 
 // Reg/wires to decode 'J_COND' and 'B_COND'
-wire [3:0] instr_cond_condition = instr_rdest;
-wire [3:0] instr_cond_rtarget   = instr_rsrc;
+wire [3:0] instr_cond_condition      = instr_rdest;
+wire [3:0] instr_jcond_rtarget       = instr_rsrc;
+wire [15:0] instr_bcond_displacement = {{8{instr_immhi_immlo[7]}}, instr_immhi_immlo};
 reg instr_cond_true;
+
+// Wires to decode 'CALL' and 'CALLD'
+wire [3:0] instr_call_rtarget = instr_rsrc;
+wire [15:0] instr_calld_displacement = {{4{instruction[11]}}, instruction[11:0]};
 
 // Used to persist the ALU status flags
 reg [4:0] status_flags;
@@ -204,7 +220,6 @@ assign O_STATUS_FLAGS = status_flags;
 reg pc_enable;
 reg [15:0] pc_i_address;
 reg pc_address_select;
-reg pc_address_select_increment;
 reg pc_address_select_displace;
 wire [15:0] pc_o_address;
 assign O_PC = pc_o_address;
@@ -218,7 +233,9 @@ reg [3:0] alu_opcode;
 reg [15:0] regfile_data;
 reg regfile_data_select;
 wire [15:0] a, b; // 'a' is Rsrc, 'b' is Rdest
+wire [15:0] result_bus;
 wire [4:0] alu_status_flags;
+assign O_RESULT_BUS = result_bus;
 
 // Ports for 'i_decoder_regfile_instr_dest_reg'
 wire [15:0] regfile_instr_dest_reg;
@@ -231,11 +248,10 @@ pc #(.P_ADDRESS_WIDTH(16))
     .I_NRESET(I_NRESET),
     .I_ADDRESS(pc_i_address),
     .I_ADDRESS_SELECT(pc_address_select),
-    .I_ADDRESS_SELECT_INCREMENT(pc_address_select_increment),
     .I_ADDRESS_SELECT_DISPLACE(pc_address_select_displace),
     .O_ADDRESS(pc_o_address));
 
-// Instantiate the Datapath containing the regfile, ALU, and status flags
+// Instantiate the Datapath containing the regfile and ALU
 datapath i_datapath
          (.I_CLK(I_CLK),
           .I_ENABLE(I_ENABLE),
@@ -250,7 +266,7 @@ datapath i_datapath
           .I_REGFILE_DATA_SELECT(regfile_data_select),
           .O_A(a),
           .O_B(b),
-          .O_RESULT_BUS(O_RESULT_BUS),
+          .O_RESULT_BUS(result_bus),
           .O_STATUS_FLAGS(alu_status_flags));
 
 // Instantiate a decoder to decode a given 'dest' register index into the write enable signal
@@ -268,11 +284,10 @@ always @(posedge I_CLK or negedge I_NRESET) begin
         instruction  <= 16'b0;
         status_flags <= 5'b0;
 
-        pc_enable                   <= 1'b0;
-        pc_i_address                <= 16'b0;
-        pc_address_select           <= 1'b0;
-        pc_address_select_increment <= 1'b0;
-        pc_address_select_displace  <= 1'b0;
+        pc_enable                  <= 1'b0;
+        pc_i_address               <= 16'b0;
+        pc_address_select          <= 1'b0;
+        pc_address_select_displace <= 1'b0;
 
         reg_write_enable    <= 16'b0;
         reg_a_select        <= 4'b0;
@@ -292,11 +307,10 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                 instruction  <= I_MEM_DATA;
                 status_flags <= status_flags;
 
-                pc_enable                   <= 1'b1;
-                pc_i_address                <= pc_i_address;
-                pc_address_select           <= 1'b0;
-                pc_address_select_increment <= 1'b0;
-                pc_address_select_displace  <= 1'b0;
+                pc_enable                  <= 1'b1;
+                pc_i_address               <= pc_i_address;
+                pc_address_select          <= 1'b0;
+                pc_address_select_displace <= 1'b0;
 
                 reg_write_enable    <= 16'b0;
                 reg_a_select        <= reg_a_select;
@@ -343,23 +357,42 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         end
                         J_COND: begin
                             if (instr_cond_true) begin
-                                state        <= S_EXECUTE_J_COND_SETUP;
-                                reg_a_select <= instr_cond_rtarget;
+                                state        <= S_EXECUTE_J_COND;
+                                reg_a_select <= instr_jcond_rtarget;
                             end
                             else
-                                state <= S_FETCH;
+                                state <= S_FETCH_WAIT;
+                        end
+                        CALL: begin
+                            state <= S_EXECUTE_CALL;
+
+                            // Decrement 'RSP' by 1 using 'ALU_SUB'
+                            reg_write_enable <= REGFILE_WRITE_ENABLE_RSP;
+                            reg_a_select     <= instr_call_rtarget;
+                            reg_b_select     <= RSP;
+                            immediate        <= 16'd1;
+                            immediate_select <= 1'b1;
+                            alu_opcode       <= ALU_SUB;
+                        end
+                        RET: begin
+                            state <= S_EXECUTE_RET;
+
+                            // Increment 'RSP' by 1 using 'ALU_ADD'
+                            reg_write_enable <= REGFILE_WRITE_ENABLE_RSP;
+                            reg_b_select     <= RSP;
+                            immediate        <= 16'd1;
+                            immediate_select <= 1'b1;
+                            alu_opcode       <= ALU_ADD;
                         end
                         LPC: begin
-                            // 'LPC' can be executed in this 'S_DECODE' state
-                            state <= S_FETCH;
+                            state <= S_FETCH_WAIT;
 
                             reg_write_enable    <= regfile_instr_dest_reg;
                             regfile_data        <= pc_o_address;
                             regfile_data_select <= 1'b1;
                         end
                         LSF: begin
-                            // 'LSF' can be executed in this 'S_DECODE' state
-                            state <= S_FETCH;
+                            state <= S_FETCH_WAIT;
 
                             reg_write_enable    <= regfile_instr_dest_reg;
                             regfile_data        <= {11'b0, status_flags};
@@ -369,20 +402,41 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                             state        <= S_EXECUTE_SSF;
                             reg_a_select <= instr_rsrc;
                         end
+                        PUSH: begin
+                            state <= S_EXECUTE_PUSH;
+
+                            // Decrement 'RSP' by 1 using 'ALU_SUB'
+                            reg_write_enable <= REGFILE_WRITE_ENABLE_RSP;
+                            reg_a_select     <= instr_call_rtarget;
+                            reg_b_select     <= RSP;
+                            immediate        <= 16'd1;
+                            immediate_select <= 1'b1;
+                            alu_opcode       <= ALU_SUB;
+                        end
+                        POP: begin
+                            state <= S_EXECUTE_POP;
+
+                            // Increment 'RSP' by 1 using 'ALU_ADD'
+                            reg_write_enable <= REGFILE_WRITE_ENABLE_RSP;
+                            reg_b_select     <= RSP;
+                            immediate        <= 16'd1;
+                            immediate_select <= 1'b1;
+                            alu_opcode       <= ALU_ADD;
+                        end
                         LOAD,
                         LOADX: begin
-                            state        <= S_EXECUTE_LOAD_WAIT;
+                            state        <= S_EXECUTE_LOAD;
                             reg_a_select <= instr_load_raddr;
                         end
                         STORE,
                         STOREX: begin
-                            state <= S_EXECUTE_STORE_WAIT;
+                            state <= S_EXECUTE_STORE;
 
-                            reg_b_select <= instr_store_raddr;
                             reg_a_select <= instr_store_rsrc;
+                            reg_b_select <= instr_store_raddr;
                         end
                         default:
-                            state <= S_FETCH;
+                            state <= S_FETCH_WAIT;
                     endcase
                 end
                 else begin
@@ -413,20 +467,35 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         end
                         B_COND: begin
                             if (instr_cond_true) begin
-                                state <= S_EXECUTE_B_COND;
+                                state <= S_DISABLE_PC_FETCH_WAIT;
 
                                 pc_enable                  <= 1'b1;
-                                pc_i_address               <= {{8{instr_immhi_immlo[7]}}, instr_immhi_immlo};
+                                pc_i_address               <= instr_bcond_displacement;
                                 pc_address_select          <= 1'b1;
                                 pc_address_select_displace <= 1'b1;
                             end
                             else begin
-                                state     <= S_FETCH;
+                                state     <= S_FETCH_WAIT;
                                 pc_enable <= 1'b0;
                             end
                         end
+                        CALLD: begin
+                            state <= S_EXECUTE_CALLD;
+
+                            pc_enable                  <= 1'b1;
+                            pc_i_address               <= instr_calld_displacement;
+                            pc_address_select          <= 1'b1;
+                            pc_address_select_displace <= 1'b1;
+
+                            // Decrement 'RSP' by 1 using 'ALU_SUB'
+                            reg_write_enable <= REGFILE_WRITE_ENABLE_RSP;
+                            reg_b_select     <= RSP;
+                            immediate        <= 16'd1;
+                            immediate_select <= 1'b1;
+                            alu_opcode       <= ALU_SUB;
+                        end
                         default: begin
-                            state     <= S_FETCH;
+                            state     <= S_FETCH_WAIT;
                             pc_enable <= 1'b0;
                         end
                     endcase
@@ -451,32 +520,58 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                     regfile_data <= instr_mov_imm_upper;
                 regfile_data_select <= 1'b1;
             end
-            S_EXECUTE_J_COND_SETUP: begin
-                state <= S_EXECUTE_J_COND;
+            S_EXECUTE_J_COND: begin
+                state <= S_DISABLE_PC_FETCH_WAIT;
 
                 pc_enable         <= 1'b1;
                 pc_i_address      <= a;
                 pc_address_select <= 1'b1;
             end
-            S_EXECUTE_J_COND: begin
-                state     <= S_EXECUTE_J_COND_WAIT;
-                pc_enable <= 1'b0;
+            S_EXECUTE_CALL: begin
+                state <= S_DISABLE_PC_FETCH_WAIT;
+
+                pc_enable         <= 1'b1;
+                pc_i_address      <= a;
+                pc_address_select <= 1'b1;
+
+                reg_write_enable <= 16'b0;
             end
-            S_EXECUTE_J_COND_WAIT: begin
-                state <= S_FETCH;
+            S_EXECUTE_CALLD: begin
+                state            <= S_FETCH_WAIT;
+                pc_enable        <= 1'b0;
+                reg_write_enable <= 16'b0;
             end
-            S_EXECUTE_B_COND: begin
-                state     <= S_EXECUTE_B_COND_WAIT;
-                pc_enable <= 1'b0;
+            S_EXECUTE_RET: begin
+                state            <= S_EXECUTE_RET_SET_PC;
+                reg_write_enable <= 16'b0;
             end
-            S_EXECUTE_B_COND_WAIT: begin
-                state <= S_FETCH;
+            S_EXECUTE_RET_SET_PC: begin
+                state <= S_DISABLE_PC_FETCH_WAIT;
+
+                pc_enable         <= 1'b1;
+                pc_i_address      <= I_MEM_DATA;
+                pc_address_select <= 1'b1;
             end
             S_EXECUTE_SSF: begin
                 state        <= S_FETCH;
                 status_flags <= a[4:0];
             end
-            S_EXECUTE_LOAD_WAIT: begin
+            S_EXECUTE_PUSH: begin
+                state            <= S_FETCH_WAIT;
+                reg_write_enable <= 16'b0;
+            end
+            S_EXECUTE_POP: begin
+                state            <= S_EXECUTE_POP_REGFILE;
+                reg_write_enable <= 16'b0;
+            end
+            S_EXECUTE_POP_REGFILE: begin
+                state <= S_FETCH;
+
+                reg_write_enable    <= regfile_instr_dest_reg;
+                regfile_data        <= I_MEM_DATA;
+                regfile_data_select <= 1'b1;
+            end
+            S_EXECUTE_LOAD: begin
                 state <= S_EXECUTE_LOAD_REGFILE;
             end
             S_EXECUTE_LOAD_REGFILE: begin
@@ -486,7 +581,14 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                 regfile_data        <= instr_load_i_mem_data_port;
                 regfile_data_select <= 1'b1;
             end
-            S_EXECUTE_STORE_WAIT: begin
+            S_EXECUTE_STORE: begin
+                state <= S_FETCH_WAIT;
+            end
+            S_DISABLE_PC_FETCH_WAIT: begin
+                state     <= S_FETCH_WAIT;
+                pc_enable <= 1'b0;
+            end
+            S_FETCH_WAIT: begin
                 state <= S_FETCH;
             end
             default: begin
@@ -654,7 +756,8 @@ end
 // and 'instruction'. By combinationally assigning the memory outputs, this saves the FSM
 // some clock cycles since it doesn't have to assign memory outputs once datapath selections
 // are ready, as they are done combinationally upon datapath selections and state changes.
-always @(I_NRESET, state, instr_has_opcode_ext, instr_opcode_and_ext, pc_o_address, a, b) begin
+always @(I_NRESET, state, instr_has_opcode_ext, instr_opcode_and_ext, pc_o_address, a, b,
+         result_bus) begin
     if (!I_NRESET) begin
         O_MEM_DATA             = 16'b0;
         O_MEM_ADDRESS          = 16'b0;
@@ -667,7 +770,33 @@ always @(I_NRESET, state, instr_has_opcode_ext, instr_opcode_and_ext, pc_o_addre
         // 'state' in this combinational logic context should actually be interpreted
         // as 'next_state'
         case (state)
-            S_EXECUTE_LOAD_WAIT: begin
+            S_EXECUTE_CALL,
+            S_EXECUTE_CALLD: begin
+                O_MEM_DATA             = pc_o_address;
+                O_MEM_ADDRESS          = b;
+                O_MEM_WRITE_ENABLE     = 1'b1;
+                O_EXT_MEM_DATA         = 16'b0;
+                O_EXT_MEM_ADDRESS      = 16'b0;
+                O_EXT_MEM_WRITE_ENABLE = 1'b0;
+            end
+            S_EXECUTE_PUSH: begin
+                O_MEM_DATA             = a;
+                O_MEM_ADDRESS          = b;
+                O_MEM_WRITE_ENABLE     = 1'b1;
+                O_EXT_MEM_DATA         = 16'b0;
+                O_EXT_MEM_ADDRESS      = 16'b0;
+                O_EXT_MEM_WRITE_ENABLE = 1'b0;
+            end
+            S_EXECUTE_RET,
+            S_EXECUTE_POP: begin
+                O_MEM_DATA             = 16'b0;
+                O_MEM_ADDRESS          = result_bus;
+                O_MEM_WRITE_ENABLE     = 1'b0;
+                O_EXT_MEM_DATA         = 16'b0;
+                O_EXT_MEM_ADDRESS      = 16'b0;
+                O_EXT_MEM_WRITE_ENABLE = 1'b0;
+            end
+            S_EXECUTE_LOAD: begin
                 if (instr_opcode_and_ext == LOAD) begin
                     O_MEM_DATA             = 16'b0;
                     O_MEM_ADDRESS          = a;
@@ -685,7 +814,7 @@ always @(I_NRESET, state, instr_has_opcode_ext, instr_opcode_and_ext, pc_o_addre
                     O_EXT_MEM_WRITE_ENABLE = 1'b0;
                 end
             end
-            S_EXECUTE_STORE_WAIT: begin
+            S_EXECUTE_STORE: begin
                 if (instr_opcode_and_ext == STORE) begin
                     O_MEM_DATA             = a;
                     O_MEM_ADDRESS          = b;

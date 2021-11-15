@@ -3,7 +3,7 @@
 //
 // Create Date: 09/21/2021
 // Module Name: datapath
-// Description: Instantiates and connects the regfile, ALU, and flag register and allows for immediate inputs.
+// Description: Instantiates and connects the regfile and ALU and allows for immediate inputs.
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
