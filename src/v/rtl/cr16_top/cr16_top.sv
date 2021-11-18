@@ -23,7 +23,7 @@ localparam [15:0] P_COLD_CLK_CYCLES = 16'd1;
 
 // This value specifies the max program count (instruction address) that the CR16 processor
 // should advance to until it is disabled.
-localparam [15:0] P_MAX_PC = 16'd32;
+localparam [15:0] P_MAX_PC = 16'd20;
 
 reg [15:0] clk_count = 16'b0;
 
@@ -45,7 +45,7 @@ localparam integer P_DISPLAY_BIT_WIDTH = 4 * 6;
 reg [P_DISPLAY_BIT_WIDTH - 1 : 0] display_bits = {P_DISPLAY_BIT_WIDTH{1'd0}};
 
 // Instantiate BRAM module with given init file
-bram #(.P_BRAM_INIT_FILE("resources/bram_init/cr16_top/test_load_store/fibonacci.dat"),
+bram #(.P_BRAM_INIT_FILE("ECE3710Projects/resources/bram_init/cr16_top/test_jcond/jlo_jhi.dat"),
        .P_BRAM_INIT_FILE_START_ADDRESS('d0),
        .P_DATA_WIDTH('d16),
        .P_ADDRESS_WIDTH('d10)) // Synthesis takes a long time with 16 bits, use 10 bits for testing

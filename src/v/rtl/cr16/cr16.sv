@@ -738,12 +738,12 @@ always @(instr_cond_condition, status_flags) begin
         COND_GT:
             instr_cond_true = status_flags[ALU_STATUS_INDEX_NEGATIVE];
         COND_GE:
-            instr_cond_true = status_flags[ALU_STATUS_INDEX_NEGATIVE] &
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_NEGATIVE] |
                               status_flags[ALU_STATUS_INDEX_ZERO];
         COND_HI:
             instr_cond_true = status_flags[ALU_STATUS_INDEX_LOW];
         COND_HS:
-            instr_cond_true = status_flags[ALU_STATUS_INDEX_LOW] &
+            instr_cond_true = status_flags[ALU_STATUS_INDEX_LOW] |
                               status_flags[ALU_STATUS_INDEX_ZERO];
         COND_UC:
             instr_cond_true = 1'b1;
