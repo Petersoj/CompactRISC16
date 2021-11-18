@@ -301,24 +301,15 @@ always @(posedge I_CLK or negedge I_NRESET) begin
     else if (I_ENABLE)
         case (state)
             S_FETCH: begin
-                // TODO remove redundant non-blocking assignments
-
                 state        <= S_DECODE;
                 instruction  <= I_MEM_DATA;
-                status_flags <= status_flags;
 
                 pc_enable                  <= 1'b1;
-                pc_i_address               <= pc_i_address;
                 pc_address_select          <= 1'b0;
                 pc_address_select_displace <= 1'b0;
 
                 reg_write_enable    <= 16'b0;
-                reg_a_select        <= reg_a_select;
-                reg_b_select        <= reg_b_select;
-                immediate           <= immediate;
                 immediate_select    <= 1'b0;
-                alu_opcode          <= alu_opcode;
-                regfile_data        <= regfile_data;
                 regfile_data_select <= 1'b0;
             end
             S_DECODE: begin
