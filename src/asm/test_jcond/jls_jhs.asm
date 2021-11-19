@@ -17,4 +17,4 @@
 .L3:   CMP    r1, r2     // r1 >= r2
        MOVIL  r12, 15    // .L4
        JHS    r12
-       STORE  r8, r1     // r1 is at the initial address of the frame pointer. r1 = 0xfffb
+       STORE  r8, r1     // r1 is at the initial address of the frame pointer. r1 = 0x7ffa

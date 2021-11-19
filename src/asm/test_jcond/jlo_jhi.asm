@@ -17,4 +17,4 @@
 .L3:   CMP    r1, r2     // y > z
        MOVIL  r12, 15    // .L4
        JHI    r12
-       STORE  r8, r1     // y is at the initial address of the frame pointer. y = 0xfffb
+       STORE  r8, r1     // y is at the initial address of the frame pointer. y = 0x7ffb
