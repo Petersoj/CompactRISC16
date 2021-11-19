@@ -191,8 +191,8 @@ reg instr_alu_immediate_select;
 reg [3:0] instr_alu_opcode;
 
 // Wires for decoding 'MOV' instruction
-wire [15:0] instr_mov_imm_lower = {8'b0, instr_immhi_immlo};
-wire [15:0] instr_mov_imm_upper = {instr_immhi_immlo, 8'b0};
+wire [15:0] instr_mov_imm_lower = {a[15:8], instr_immhi_immlo};
+wire [15:0] instr_mov_imm_upper = {instr_immhi_immlo, a[7:0]};
 
 // Wires for decoding 'LOAD', 'LOADX' 'STORE', and 'STOREX' instructions
 wire [3:0] instr_load_raddr  = instr_rsrc;
@@ -453,8 +453,9 @@ always @(posedge I_CLK or negedge I_NRESET) begin
                         end
                         MOVIL,
                         MOVIU: begin
-                            state     <= S_EXECUTE_MOV;
-                            pc_enable <= 1'b0;
+                            state        <= S_EXECUTE_MOV;
+                            pc_enable    <= 1'b0;
+                            reg_a_select <= instr_rdest;
                         end
                         B_COND: begin
                             if (instr_cond_true) begin
