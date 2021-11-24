@@ -1,0 +1,16 @@
+MOVIU   r0, 0x80   
+MOVIL   r0, 0x02
+MOVIU   r1, 0x00   
+MOVIL   r1, 0x01    // 32-bit 0000_0000_0000_0001_1000_0000_0000_0010
+MOVIU   r2, 0x80   
+MOVIL   r2, 0x03
+MOVIU   r3, 0x00
+MOVIL   r3, 0x01    // 32-bit 0000_0000_0000_0001_1000_0000_0000_0011
+SUB     r0, r2
+BHS     1
+SUBI    r1, 1
+SUB     r1, r3
+MOVIL   r8, 0x1F
+MOVIL   r9, 0x20
+STORE   r8, r0
+STORE   r9, r1
