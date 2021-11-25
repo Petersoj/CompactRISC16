@@ -1,4 +1,4 @@
-package io.github.compactrisc16.compiler.arguments;
+package io.github.compactrisc16.assembler.argument;
 
 /**
  * {@link NumberBase} defines which number base to output a binary as.

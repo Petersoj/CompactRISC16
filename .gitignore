@@ -91,11 +91,11 @@ docs/**/*.pdfsync
 # BEGIN Ignore IntelliJ/Eclipse
 #
 
-compiler/bin/
-compiler/out/
-compiler/build/
-compiler/.gradle/
-compiler/.idea/
+assembler/bin/
+assembler/out/
+assembler/build/
+assembler/.gradle/
+assembler/.idea/
 
 #
 # END Ignore IntelliJ/Eclipse

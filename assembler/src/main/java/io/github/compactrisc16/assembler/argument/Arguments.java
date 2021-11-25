@@ -1,16 +1,16 @@
-package io.github.compactrisc16.compiler.arguments;
+package io.github.compactrisc16.assembler.argument;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.FileConverter;
-import io.github.compactrisc16.compiler.Compiler;
+import io.github.compactrisc16.assembler.Assembler;
 
 import java.io.File;
 import java.util.Arrays;
 
 /**
- * {@link Arguments} contains the arguments parsed from the command line to be used for the {@link Compiler}.
+ * {@link Arguments} contains the arguments parsed from the command line to be used for the {@link Assembler}.
  */
 public class Arguments {
 
@@ -33,6 +33,9 @@ public class Arguments {
     @Parameter(names = {"-v", "--max-padding-line-value"}, description = "The decimal value of the padding lines.")
     private int maxPaddingLineValue = 0;
 
+    @Parameter(names = {"-d", "--debug"}, description = "Turns on debug mode.")
+    private boolean debug = false;
+
     /**
      * Instantiates a new {@link Arguments}.
      *
@@ -45,18 +48,19 @@ public class Arguments {
     /**
      * Parses the arguments.
      *
-     * @throws ParameterException thrown for {@link ParameterException}s
+     * @throws ParameterException       thrown for {@link ParameterException}s from {@link JCommander}
+     * @throws IllegalArgumentException thrown for {@link IllegalArgumentException}s which occurs when parsing
+     *                                  succeeded, but the arguments parsed are illegal
      */
-    public void parse() throws ParameterException {
+    public void parse() throws ParameterException, IllegalArgumentException {
         JCommander.newBuilder()
-                .programName("compiler")
+                .programName("assembler")
                 .addObject(this)
                 .build()
                 .parse(argumentStrings);
 
         if (!assemblyFile.exists() || !assemblyFile.isFile()) {
-            System.err.printf("%s is not a valid file.\n", assemblyFile.toString());
-            return;
+            throw new IllegalArgumentException(String.format("\"%s\" is not a valid file.", assemblyFile.toString()));
         }
 
         if (output == null) {
@@ -67,58 +71,32 @@ public class Arguments {
         }
     }
 
-    /**
-     * Gets {@link #assemblyFile}.
-     *
-     * @return the {@link #assemblyFile}
-     */
-    public File getAssemblyFile() {
-        return assemblyFile;
-    }
-
-    /**
-     * Gets {@link #argumentStrings}.
-     *
-     * @return the {@link #argumentStrings}
-     */
     public String[] getArgumentStrings() {
         return argumentStrings;
     }
 
-    /**
-     * Gets {@link #output}.
-     *
-     * @return the {@link #output}
-     */
+    public File getAssemblyFile() {
+        return assemblyFile;
+    }
+
     public File getOutput() {
         return output;
     }
 
-    /**
-     * Gets {@link #numberBase}.
-     *
-     * @return the {@link #numberBase}
-     */
     public NumberBase getNumberBase() {
         return numberBase;
     }
 
-    /**
-     * Gets {@link #maxPaddingLine}.
-     *
-     * @return the {@link #maxPaddingLine}
-     */
     public int getMaxPaddingLine() {
         return maxPaddingLine;
     }
 
-    /**
-     * Gets {@link #maxPaddingLineValue}.
-     *
-     * @return the {@link #maxPaddingLineValue}
-     */
     public int getMaxPaddingLineValue() {
         return maxPaddingLineValue;
+    }
+
+    public boolean isDebug() {
+        return debug;
     }
 
     @Override

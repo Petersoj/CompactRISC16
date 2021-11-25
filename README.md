@@ -8,14 +8,14 @@ This is an implementation of the CompactRISC (CR16) CPU written in Verilog for t
 - Isabella Gilman
 - Nate Hansen
 
-## Compiler
-To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf), run the `compiler/compiler` shell script with the given arguments as outlined below. Some example programs are given in [`src/asm`](src/asm). Note that the Java Runtime Environment is required to run the compiler and must be of version 8 or greater. Also note that you may need to make the script executable via: `chmod 755 compiler/compiler`.
+## Assembler
+To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf), run the `assembler/assembler` shell script with the given arguments as outlined below. Some example programs are given in [`src/asm`](src/asm). Note that the Java Runtime Environment is required to run the assembler and must be of version 8 or greater. Also note that you may need to make the script executable via: `chmod 755 assembler/assembler`.
 ```
-Usage: compiler [options] <assembly code file path>
+Usage: assembler [options] <assembly code file path>
   Options:
     -p, --max-padding-line
-      The line number to which padding lines should be added to an output.
-      binary
+      The line number to which padding lines should be added to an output
+      binary.
       Default: 0
     -v, --max-padding-line-value
       The decimal value of the padding lines.

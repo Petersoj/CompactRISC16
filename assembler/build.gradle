@@ -3,7 +3,7 @@ plugins {
     id 'application'
 }
 
-group 'io.github.compactrisc16.compiler'
+group 'io.github.compactrisc16.assembler'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -12,15 +12,16 @@ repositories {
 
 dependencies {
     implementation group: 'com.beust', name: 'jcommander', version: '1.81'
+    implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-mainClassName = 'io.github.compactrisc16.compiler.Compiler'
+mainClassName = 'io.github.compactrisc16.assembler.Assembler'
 
-applicationName = 'compiler'
+applicationName = 'assembler'
 
 distTar.enabled = false
 distZip.enabled = false
