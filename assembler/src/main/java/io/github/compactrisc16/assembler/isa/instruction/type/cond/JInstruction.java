@@ -4,6 +4,8 @@ import io.github.compactrisc16.assembler.isa.instruction.exception.InstructionPa
 import io.github.compactrisc16.assembler.isa.instruction.type.OpcodeExtInstruction;
 import io.github.compactrisc16.assembler.isa.register.Register;
 
+import java.util.List;
+
 /**
  * {@link JInstruction} is an {@link OpcodeExtInstruction} representing a <code>J[condition]</code> instruction with
  * <code>Rtarget</code> as an argument.
@@ -28,17 +30,21 @@ public class JInstruction extends OpcodeExtInstruction {
     }
 
     @Override
-    public void parse(String[] assemblyInstruction) throws InstructionParseException {
-        if (assemblyInstruction.length != 2) {
+    public void parse(List<String> lineWords) throws InstructionParseException {
+        if (lineWords.size() != 2) {
             throw new InstructionParseException(
                     String.format("Invalid arguments. Expected: %s <Rtarget>", mnemonic));
         }
 
-        rtarget = parseRegister(assemblyInstruction[INSTRUCTION_INDEX_RTARGET]);
+        rtarget = parseRegister(lineWords.get(INSTRUCTION_INDEX_RTARGET));
     }
 
     @Override
     public int assemble() {
         return super.assemble() | condition << 8 | rtarget.getIndex();
+    }
+
+    public Register getRtarget() {
+        return rtarget;
     }
 }

@@ -3,6 +3,8 @@ package io.github.compactrisc16.assembler.isa.instruction.type.r;
 import io.github.compactrisc16.assembler.isa.instruction.exception.InstructionParseException;
 import io.github.compactrisc16.assembler.isa.instruction.type.OpcodeExtInstruction;
 
+import java.util.List;
+
 /**
  * {@link RetInstruction} is an {@link OpcodeExtInstruction} representing a <code>RET</code> instruction.
  */
@@ -16,8 +18,8 @@ public class RetInstruction extends OpcodeExtInstruction {
     }
 
     @Override
-    public void parse(String[] assemblyInstruction) throws InstructionParseException {
-        if (assemblyInstruction.length != 1) {
+    public void parse(List<String> lineWords) throws InstructionParseException {
+        if (lineWords.size() != 1) {
             throw new InstructionParseException(String.format("Invalid arguments. Expected: %s", mnemonic));
         }
     }

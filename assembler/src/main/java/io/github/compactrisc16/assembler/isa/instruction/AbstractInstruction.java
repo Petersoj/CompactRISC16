@@ -5,7 +5,9 @@ import io.github.compactrisc16.assembler.isa.register.Register;
 import io.github.compactrisc16.assembler.isa.register.Registers;
 import io.github.compactrisc16.assembler.util.BasedNumberParser;
 
-import static io.github.compactrisc16.assembler.isa.register.Registers.NAMES_OF_REGISTERS;
+import java.util.List;
+
+import static io.github.compactrisc16.assembler.isa.register.Registers.REGISTERS_OF_NAMES;
 
 /**
  * {@link AbstractInstruction} represents an abstract CR16 instruction.
@@ -29,11 +31,11 @@ public abstract class AbstractInstruction {
     /**
      * Parses an assembly instruction {@link String}.
      *
-     * @param assemblyInstruction the space-delimited assembly instruction {@link String}s
+     * @param lineWords the assembly code line word {@link String}s
      *
      * @throws InstructionParseException thrown for {@link InstructionParseException}s
      */
-    public abstract void parse(String[] assemblyInstruction) throws InstructionParseException;
+    public abstract void parse(List<String> lineWords) throws InstructionParseException;
 
     /**
      * Parses the given <code>registerString</code> (which is confined to {@link Register#getName()} in {@link
@@ -45,13 +47,11 @@ public abstract class AbstractInstruction {
      *
      * @throws InstructionParseException thrown for {@link InstructionParseException}s
      */
-    protected Register parseRegister(String registerString) throws InstructionParseException {
-        Register register = NAMES_OF_REGISTERS.get(registerString);
-
+    public static Register parseRegister(String registerString) throws InstructionParseException {
+        Register register = REGISTERS_OF_NAMES.get(registerString);
         if (register == null) {
             throw new InstructionParseException("Unrecognized register: " + registerString);
         }
-
         return register;
     }
 
@@ -66,7 +66,7 @@ public abstract class AbstractInstruction {
      *
      * @throws InstructionParseException thrown for {@link InstructionParseException}s
      */
-    protected int parseImmediate(String immediateString, int min, int max) throws InstructionParseException {
+    public static int parseImmediate(String immediateString, int min, int max) throws InstructionParseException {
         int immediate;
 
         try {

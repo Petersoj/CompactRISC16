@@ -12,6 +12,11 @@ import io.github.compactrisc16.assembler.isa.instruction.type.r.RdestRsrcInstruc
 import io.github.compactrisc16.assembler.isa.instruction.type.r.RetInstruction;
 import io.github.compactrisc16.assembler.isa.instruction.type.r.RsrcInstruction;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 /**
  * {@link Instructions} instantiates all {@link AbstractInstruction}s as defined in the <a
  * href="https://github.com/Petersoj/CompactRISC16/blob/main/docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf">CR16 ISA</a>.
@@ -92,4 +97,16 @@ public final class Instructions {
     public static final RdestRsrcInstruction LOADX = new RdestRsrcInstruction("LOADX", 0b1111, 0b1100);
     public static final RdestRsrcInstruction STOREX = new RdestRsrcInstruction("STOREX", 0b1111, 0b1101);
     public static final NOPInstruction NOP = new NOPInstruction();
+
+    public static final List<AbstractInstruction> INSTRUCTIONS =
+            List.of(ADD, ADDI, ADDC, ADDCI, MUL, MULI, SUB, SUBI, CMP, CMPI, NOT, NOTI, AND, ANDI, OR, ORI, XOR, XORI,
+                    LSH, LSHI, RSH, RSHI, ALSH, ALSHI, ARSH, ARSHI, MOV, MOVIL, MOVIU, JEQ, JNE, JCS, JCC, JFS, JFC,
+                    JLT, JLE, JLO, JLS, JGT, JGE, JHI, JHS, JUC, BEQ, BNE, BCS, BCC, BFS, BFC, BLT, BLE, BLO, BLS, BGT,
+                    BGE, BHI, BHS, BUC, CALL, CALLD, RET, LPC, LSF, SSF, PUSH, POP, LOAD, STORE, LOADX, STOREX, NOP);
+    public static final List<AbstractInstruction> J_INSTRUCTIONS =
+            List.of(JEQ, JNE, JCS, JCC, JFS, JFC, JLT, JLE, JLO, JLS, JGT, JGE, JHI, JHS, JUC);
+    public static final List<AbstractInstruction> B_INSTRUCTIONS =
+            List.of(BEQ, BNE, BCS, BCC, BFS, BFC, BLT, BLE, BLO, BLS, BGT, BGE, BHI, BHS, BUC);
+    public static final Map<String, AbstractInstruction> INSTRUCTIONS_OF_MNEMONICS = INSTRUCTIONS.stream()
+            .collect(Collectors.toMap(AbstractInstruction::getMnemonic, Function.identity()));
 }

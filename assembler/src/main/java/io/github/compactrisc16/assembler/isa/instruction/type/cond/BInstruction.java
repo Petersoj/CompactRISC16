@@ -3,6 +3,8 @@ package io.github.compactrisc16.assembler.isa.instruction.type.cond;
 import io.github.compactrisc16.assembler.isa.instruction.AbstractInstruction;
 import io.github.compactrisc16.assembler.isa.instruction.exception.InstructionParseException;
 
+import java.util.List;
+
 /**
  * {@link BInstruction} is an {@link AbstractInstruction} representing a <code>B[condition]</code> instruction with
  * <code>Displacement Imm</code> as an argument.
@@ -27,18 +29,22 @@ public class BInstruction extends AbstractInstruction {
     }
 
     @Override
-    public void parse(String[] assemblyInstruction) throws InstructionParseException {
-        if (assemblyInstruction.length != 2) {
+    public void parse(List<String> lineWords) throws InstructionParseException {
+        if (lineWords.size() != 2) {
             throw new InstructionParseException(
                     String.format("Invalid arguments. Expected: %s <Displacement Imm>", mnemonic));
         }
 
-        displacementImm = parseImmediate(assemblyInstruction[INSTRUCTION_INDEX_DISPLACEMENT_IMM],
+        displacementImm = parseImmediate(lineWords.get(INSTRUCTION_INDEX_DISPLACEMENT_IMM),
                 Byte.MIN_VALUE, Byte.MAX_VALUE);
     }
 
     @Override
     public int assemble() {
         return super.assemble() | condition << 8 | (displacementImm & 0xFF);
+    }
+
+    public int getDisplacementImm() {
+        return displacementImm;
     }
 }

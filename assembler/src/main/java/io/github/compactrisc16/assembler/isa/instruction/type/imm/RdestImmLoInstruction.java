@@ -4,6 +4,8 @@ import io.github.compactrisc16.assembler.isa.instruction.exception.InstructionPa
 import io.github.compactrisc16.assembler.isa.instruction.type.OpcodeExtInstruction;
 import io.github.compactrisc16.assembler.isa.register.Register;
 
+import java.util.List;
+
 /**
  * {@link RdestImmLoInstruction} is an {@link OpcodeExtInstruction} with <code>Rdest</code> and <code>ImmLo</code> as
  * arguments.
@@ -28,18 +30,26 @@ public class RdestImmLoInstruction extends OpcodeExtInstruction {
     }
 
     @Override
-    public void parse(String[] assemblyInstruction) throws InstructionParseException {
-        if (assemblyInstruction.length != 3) {
+    public void parse(List<String> lineWords) throws InstructionParseException {
+        if (lineWords.size() != 3) {
             throw new InstructionParseException(
                     String.format("Invalid arguments. Expected: %s <Rdest>, <ImmLo>", mnemonic));
         }
 
-        rdest = parseRegister(assemblyInstruction[INSTRUCTION_INDEX_RDEST]);
-        immLo = parseImmediate(assemblyInstruction[INSTRUCTION_INDEX_IMMLO], 0, 15);
+        rdest = parseRegister(lineWords.get(INSTRUCTION_INDEX_RDEST));
+        immLo = parseImmediate(lineWords.get(INSTRUCTION_INDEX_IMMLO), 0, 15);
     }
 
     @Override
     public int assemble() {
         return super.assemble() | rdest.getIndex() << 8 | (immLo & 0xF);
+    }
+
+    public Register getRdest() {
+        return rdest;
+    }
+
+    public int getImmLo() {
+        return immLo;
     }
 }

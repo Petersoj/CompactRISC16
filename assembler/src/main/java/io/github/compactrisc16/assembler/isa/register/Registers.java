@@ -1,7 +1,5 @@
 package io.github.compactrisc16.assembler.isa.register;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -31,8 +29,8 @@ public class Registers {
     public static final Register R1 = new Register("r1", 1);
     public static final Register R0 = new Register("r0", 0);
 
-    public static final List<Register> REGISTERS = Collections.unmodifiableList(Arrays.asList(
-            RSP, R14, R13, R12, R11, R10, R9, R8, R7, R6, R5, R4, R3, R2, R1, R0));
-    public static final Map<String, Register> NAMES_OF_REGISTERS = REGISTERS.stream()
+    public static final List<Register> REGISTERS = List.of(
+            RSP, R14, R13, R12, R11, R10, R9, R8, R7, R6, R5, R4, R3, R2, R1, R0);
+    public static final Map<String, Register> REGISTERS_OF_NAMES = REGISTERS.stream()
             .collect(Collectors.toMap(Register::getName, Function.identity()));
 }

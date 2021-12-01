@@ -15,8 +15,8 @@ dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 mainClassName = 'io.github.compactrisc16.assembler.Assembler'

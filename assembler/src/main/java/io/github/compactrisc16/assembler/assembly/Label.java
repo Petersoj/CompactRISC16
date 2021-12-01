@@ -6,26 +6,32 @@ package io.github.compactrisc16.assembler.assembly;
  */
 public class Label {
 
-    private String name;
+    private final String name;
+
+    private Line line;
     private Integer address;
 
     /**
      * Instantiates a new {@link Label}.
      *
-     * @param name    the name
-     * @param address the address
+     * @param name the name
+     * @param line the {@link Line}
      */
-    public Label(String name, Integer address) {
+    public Label(String name, Line line) {
         this.name = name;
-        this.address = address;
+        this.line = line;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Line getLine() {
+        return line;
+    }
+
+    public void setLine(Line line) {
+        this.line = line;
     }
 
     public Integer getAddress() {
@@ -34,5 +40,14 @@ public class Label {
 
     public void setAddress(Integer address) {
         this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Label{" +
+                "name='" + name + '\'' +
+                ", line=" + line +
+                ", address=" + address +
+                '}';
     }
 }

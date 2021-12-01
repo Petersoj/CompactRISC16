@@ -4,6 +4,8 @@ import io.github.compactrisc16.assembler.isa.instruction.exception.InstructionPa
 import io.github.compactrisc16.assembler.isa.instruction.type.OpcodeExtInstruction;
 import io.github.compactrisc16.assembler.isa.register.Register;
 
+import java.util.List;
+
 /**
  * {@link RdestRsrcInstruction} is an {@link OpcodeExtInstruction} with <code>Rsrc</code> and <code>Rdest</code> as
  * arguments.
@@ -28,18 +30,26 @@ public class RdestRsrcInstruction extends OpcodeExtInstruction {
     }
 
     @Override
-    public void parse(String[] assemblyInstruction) throws InstructionParseException {
-        if (assemblyInstruction.length != 3) {
+    public void parse(List<String> lineWords) throws InstructionParseException {
+        if (lineWords.size() != 3) {
             throw new InstructionParseException(
                     String.format("Invalid arguments. Expected: %s <Rdest>, <Rsrc>", mnemonic));
         }
 
-        rdest = parseRegister(assemblyInstruction[INSTRUCTION_INDEX_RDEST]);
-        rsrc = parseRegister(assemblyInstruction[INSTRUCTION_INDEX_RSRC]);
+        rdest = parseRegister(lineWords.get(INSTRUCTION_INDEX_RDEST));
+        rsrc = parseRegister(lineWords.get(INSTRUCTION_INDEX_RSRC));
     }
 
     @Override
     public int assemble() {
         return super.assemble() | rdest.getIndex() << 8 | rsrc.getIndex();
+    }
+
+    public Register getRdest() {
+        return rdest;
+    }
+
+    public Register getRsrc() {
+        return rsrc;
     }
 }

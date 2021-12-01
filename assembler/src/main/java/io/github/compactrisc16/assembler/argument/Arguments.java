@@ -20,7 +20,7 @@ public class Arguments {
     private File assemblyFile;
 
     @Parameter(names = {"-o", "--output"},
-            description = "The output binary file path. Defaults to <input assembly file>.bin.")
+            description = "The output binary file path. Defaults to <input assembly file>.dat.")
     private File output;
 
     @Parameter(names = {"-b", "--number-base"}, description = "The number base of the output binary.")
@@ -67,7 +67,7 @@ public class Arguments {
             int lastIndexOfPeriod = assemblyFile.getName().lastIndexOf('.');
             output = new File(assemblyFile.getParentFile(),
                     (lastIndexOfPeriod == -1 ? assemblyFile.getName() :
-                     assemblyFile.getName().substring(0, lastIndexOfPeriod)) + ".bin");
+                     assemblyFile.getName().substring(0, lastIndexOfPeriod)) + ".dat");
         }
     }
 
