@@ -1,6 +1,6 @@
 # CompactRISC16 (CR16) CPU
 
-This is an implementation of the CompactRISC (CR16) CPU written in Verilog (with an assembler written in Java) for the Computer Design Laboratory ECE 3710 class at The University of Utah. This CPU was designed to run on an FPGA and interface with peripheral components and hardware. Our group's final project for this class is entitled "FSS Prototype" and uses this CPU and assembler. More information on our final project can be found [here](https://github.com/Petersoj/FSSPrototype).
+This is an implementation of the CompactRISC (CR16) CPU written in Verilog and SystemVerilog with an assembler written in Java for the Computer Design Laboratory ECE 3710 class at The University of Utah. This CPU was designed to run on an FPGA and interface with peripheral components and hardware. Our group's final project for this class is entitled "FSS Prototype" and uses this CPU and assembler. More information on our final project can be found [here](https://github.com/Petersoj/FSSPrototype).
 
 ## Authors
 - Jacob Peterson
