@@ -1,6 +1,6 @@
 # CompactRISC16 (CR16) CPU
 
-This is an implementation of the CompactRISC (CR16) CPU written in Verilog for the Computer Design Laboratory ECE 3710 class at The University of Utah.
+This is an implementation of the CompactRISC (CR16) CPU written in Verilog (with an assembler written in Java) for the Computer Design Laboratory ECE 3710 class at The University of Utah. This CPU was designed to run on an FPGA and interface with peripheral components and hardware. Our group's final project for this class is entitled "FSS Prototype" and uses this CPU and assembler. More information on our final project can be found [here](https://github.com/Petersoj/FSSPrototype).
 
 ## Authors
 - Jacob Peterson
@@ -9,7 +9,7 @@ This is an implementation of the CompactRISC (CR16) CPU written in Verilog for t
 - Nate Hansen
 
 ## Assembler
-To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf), run the `assembler/assembler` shell script with the given arguments as outlined below. Some example programs are given in [`src/asm`](src/asm). Note that the Java Runtime Environment is required to run the assembler and must be of version 8 or greater. Also note that you may need to make the script executable via: `chmod 755 assembler/assembler`.
+To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf), run the `assembler/assembler` shell script with the given arguments as outlined below. Some example programs are given in [`src/asm`](src/asm). Note that the Java Runtime Environment is required to run the assembler and must be of version 11 or greater. Also note that you may need to make the script executable via: `chmod 755 assembler/assembler`.
 ```
 Usage: assembler [options] <assembly code file path>
   Options:
