@@ -29,7 +29,7 @@ public class RsrcInstruction extends OpcodeExtInstruction {
     @Override
     public void parse(List<String> lineWords) throws InstructionParseException {
         if (lineWords.size() != 2) {
-            throw new InstructionParseException(String.format("Invalid arguments. Expected: %s <Rsrc>", mnemonic));
+            throw new InstructionParseException(formatInstructParseExceptionMessage(lineWords, "<Rsrc>"));
         }
 
         rsrc = parseRegister(lineWords.get(INSTRUCTION_INDEX_RDEST));

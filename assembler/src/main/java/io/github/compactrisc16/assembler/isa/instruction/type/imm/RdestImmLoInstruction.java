@@ -32,8 +32,7 @@ public class RdestImmLoInstruction extends OpcodeExtInstruction {
     @Override
     public void parse(List<String> lineWords) throws InstructionParseException {
         if (lineWords.size() != 3) {
-            throw new InstructionParseException(
-                    String.format("Invalid arguments. Expected: %s <Rdest> <ImmLo>", mnemonic));
+            throw new InstructionParseException(formatInstructParseExceptionMessage(lineWords, "<Rdest> <ImmLo>"));
         }
 
         rdest = parseRegister(lineWords.get(INSTRUCTION_INDEX_RDEST));

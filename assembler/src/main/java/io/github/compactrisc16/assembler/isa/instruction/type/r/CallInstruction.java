@@ -26,7 +26,7 @@ public class CallInstruction extends OpcodeExtInstruction {
     @Override
     public void parse(List<String> lineWords) throws InstructionParseException {
         if (lineWords.size() != 2) {
-            throw new InstructionParseException(String.format("Invalid arguments. Expected: %s <Rtarget>", mnemonic));
+            throw new InstructionParseException(formatInstructParseExceptionMessage(lineWords, "<Rtarget>"));
         }
 
         rtarget = parseRegister(lineWords.get(INSTRUCTION_INDEX_RTARGET));

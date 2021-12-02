@@ -10,6 +10,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * {@link Arguments} contains the arguments parsed from the command line to be used for the {@link Assembler}.
  */
@@ -69,22 +71,28 @@ public class Arguments {
                 .parse(argumentStrings);
 
         if (!assemblyFile.exists() || !assemblyFile.isFile()) {
-            throw new IllegalArgumentException(String.format("\"%s\" is not a valid file.", assemblyFile.toString()));
+            throw new IllegalArgumentException(String.format("%s is not a valid file.", assemblyFile.getPath()));
         }
 
+        assemblyFile = assemblyFile.getAbsoluteFile(); // Getting absolute 'File' ensures 'getParentFile()' works
         if (outputFile == null) {
             int lastPeriodIndex = assemblyFile.getName().lastIndexOf('.');
             outputFile = new File(assemblyFile.getParentFile(),
                     (lastPeriodIndex == -1 ? assemblyFile.getName() :
                      assemblyFile.getName().substring(0, lastPeriodIndex)) + ".dat");
         }
-        outputFile.getParentFile().mkdirs(); // Recursively create parent directories for 'outputFile'
+        outputFile.getParentFile().mkdirs(); // Recursively create parent directories for 'outputFile' as needed
+        checkArgument(outputFile.getParentFile().canWrite(), "Write permission not enabled at: %s",
+                outputFile.getParentFile().getPath());
 
         if (outputProcessed) {
             int lastPeriodIndex = outputFile.getName().lastIndexOf('.');
             processedOutputFile = new File(outputFile.getParentFile(),
                     (lastPeriodIndex == -1 ? outputFile.getName() :
                      outputFile.getName().substring(0, lastPeriodIndex)) + ".processed.asm");
+
+            checkArgument(processedOutputFile.getParentFile().canWrite(), "Write permission not enabled at: %s",
+                    processedOutputFile.getParentFile().getPath());
         }
 
         // Create a number base converter that takes in an integer and converts it to the desired output number base

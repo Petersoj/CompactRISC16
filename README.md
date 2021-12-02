@@ -13,6 +13,9 @@ To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datash
 ```
 Usage: assembler [options] <assembly code file path>
   Options:
+    -d, --debug
+      Turns on debug mode.
+      Default: false
     -p, --max-padding-line
       The line number to which padding lines should be added to an output
       binary.
@@ -25,7 +28,11 @@ Usage: assembler [options] <assembly code file path>
       Default: HEX
       Possible Values: [BINARY, DECIMAL, HEX]
     -o, --output
-      The output binary file path. Defaults to <input assembly file>.bin.
+      The output binary file path. Defaults to <input assembly file>.dat.
+    -s, --output-processed
+      True to write the processed assembly to <output binary file
+      path>.processed.asm.
+      Default: false
 ```
 
 ## Verilog Source Naming Conventions and Format

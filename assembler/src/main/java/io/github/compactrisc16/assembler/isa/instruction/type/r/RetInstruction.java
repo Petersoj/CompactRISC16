@@ -20,7 +20,7 @@ public class RetInstruction extends OpcodeExtInstruction {
     @Override
     public void parse(List<String> lineWords) throws InstructionParseException {
         if (lineWords.size() != 1) {
-            throw new InstructionParseException(String.format("Invalid arguments. Expected: %s", mnemonic));
+            throw new InstructionParseException(formatInstructParseExceptionMessage(lineWords, ""));
         }
     }
 }

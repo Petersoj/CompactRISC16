@@ -27,8 +27,7 @@ public class CalldInstruction extends AbstractInstruction {
     @Override
     public void parse(List<String> lineWords) throws InstructionParseException {
         if (lineWords.size() != 2) {
-            throw new InstructionParseException(
-                    String.format("Invalid arguments. Expected: %s <Displacement Imm>", mnemonic));
+            throw new InstructionParseException(formatInstructParseExceptionMessage(lineWords, "<Displacement Imm>"));
         }
 
         displacementImm = parseImmediate(lineWords.get(INSTRUCTION_INDEX_DISPLACEMENT_IMM),

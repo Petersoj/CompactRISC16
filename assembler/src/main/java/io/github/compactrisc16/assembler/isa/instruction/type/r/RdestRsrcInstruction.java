@@ -32,8 +32,7 @@ public class RdestRsrcInstruction extends OpcodeExtInstruction {
     @Override
     public void parse(List<String> lineWords) throws InstructionParseException {
         if (lineWords.size() != 3) {
-            throw new InstructionParseException(
-                    String.format("Invalid arguments. Expected: %s <Rdest> <Rsrc>", mnemonic));
+            throw new InstructionParseException(formatInstructParseExceptionMessage(lineWords, "<Rdest> <Rsrc>"));
         }
 
         rdest = parseRegister(lineWords.get(INSTRUCTION_INDEX_RDEST));

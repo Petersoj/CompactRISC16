@@ -88,6 +88,19 @@ public abstract class AbstractInstruction {
     }
 
     /**
+     * Formats a {@link String} for the {@link InstructionParseException#getMessage()}.
+     *
+     * @param lineWords         the {@link List} of line words
+     * @param expectedArguments the expected arguments {@link String}
+     *
+     * @return a formatted {@link String}
+     */
+    protected String formatInstructParseExceptionMessage(List<String> lineWords, String expectedArguments) {
+        return String.format("Invalid arguments. Expected: %s%s. Got: %s",
+                mnemonic, expectedArguments.length() != 0 ? " " + expectedArguments : "", String.join(" ", lineWords));
+    }
+
+    /**
      * Assembles an assembly instruction {@link String} into the equivalent machine code.
      *
      * @return the machine code 16-bit-masked {@link Integer}
