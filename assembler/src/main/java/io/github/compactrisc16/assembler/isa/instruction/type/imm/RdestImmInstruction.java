@@ -32,7 +32,7 @@ public class RdestImmInstruction extends AbstractInstruction {
     public void parse(List<String> lineWords) throws InstructionParseException {
         if (lineWords.size() != 3) {
             throw new InstructionParseException(
-                    String.format("Invalid arguments. Expected: %s <Rdest>, <Imm>", mnemonic));
+                    String.format("Invalid arguments. Expected: %s <Rdest> <Imm>", mnemonic));
         }
 
         rdest = parseRegister(lineWords.get(INSTRUCTION_INDEX_RDEST));

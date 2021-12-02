@@ -506,32 +506,36 @@ public class Assembler {
         }
 
         // Write assembled lines to binary file
-        try (FileWriter binaryFileWriter = new FileWriter(arguments.getOutputFile())) {
-            for (Line line : lines) {
-                List<String> lineWords = line.getLineWords();
-                AbstractInstruction lineInstruction = INSTRUCTIONS_OF_MNEMONICS.get(lineWords.get(0));
+        List<String> machineCodeLines = new ArrayList<>();
+        for (Line line : lines) {
+            List<String> lineWords = line.getLineWords();
+            AbstractInstruction lineInstruction = INSTRUCTIONS_OF_MNEMONICS.get(lineWords.get(0));
 
-                if (lineInstruction != null) { // Parse line as an instruction
-                    try {
-                        lineInstruction.parse(lineWords);
-                    } catch (InstructionParseException exception) {
-                        throw new AssemblyParseException(exception, line.getSourceLineNumber());
-                    }
-                    binaryFileWriter.write(formatMachineCodeString(lineInstruction.assemble()));
-                } else { // Try to parse line as a number
-                    try {
-                        int number = BasedNumberParser.parseInt(lineWords.get(0));
-                        binaryFileWriter.write(formatMachineCodeString(number));
-                    } catch (NumberFormatException exception) {
-                        throw new AssemblyParseException("Unknown instruction or assembly number: " +
-                                String.join(" ", lineWords), line.getSourceLineNumber());
-                    }
-
-                    if (lineWords.size() > 1) {
-                        throw new AssemblyParseException("Only one assembly number per line is allowed.",
-                                line.getSourceLineNumber());
-                    }
+            if (lineInstruction != null) { // Parse line as an instruction
+                try {
+                    lineInstruction.parse(lineWords);
+                } catch (InstructionParseException exception) {
+                    throw new AssemblyParseException(exception, line.getSourceLineNumber());
                 }
+                machineCodeLines.add(formatMachineCodeString(lineInstruction.assemble()));
+            } else { // Try to parse line as a number
+                try {
+                    int number = BasedNumberParser.parseInt(lineWords.get(0));
+                    machineCodeLines.add(formatMachineCodeString(number));
+                } catch (NumberFormatException exception) {
+                    throw new AssemblyParseException("Unknown instruction or assembly number: " +
+                            String.join(" ", lineWords), line.getSourceLineNumber());
+                }
+
+                if (lineWords.size() > 1) {
+                    throw new AssemblyParseException("Only one assembly number per line is allowed.",
+                            line.getSourceLineNumber());
+                }
+            }
+        }
+        try (FileWriter binaryFileWriter = new FileWriter(arguments.getOutputFile())) {
+            for (String machineCodeLine : machineCodeLines) {
+                binaryFileWriter.write(machineCodeLine);
             }
         }
 
