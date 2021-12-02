@@ -60,6 +60,7 @@ public class Arguments {
      * @throws IllegalArgumentException thrown for {@link IllegalArgumentException}s which occurs when parsing
      *                                  succeeded, but the arguments parsed are illegal
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void parse() throws ParameterException, IllegalArgumentException {
         JCommander.newBuilder()
                 .programName("assembler")
@@ -77,6 +78,7 @@ public class Arguments {
                     (lastPeriodIndex == -1 ? assemblyFile.getName() :
                      assemblyFile.getName().substring(0, lastPeriodIndex)) + ".dat");
         }
+        outputFile.getParentFile().mkdirs(); // Recursively create parent directories for 'outputFile'
 
         if (outputProcessed) {
             int lastPeriodIndex = outputFile.getName().lastIndexOf('.');

@@ -1,4 +1,4 @@
-    MOVIL  r8  48  # Frame pointer = 48
+    MOVIL  r8  48     # Frame pointer = 48
 .main
     MOVIU  r0  0x80   # Upper of 32768 is 1000_0000 or 0x80
     MOVIL  r0  0x00   # Lower of 32768 is 0000_0000 or 0x00  r0 = 32,768
