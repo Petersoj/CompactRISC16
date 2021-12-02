@@ -6,6 +6,8 @@ package io.github.compactrisc16.assembler.assembly.exception;
  */
 public class AssemblyParseException extends Exception {
 
+    private final Integer lineNumber;
+
     /**
      * Instantiates a new {@link AssemblyParseException}.
      *
@@ -13,25 +15,35 @@ public class AssemblyParseException extends Exception {
      * @param lineNumber the line number (<code>null</code> to disregard)
      */
     public AssemblyParseException(String message, Integer lineNumber) {
-        super((lineNumber == null ? "" : "On line " + lineNumber + ": ") + message);
+        super(message);
+        this.lineNumber = lineNumber;
     }
 
     /**
      * Instantiates a new {@link AssemblyParseException}.
      *
-     * @param cause the cause {@link Throwable}
+     * @param cause      the cause {@link Throwable}
+     * @param lineNumber the line number (<code>null</code> to disregard)
      */
-    public AssemblyParseException(Throwable cause) {
-        super(cause);
+    public AssemblyParseException(Throwable cause, Integer lineNumber) {
+        super(cause.getClass().getSimpleName() + ": " + cause.getMessage(), cause);
+        this.lineNumber = lineNumber;
     }
 
     /**
      * Instantiates a new {@link AssemblyParseException}.
      *
-     * @param message the message
-     * @param cause   the cause {@link Throwable}
+     * @param message    the message
+     * @param cause      the cause {@link Throwable}
+     * @param lineNumber the line number (<code>null</code> to disregard)
      */
-    public AssemblyParseException(String message, Throwable cause) {
+    public AssemblyParseException(String message, Throwable cause, Integer lineNumber) {
         super(message, cause);
+        this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public String getMessage() {
+        return lineNumber == null ? "" : "On line " + lineNumber + ": " + super.getMessage();
     }
 }

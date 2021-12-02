@@ -8,6 +8,7 @@ import io.github.compactrisc16.assembler.Assembler;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.function.Function;
 
 /**
  * {@link Arguments} contains the arguments parsed from the command line to be used for the {@link Assembler}.
@@ -21,10 +22,17 @@ public class Arguments {
 
     @Parameter(names = {"-o", "--output"},
             description = "The output binary file path. Defaults to <input assembly file>.dat.")
-    private File output;
+    private File outputFile;
+
+    @Parameter(names = {"-s", "--output-processed"},
+            description = "True to write the processed assembly to <output binary file path>.processed.asm.")
+    private boolean outputProcessed = false;
+    private File processedOutputFile;
 
     @Parameter(names = {"-b", "--number-base"}, description = "The number base of the output binary.")
     private NumberBase numberBase = NumberBase.HEX;
+    private Function<Integer, String> numberBaseConverter;
+    private String numberBasePadding;
 
     @Parameter(names = {"-p", "--max-padding-line"},
             description = "The line number to which padding lines should be added to an output binary.")
@@ -63,11 +71,36 @@ public class Arguments {
             throw new IllegalArgumentException(String.format("\"%s\" is not a valid file.", assemblyFile.toString()));
         }
 
-        if (output == null) {
-            int lastIndexOfPeriod = assemblyFile.getName().lastIndexOf('.');
-            output = new File(assemblyFile.getParentFile(),
-                    (lastIndexOfPeriod == -1 ? assemblyFile.getName() :
-                     assemblyFile.getName().substring(0, lastIndexOfPeriod)) + ".dat");
+        if (outputFile == null) {
+            int lastPeriodIndex = assemblyFile.getName().lastIndexOf('.');
+            outputFile = new File(assemblyFile.getParentFile(),
+                    (lastPeriodIndex == -1 ? assemblyFile.getName() :
+                     assemblyFile.getName().substring(0, lastPeriodIndex)) + ".dat");
+        }
+
+        if (outputProcessed) {
+            int lastPeriodIndex = outputFile.getName().lastIndexOf('.');
+            processedOutputFile = new File(outputFile.getParentFile(),
+                    (lastPeriodIndex == -1 ? outputFile.getName() :
+                     outputFile.getName().substring(0, lastPeriodIndex)) + ".processed.asm");
+        }
+
+        // Create a number base converter that takes in an integer and converts it to the desired output number base
+        switch (numberBase) {
+            case BINARY:
+                numberBaseConverter = Integer::toBinaryString;
+                numberBasePadding = "0000000000000000";
+                break;
+            case DECIMAL:
+                numberBaseConverter = Object::toString;
+                numberBasePadding = "00000";
+                break;
+            case HEX:
+                numberBaseConverter = Integer::toHexString;
+                numberBasePadding = "0000";
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -79,12 +112,28 @@ public class Arguments {
         return assemblyFile;
     }
 
-    public File getOutput() {
-        return output;
+    public File getOutputFile() {
+        return outputFile;
+    }
+
+    public boolean isOutputProcessed() {
+        return outputProcessed;
+    }
+
+    public File getProcessedOutputFile() {
+        return processedOutputFile;
     }
 
     public NumberBase getNumberBase() {
         return numberBase;
+    }
+
+    public Function<Integer, String> getNumberBaseConverter() {
+        return numberBaseConverter;
+    }
+
+    public String getNumberBasePadding() {
+        return numberBasePadding;
     }
 
     public int getMaxPaddingLine() {
@@ -104,10 +153,15 @@ public class Arguments {
         return "Arguments{" +
                 "argumentStrings=" + Arrays.toString(argumentStrings) +
                 ", assemblyFile=" + assemblyFile +
-                ", output=" + output +
+                ", outputFile=" + outputFile +
+                ", outputProcessed=" + outputProcessed +
+                ", processedOutputFile=" + processedOutputFile +
                 ", numberBase=" + numberBase +
+                ", numberBaseConverter=" + numberBaseConverter +
+                ", numberBasePadding='" + numberBasePadding + '\'' +
                 ", maxPaddingLine=" + maxPaddingLine +
                 ", maxPaddingLineValue=" + maxPaddingLineValue +
+                ", debug=" + debug +
                 '}';
     }
 }

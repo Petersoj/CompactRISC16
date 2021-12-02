@@ -12,6 +12,8 @@ import java.util.List;
 public class BInstruction extends AbstractInstruction {
 
     public static final int INSTRUCTION_INDEX_DISPLACEMENT_IMM = 1;
+    public static final int MIN_DISPLACEMENT_IMM = Byte.MIN_VALUE;
+    public static final int MAX_DISPLACEMENT_IMM = Byte.MAX_VALUE;
 
     private final int condition;
 
@@ -36,7 +38,7 @@ public class BInstruction extends AbstractInstruction {
         }
 
         displacementImm = parseImmediate(lineWords.get(INSTRUCTION_INDEX_DISPLACEMENT_IMM),
-                Byte.MIN_VALUE, Byte.MAX_VALUE);
+                MIN_DISPLACEMENT_IMM, MAX_DISPLACEMENT_IMM);
     }
 
     @Override

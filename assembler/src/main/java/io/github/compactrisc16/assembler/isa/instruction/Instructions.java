@@ -2,7 +2,7 @@ package io.github.compactrisc16.assembler.isa.instruction;
 
 import io.github.compactrisc16.assembler.isa.instruction.type.cond.BInstruction;
 import io.github.compactrisc16.assembler.isa.instruction.type.cond.JInstruction;
-import io.github.compactrisc16.assembler.isa.instruction.type.imm.CallDInstruction;
+import io.github.compactrisc16.assembler.isa.instruction.type.imm.CalldInstruction;
 import io.github.compactrisc16.assembler.isa.instruction.type.imm.RdestImmInstruction;
 import io.github.compactrisc16.assembler.isa.instruction.type.imm.RdestImmLoInstruction;
 import io.github.compactrisc16.assembler.isa.instruction.type.pseudo.NOPInstruction;
@@ -85,7 +85,7 @@ public final class Instructions {
     public static final BInstruction BHS = new BInstruction("BHS", 0b1101);
     public static final BInstruction BUC = new BInstruction("BUC", 0b1110);
     public static final CallInstruction CALL = new CallInstruction();
-    public static final CallDInstruction CALLD = new CallDInstruction();
+    public static final CalldInstruction CALLD = new CalldInstruction();
     public static final RetInstruction RET = new RetInstruction();
     public static final RdestInstruction LPC = new RdestInstruction("LPC", 0b1111, 0b0101);
     public static final RdestInstruction LSF = new RdestInstruction("LSF", 0b1111, 0b0110);

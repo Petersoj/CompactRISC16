@@ -6,19 +6,21 @@ import io.github.compactrisc16.assembler.isa.instruction.exception.InstructionPa
 import java.util.List;
 
 /**
- * {@link CallDInstruction} is an {@link AbstractInstruction} representing a <code>CALLD</code> instruction with
+ * {@link CalldInstruction} is an {@link AbstractInstruction} representing a <code>CALLD</code> instruction with
  * <code>Displacement Imm</code> as an argument.
  */
-public class CallDInstruction extends AbstractInstruction {
+public class CalldInstruction extends AbstractInstruction {
 
     public static final int INSTRUCTION_INDEX_DISPLACEMENT_IMM = 1;
+    public static final int MIN_DISPLACEMENT_IMM = (int) -Math.pow(2, 11);
+    public static final int MAX_DISPLACEMENT_IMM = (int) Math.pow(2, 11) - 1;
 
     private int displacementImm;
 
     /**
-     * Instantiates a new {@link CallDInstruction}.
+     * Instantiates a new {@link CalldInstruction}.
      */
-    public CallDInstruction() {
+    public CalldInstruction() {
         super("CALLD", 0b1101);
     }
 
@@ -30,7 +32,7 @@ public class CallDInstruction extends AbstractInstruction {
         }
 
         displacementImm = parseImmediate(lineWords.get(INSTRUCTION_INDEX_DISPLACEMENT_IMM),
-                (int) -Math.pow(2, 11), (int) Math.pow(2, 11) - 1);
+                MIN_DISPLACEMENT_IMM, MAX_DISPLACEMENT_IMM);
     }
 
     @Override

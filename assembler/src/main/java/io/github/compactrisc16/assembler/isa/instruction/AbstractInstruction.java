@@ -81,8 +81,7 @@ public abstract class AbstractInstruction {
                     " (" + Integer.toBinaryString(min) + " in binary)");
         } else if (immediate > max) {
             throw new InstructionParseException("Immediate value cannot be greater than: " + max +
-                    " (" + Integer.toBinaryString(max) + " in binary)" +
-                    " (" + Integer.toUnsignedString(max) + " in unsigned decimal)");
+                    " (" + Integer.toBinaryString(max) + " in binary)");
         }
 
         return immediate;
