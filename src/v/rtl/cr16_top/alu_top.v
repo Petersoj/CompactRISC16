@@ -7,6 +7,14 @@
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
+// @param I_CLK                 the clock signal
+// @param I_NRESET              the active-low asynchronous reset signal
+// @param I_INPUT               the number inputs for the FSM
+// @param O_7_SEGMENT_DISPLAY_0 output to the least-significant 7-segment display
+// @param O_7_SEGMENT_DISPLAY_1 output to the 2nd least-significant 7-segment display
+// @param O_7_SEGMENT_DISPLAY_2 output to the 3rd least-significant 7-segment display
+// @param O_7_SEGMENT_DISPLAY_4 output to the 4th least-significant 7-segment display
+// @param O_STATUS_LED          ALU status flags output to the FPGA board LEDs
 module alu_top
        (input I_CLK,
         input I_NRESET,

@@ -7,16 +7,16 @@
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-// @param P_ADDRESS_WIDTH            the width of the input/output address
-// @param I_CLK                      the clock signal
-// @param I_ENABLE                   the enable signal
-// @param I_NRESET                   the active-low asynchronous reset signal
-// @param I_ADDRESS                  the address input value
-// @param I_ADDRESS_SELECT           assert to output 'I_ADDRESS' on 'O_ADDRESS' or reset to
-//                                   increment and output 'O_ADDRESS'
-// @param I_ADDRESS_SELECT_DISPLACE  assert to output the current 'O_ADDRESS' + $signed(I_ADDRESS)
-//                                   if 'I_ADDRESS_SELECT' is asserted
-// @param O_ADDRESS                  the address output value
+// @param P_ADDRESS_WIDTH           the width of the input/output address
+// @param I_CLK                     the clock signal
+// @param I_ENABLE                  the enable signal
+// @param I_NRESET                  the active-low asynchronous reset signal
+// @param I_ADDRESS                 the address input value
+// @param I_ADDRESS_SELECT          assert to output 'I_ADDRESS' on 'O_ADDRESS' or reset to
+//                                  increment and output 'O_ADDRESS'
+// @param I_ADDRESS_SELECT_DISPLACE assert to output the current 'O_ADDRESS' + $signed(I_ADDRESS)
+//                                  if 'I_ADDRESS_SELECT' is asserted
+// @param O_ADDRESS                 the address output value
 module pc #(parameter integer P_ADDRESS_WIDTH = 16)
        (input wire I_CLK,
         input wire I_ENABLE,

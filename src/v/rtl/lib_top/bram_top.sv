@@ -10,6 +10,10 @@
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
+// @param I_CLK               the clock signal
+// @param I_NRESET            the active-low asynchronous reset signal
+// @param I_STEP              the FSM 'step' signal input
+// @param O_7_SEGMENT_DISPLAY output to the 7-segment displays
 module bram_top
        (input wire I_CLK,
         input wire I_NRESET,

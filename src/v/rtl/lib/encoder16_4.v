@@ -7,8 +7,8 @@
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
-// @param I_DATA   the 16-bit encoder input data
-// @param O_DATA   the 4-bit encoder output data
+// @param I_DATA the 16-bit encoder input data
+// @param O_DATA the 4-bit encoder output data
 module encoder16_4
        (input wire [15:0] I_DATA,
         output reg [3:0] O_DATA);

@@ -8,6 +8,10 @@
 // Authors: Jacob Peterson, Brady Hartog, Isabella Gilman, Nate Hansen
 //
 
+// @param I_CLK               the clock signal
+// @param I_NRESET            the active-low asynchronous reset signal
+// @param O_7_SEGMENT_DISPLAY output to the 7-segment displays
+// @param O_LED_FLAGS         ALU status flags output to the FPGA board LEDs
 module datapath_top
        (input wire I_CLK,
         input wire I_NRESET,
