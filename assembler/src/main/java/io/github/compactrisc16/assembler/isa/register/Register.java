@@ -14,7 +14,7 @@ public class Register {
      * @param name  the name
      * @param index the index
      */
-    protected Register(String name, int index) {
+    public Register(String name, int index) {
         this.name = name;
         this.index = index;
     }

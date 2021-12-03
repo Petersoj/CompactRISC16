@@ -9,7 +9,7 @@ This is an implementation of the CompactRISC (CR16) CPU written in Verilog and S
 - Nate Hansen
 
 ## Assembler
-To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf), run the `assembler/assembler` shell script with the given arguments as outlined below. Some example programs are given in [`src/asm`](src/asm). Note that the Java Runtime Environment is required to run the assembler and must be of version 11 or greater. Also note that you may need to make the script executable via: `chmod 755 assembler/assembler`.
+To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf), run the `assembler/assembler` shell script with the given arguments as outlined below. Some example programs are given in [`src/asm`](src/asm). A good example showing the capabilities of the ISA and the assembler is shown in [`src/asm/test_all/all.asm`](src/asm/test_all/all.asm). Note that the Java Runtime Environment is required to run the assembler and must be of version `11` or greater. Also note that you may need to make the script executable via: `chmod 755 assembler/assembler`.
 ```
 Usage: assembler [options] <assembly code file path>
   Options:

@@ -29,6 +29,8 @@ localparam [15:0] P_COLD_CLK_CYCLES = 16'd1;
 // This value specifies the max program count (instruction address) that the CR16 processor
 // should advance to until it is disabled.
 localparam [15:0] P_MAX_PC = 16'd20;
+// Set this to 0 to disable the 'P_MAX_PC' logic, set to a 1 to enable it
+localparam P_ENABLE_MAX_PC = 1'b1;
 
 reg [15:0] clk_count = 16'b0;
 
@@ -115,9 +117,9 @@ end
 
 // Combinationally enable CR16 for all 'pc' before 'P_MAX_PC'
 always @(pc, o_mem_data_b, result_bus) begin
-    if (pc > P_MAX_PC) begin
+    if (P_ENABLE_MAX_PC == 1'b0 || pc > P_MAX_PC) begin
         display_bits = {8'b0, o_mem_data_b};
-        cr16_enable  = 1'b0;
+        cr16_enable  = P_ENABLE_MAX_PC == 1'b0 ? 1'b1 : 1'b0;
     end
     else begin
         display_bits = {pc[7:0], result_bus};

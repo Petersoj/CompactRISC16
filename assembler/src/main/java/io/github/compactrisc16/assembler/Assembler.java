@@ -221,10 +221,12 @@ public class Assembler {
                 .mapToInt(Integer::intValue)
                 .forEachOrdered(lines::remove);
 
-        // Expand lines containing labels to 'MOVIL' and 'MOVIU' instructions
         final Map<String, Label> labelsOfLabelNames = labels.stream()
                 .collect(Collectors.toMap(Label::getName, Function.identity()));
-        final Map<Entry<Line, AbstractInstruction>, Label> labelsOfJOrCalldInstructionLines = new HashMap<>();
+        final Register tempRegister = new Register("temp", -1);
+
+        // Expand lines containing labels to 'MOVIL' and 'MOVIU' instructions
+        final List<List<Object>> jOrCalldInstructionLineTuples = new ArrayList<>(); // Hacky to use a "tuple", but eh
         final Map<Entry<Line, Line>, Label> labelsOfMovLowerUpperImmediateLines = new HashMap<>();
         final List<Label> usedLabels = new ArrayList<>();
         for (int lineIndex = 0; lineIndex < lines.size(); lineIndex++) {
@@ -304,20 +306,11 @@ public class Assembler {
                 lines.remove(lineIndex); // Remove this 'MOV' instruction since only 'MOVIL' and 'MOVIU' are needed
                 lineIndex++; // Skip one of the 'movilLine' and 'moviuLine' lines added below
             } else if (J_INSTRUCTIONS.contains(lineInstruction) || lineInstruction == CALL) {
-                if (loadingRegister == null) {
-                    throw new AssemblyParseException("A label reference for a J[condition] or CALL instruction must " +
-                            "contain a loading register (the intermediary register used to load a label address in " +
-                            "the event that the equivalent displacement immediate instruction cannot be used due " +
-                            "to the label address offset being greater than the range of the immediate). " +
-                            "e.g. .label$r1",
-                            line.getSourceLineNumber());
-                }
-
-                rdest = loadingRegister;
+                rdest = loadingRegister == null ? tempRegister : loadingRegister;
 
                 Line jOrCalldLineWithRdest = new Line(List.of(lineInstruction.getMnemonic(), rdest.getName()),
                         line.getSourceLineNumber());
-                labelsOfJOrCalldInstructionLines.put(Map.entry(jOrCalldLineWithRdest, lineInstruction), label);
+                jOrCalldInstructionLineTuples.add(List.of(lineInstruction, jOrCalldLineWithRdest, label, rdest));
 
                 lines.remove(lineIndex);
                 lines.add(lineIndex, jOrCalldLineWithRdest);
@@ -350,10 +343,12 @@ public class Assembler {
         // Loop through all 'labelsOfJOrCalldInstructionLines' and determine if it should be replaced with the
         // equivalent displacement immediate instruction.
         final Map<Line, Label> labelsOfPlaceholderLinesToDisplace = new HashMap<>();
-        for (Entry<Entry<Line, AbstractInstruction>, Label> entry : labelsOfJOrCalldInstructionLines.entrySet()) {
-            final Line jOrCalldLineWithRdest = entry.getKey().getKey();
-            final AbstractInstruction jOrCalldLineInstruction = entry.getKey().getValue();
-            final Label label = entry.getValue();
+        for (List<Object> jOrCalldInstructionLineTuple : jOrCalldInstructionLineTuples) {
+            final AbstractInstruction jOrCalldLineInstruction =
+                    (AbstractInstruction) jOrCalldInstructionLineTuple.get(0);
+            final Line jOrCalldLineWithRdest = (Line) jOrCalldInstructionLineTuple.get(1);
+            final Label label = (Label) jOrCalldInstructionLineTuple.get(2);
+            final Register rdest = (Register) jOrCalldInstructionLineTuple.get(3);
 
             computeLabelAddress(lines, label);
             int lineIndex = lines.indexOf(jOrCalldLineWithRdest);
@@ -395,6 +390,12 @@ public class Assembler {
                 lines.add(oldMovilLineIndex, displacementImmediateLinePlaceholder);
 
                 labelsOfPlaceholderLinesToDisplace.put(displacementImmediateLinePlaceholder, label);
+            } else if (rdest == tempRegister) {
+                throw new AssemblyParseException(String.format("The displacement of the label reference %s is " +
+                        "further than the equivalent displacement-immediate instruction range and must use an " +
+                        "intermediary loading register to load in the address of the label reference. This only " +
+                        "applies to J[condition] and CALL instructions. e.g. .label$r1", label.getName()),
+                        jOrCalldLineWithRdest.getSourceLineNumber());
             }
         }
 
@@ -514,17 +515,17 @@ public class Assembler {
             if (lineInstruction != null) { // Parse line as an instruction
                 try {
                     lineInstruction.parse(lineWords);
-                } catch (InstructionParseException exception) {
+                    machineCodeLines.add(formatMachineCodeString(lineInstruction.assemble()));
+                } catch (Exception exception) {
                     throw new AssemblyParseException(exception, line.getSourceLineNumber());
                 }
-                machineCodeLines.add(formatMachineCodeString(lineInstruction.assemble()));
             } else { // Try to parse line as a number
                 try {
                     int number = BasedNumberParser.parseInt(lineWords.get(0));
                     machineCodeLines.add(formatMachineCodeString(number));
-                } catch (NumberFormatException exception) {
+                } catch (Exception exception) {
                     throw new AssemblyParseException("Unknown instruction or assembly number: " +
-                            String.join(" ", lineWords), line.getSourceLineNumber());
+                            String.join(" ", lineWords), exception, line.getSourceLineNumber());
                 }
 
                 if (lineWords.size() > 1) {
@@ -559,8 +560,14 @@ public class Assembler {
      *
      * @return the formatted machine code {@link String}
      */
-    private String formatMachineCodeString(int number) {
+    private String formatMachineCodeString(int number) throws NumberFormatException {
         String machineCodeString = arguments.getNumberBaseConverter().apply(number);
+        // 'machineCodeString' is string representation of a 32-bit number since the 'getNumberBaseConverter' method
+        // uses integers, so '-0x1' would be '0xFFFFFFFF' but we're working with 16-bit numbers for CR16, so truncate
+        // to the number base length as needed.
+        if (machineCodeString.length() > arguments.getNumberBasePadding().length()) {
+            machineCodeString = machineCodeString.substring(arguments.getNumberBasePadding().length());
+        }
         machineCodeString = arguments.getNumberBasePadding().substring(machineCodeString.length()) + machineCodeString;
         machineCodeString = machineCodeString.toUpperCase() + "\n";
         return machineCodeString;
