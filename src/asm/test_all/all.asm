@@ -44,6 +44,8 @@
     PUSH    r1
     STORE   rsp r2
     SUBI    rsp 1
+    # Call .test_random_raw_data
+    CALL    .test_random_raw_data
     # Call .end
     MOVIL   r11 1
     MOVIU   r11 0
@@ -217,6 +219,17 @@
 -1
 0b0101      # Binary numbers are prefixed with a '0b'
 0b1001_1001 # Underscores are ignored in numbers
+
+##
+# Loads '.random_raw_data' and performs some arithmetic and then stores it back in main memory.
+##
+.test_random_raw_data
+    MOV     r0  .random_raw_data    # Load '.random_raw_data' address into r0
+    ADDI    r0  3                   # Get the -0x1 data address from '.random_raw_data'
+    LOAD    r0  r0                  # Load -0x1 into r0
+    ADDI    r0  1                   # Add 1 to -1 to get 0 in r0
+    STORE   r0  r0                  # Store 0 back where -0x1 was in '.random_raw_data'
+    RET
 
 ##
 # Does nothing or spins the processor indefinitely.
