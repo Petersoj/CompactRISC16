@@ -8,8 +8,12 @@
 # Authors: Nate Hansen, Jacob Peterson
 #
 
-    MOVIL   rsp 0xFF
-    MOVIU   rsp 0x03   # Initialize stack pointer to 1023
+`define STACK_PTR_LOWER 0xFF
+`define STACK_PTR_UPPER 0x03
+
+    # Initialize stack pointer to 1023
+    MOVIL   rsp STACK_PTR_LOWER
+    MOVIU   rsp STACK_PTR_UPPER
 
 ##
 # The main function.
