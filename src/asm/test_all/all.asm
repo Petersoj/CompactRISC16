@@ -8,6 +8,7 @@
 # Authors: Nate Hansen, Jacob Peterson
 #
 
+# The following is an example of `define (macro) syntax
 `define STACK_PTR_LOWER 0xFF
 `define STACK_PTR_UPPER 0x03
 
@@ -17,6 +18,8 @@
 
 ##
 # The main function.
+#
+# @return void
 ##
 .main
     MOVIL   r0  0      # i
@@ -60,10 +63,10 @@
 ##
 # Returns the greater of two given numbers.
 #
-# @param r11  the first number
-# @param r12  the second number
+# @param r11 - the first number
+# @param r12 - the second number
 #
-# @return r10  the greater number
+# @return r10 - the greater number
 ##
 .max
     CMP    r11   r12
@@ -226,6 +229,8 @@
 
 ##
 # Loads '.random_raw_data' and performs some arithmetic and then stores it back in main memory.
+#
+# @return void
 ##
 .test_random_raw_data
     MOV     r0  .random_raw_data    # Load '.random_raw_data' address into r0
@@ -238,7 +243,9 @@
 ##
 # Does nothing or spins the processor indefinitely.
 #
-# @param r11  '0' to spin indefinitely, '1' to do nothing
+# @param r11 - '0' to spin indefinitely, '1' to do nothing
+#
+# @return void
 ##
 .end
     CMPI    r11 1

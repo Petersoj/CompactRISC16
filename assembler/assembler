@@ -1,12 +1,12 @@
 #!/bin/bash
 
-ASSEMBLER_PATH=$(dirname $0)/build/install/assembler/bin/assembler
+ASSEMBLER_PATH=$(dirname $0)
+ASSEMBLER_BINARY_PATH=${ASSEMBLER_PATH}/build/install/assembler/bin/assembler
 
-if [ ! -f "$ASSEMBLER_PATH" ]; then
-    echo "${ASSEMBLER_PATH} doesn't exist. Running './gradlew build'..."
-    cd assembler
+if [ ! -f "$ASSEMBLER_BINARY_PATH" ]; then
+    echo "${ASSEMBLER_BINARY_PATH} doesn't exist. Running './gradlew build'..."
+    cd ${ASSEMBLER_PATH}
     ./gradlew build
-    cd ..
 fi
 
-"$ASSEMBLER_PATH" $@
+"$ASSEMBLER_BINARY_PATH" $@
