@@ -165,6 +165,30 @@ localparam [3:0] RSP = 4'd15;
 // Define regfile 'write enable' for 'stack pointer' register
 localparam [15:0] REGFILE_WRITE_ENABLE_RSP = {1'b1, 15'b0};
 
+// Ports for 'i_pc'
+reg pc_enable;
+reg [15:0] pc_i_address;
+reg pc_address_select;
+reg pc_address_select_displace;
+wire [15:0] pc_o_address;
+assign O_PC = pc_o_address;
+
+// Ports for 'i_datapath'
+reg [15:0] reg_write_enable;
+reg [3:0] reg_a_select, reg_b_select;
+reg [15:0] immediate;
+reg immediate_select;
+reg [3:0] alu_opcode;
+reg [15:0] regfile_data;
+reg regfile_data_select;
+wire [15:0] a, b; // 'a' is Rsrc, 'b' is Rdest
+wire [15:0] result_bus;
+wire [4:0] alu_status_flags;
+assign O_RESULT_BUS = result_bus;
+
+// Ports for 'i_decoder_regfile_instr_dest_reg'
+wire [15:0] regfile_instr_dest_reg;
+
 // State register
 reg [P_STATE_BIT_WIDTH - 1 : 0] state = S_FETCH;
 
@@ -215,30 +239,6 @@ wire [15:0] instr_calld_displacement = {{4{instruction[11]}}, instruction[11:0]}
 // Used to persist the ALU status flags
 reg [4:0] status_flags;
 assign O_STATUS_FLAGS = status_flags;
-
-// Ports for 'i_pc'
-reg pc_enable;
-reg [15:0] pc_i_address;
-reg pc_address_select;
-reg pc_address_select_displace;
-wire [15:0] pc_o_address;
-assign O_PC = pc_o_address;
-
-// Ports for 'i_datapath'
-reg [15:0] reg_write_enable;
-reg [3:0] reg_a_select, reg_b_select;
-reg [15:0] immediate;
-reg immediate_select;
-reg [3:0] alu_opcode;
-reg [15:0] regfile_data;
-reg regfile_data_select;
-wire [15:0] a, b; // 'a' is Rsrc, 'b' is Rdest
-wire [15:0] result_bus;
-wire [4:0] alu_status_flags;
-assign O_RESULT_BUS = result_bus;
-
-// Ports for 'i_decoder_regfile_instr_dest_reg'
-wire [15:0] regfile_instr_dest_reg;
 
 // Instantiate the Program Counter
 pc #(.P_ADDRESS_WIDTH(16))

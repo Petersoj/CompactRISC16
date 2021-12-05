@@ -12,6 +12,12 @@
 `define STACK_PTR_LOWER 0xFF
 `define STACK_PTR_UPPER 0x03
 
+##
+# The program initialization.
+#
+# @return void
+##
+.init
     # Initialize stack pointer to 1023
     MOVIL   rsp STACK_PTR_LOWER
     MOVIU   rsp STACK_PTR_UPPER
@@ -35,17 +41,17 @@
     ADDI    r0  1
     MOVIL   r4  0
     MOVIU   r4  0      # j
-.L2
-    LSHI    r0  1
+    .main:l2           # Nested labels should be be prepended with the function label and a ':' and
+    LSHI    r0  1      # they should be indented.
     ADDI    r4  1
     CMPI    r4  3
-    JLT     .L2
+    JLT     .main:l2
     PUSH    r0
     CMPI    r0  8
-    JNE     .L1
+    JNE     .main:l1
     MOVIL   r1  20
     MOVIU   r1  0
-.L1
+    .main:l1
     SUBI    r1  10     # r1 = 10
     MULI    r2  2      # r2 = 8
     PUSH    r1
@@ -53,8 +59,8 @@
     SUBI    rsp 1
     # Call .test_random_raw_data
     CALL    .test_random_raw_data
-    # Call .end
-    MOVIL   r11 1
+    # Call .end to spin indefinitely
+    MOVIL   r11 0
     MOVIU   r11 0
     CALL    .end
 
@@ -70,8 +76,8 @@
 ##
 .max
     CMP    r11   r12
-    JGE    .L3$r9
-    MOV    r10   r12
+    JGE    .max:l3$r9   # This label requires a label-loading register to load the absolute address
+    MOV    r10   r12    # of the desired label into a register.
     RET
     NOP                 # The long list of NOPs here is used to confirm that the assembler uses
     NOP                 # absolute jumping and not displacement jumping with instructions containing
@@ -209,7 +215,7 @@
     NOP
     NOP
     NOP
-.L3
+    .max:l3
     MOV    r10   r11
     RET
 
@@ -249,8 +255,8 @@
 ##
 .end
     CMPI    r11 1
-    JEQ     .nop
-.spin
+    JEQ     .end:nop
+    .end:spin
     BUC     -1
-.nop
+    .end:nop
     NOP

@@ -30,7 +30,7 @@ localparam [15:0] P_COLD_CLK_CYCLES = 16'd1;
 // should advance to until it is disabled.
 localparam [15:0] P_MAX_PC = 16'd20;
 // Set this to 0 to disable the 'P_MAX_PC' logic, set to a 1 to enable it
-localparam P_ENABLE_MAX_PC = 1'b1;
+localparam P_ENABLE_MAX_PC = 1'b0;
 
 reg [15:0] clk_count = 16'b0;
 
@@ -52,7 +52,7 @@ localparam integer P_DISPLAY_BIT_WIDTH = 4 * 6;
 reg [P_DISPLAY_BIT_WIDTH - 1 : 0] display_bits = {P_DISPLAY_BIT_WIDTH{1'd0}};
 
 // Instantiate BRAM module with given init file
-bram #(.P_BRAM_INIT_FILE("resources/bram_init/cr16_top/test_sub32/sub32.dat"),
+bram #(.P_BRAM_INIT_FILE("resources/bram_init/cr16_top/test_all/all.dat"),
        .P_BRAM_INIT_FILE_START_ADDRESS('d0),
        .P_DATA_WIDTH('d16),
        .P_ADDRESS_WIDTH('d10)) // Synthesis takes a long time with 16 bits, use 10 bits for testing
