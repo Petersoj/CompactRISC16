@@ -545,7 +545,7 @@ public class Assembler {
         if (linesToPad > 0) {
             String paddingLine = formatMachineCodeString(arguments.getMaxPaddingLineValue());
             try (FileWriter binaryFileAppender = new FileWriter(arguments.getOutputFile(), true)) {
-                for (int lineIndex = linesToPad; lineIndex < arguments.getMaxPaddingLine(); lineIndex++) {
+                for (int lineIndex = 0; lineIndex < linesToPad; lineIndex++) {
                     binaryFileAppender.write(paddingLine);
                 }
             }
