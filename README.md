@@ -8,6 +8,16 @@ This is an implementation of the CompactRISC (CR16) CPU written in Verilog and S
 - Isabella Gilman
 - Nate Hansen
 
+## How This Repository is Organized
+- `.formatter/verilog/` contains the Verilog source code formatter. More info on it [here](https://github.com/Petersoj/CompactRISC16#verilog-source-formatting).
+- `assembler/` contains the source code for our custom assembler written in Java. More info on it [here](https://github.com/Petersoj/CompactRISC16#verilog-source-formatting).
+- `docs/` contains the following: LaTeX source files and compiled PDFs of our lab reports for this class, various datasheets and documentation (including our custom CR16 ISA), and class handout of a CR16 block diagram guideline.
+- `resources/bram_init/` contains block RAM (BRAM) initialization files encoded in UTF-8 hexadecimal characters.
+- `resources/pin_assignments/` contains exported CSVs of pin assignments for the various Verilog top modules in this repository.
+- `src/asm/` contains assembly source code files written in accordance with our custom ISA which can then be assembled with our custom assembler.
+- `src/v/rtl` contains the Verilog and SystemVerilog RTL code for our custom CR16 processor. Note that it contains various top-level modules that were used to test certain RTL modules during our development process. The main `cr16.sv` module source code is located [here](src/v/rtl/cr16/cr16.sv).
+- `src/v/tb` contains the Verilog and SystemVerilog testbench code for testing the various CR16 processor modules.
+
 ## Assembler
 To compile an assembly code file in accordance with the [`CR16 ISA`](docs/Datasheets/CR16%20ISA/CR16%20ISA.pdf), run the `assembler/assembler` shell script with the given arguments as outlined below. Some example programs are given in [`src/asm`](src/asm). A good example showing the capabilities of the ISA and the assembler is shown in [`src/asm/test_all/all.asm`](src/asm/test_all/all.asm). Note that the Java Runtime Environment is required to run the assembler and must be of version `11` or greater. Also note that you may need to make the script executable via: `chmod 755 assembler/assembler`.
 ```
@@ -35,7 +45,7 @@ Usage: assembler [options] <assembly code file path>
       Default: false
 ```
 
-## Verilog Source Naming Conventions and Format
+## Verilog Source Naming Conventions and Format For This Repository
 - File names, module names, and wire/reg assignment names should be snake case (e.g. `my_verilog_module.v`)
 - Testbench modules and file names should be appended with a `_tb` (e.g. `my_verilog_module_tb.v`)
 - Top level modules and file names should be appended with a `_top` (e.g. `my_verilog_module_top.v`)
@@ -60,7 +70,7 @@ Usage: assembler [options] <assembly code file path>
   - Clock `@always` blocks which generally should only include `posedge I_CLK` in the sensitivty list
   - Other `@always` (such as internal finite state machines) or `task` blocks
 
-## Verilog Source Formatting
+## Verilog Source Formatting For This Repository
 To format verilog source code, use the [`istyle-verilog-formatter`](https://github.com/thomasrussellmurphy/istyle-verilog-formatter) tool via the `format` script:
 ```
 .formatter/verilog/format <paths to files or directories>

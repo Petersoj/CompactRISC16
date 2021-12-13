@@ -239,11 +239,15 @@
 # @return void
 ##
 .test_random_raw_data
-    MOV     r0  .random_raw_data    # Load '.random_raw_data' address into r0
+    # Load '.random_raw_data' address into 'r0'. This will always compile to 'MOVIL' and 'MOVIU'
+    # instructions with address of the label as the lower and upper immediate values respectively.
+    MOV     r0  .random_raw_data
+
     ADDI    r0  3                   # Get the -0x1 data address from '.random_raw_data'
     LOAD    r1  r0                  # Load -0x1 into r1
     ADDI    r1  1                   # Add 1 to -1 to get 0 in r1
     STORE   r0  r1                  # Store 0 back where -0x1 was in '.random_raw_data'
+
     RET
 
 ##
